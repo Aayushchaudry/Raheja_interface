@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="520" viewBox="0 0 800 520">
+  <rect width="800" height="520" fill="#E8E4DF"/>
+  <path d="M0 100 Q200 80 400 150 T800 100" stroke="rgba(180,170,160,0.5)" stroke-width="2" fill="none"/>
+  <path d="M0 200 Q300 180 500 250 T800 200" stroke="rgba(160,150,140,0.4)" stroke-width="1.5" fill="none"/>
+  <path d="M0 350 Q250 320 450 380 T800 340" stroke="rgba(170,160,150,0.3)" stroke-width="1" fill="none"/>
+  <text x="400" y="270" text-anchor="middle" fill="rgba(100,80,60,0.3)" font-size="20" font-family="serif">Italian Carrara Marble</text>
+</svg>

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+  <circle cx="200" cy="200" r="200" fill="hsl(240, 20%, 25%)"/>
+  <circle cx="200" cy="200" r="150" fill="hsl(240, 25%, 30%)" opacity="0.6"/>
+  <text x="200" y="210" text-anchor="middle" fill="rgba(212,175,55,0.5)" font-size="20" font-family="serif">Legacy 4</text>
+</svg>

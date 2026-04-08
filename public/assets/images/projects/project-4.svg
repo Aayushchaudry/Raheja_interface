@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <rect width="800" height="600" fill="hsl(180, 20%, 25%)"/>
+  <rect x="200" y="100" width="400" height="400" rx="8" fill="hsl(180, 25%, 35%)" opacity="0.5"/>
+  <text x="400" y="300" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-size="24" font-family="serif">Project 4 — 4990s</text>
+  <rect x="250" y="350" width="300" height="120" rx="4" fill="hsl(180, 15%, 20%)" opacity="0.6"/>
+</svg>

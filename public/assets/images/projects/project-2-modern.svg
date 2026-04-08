@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="hsl(100, 40%, 45%)"/><stop offset="100%" stop-color="hsl(100, 30%, 25%)"/></linearGradient></defs>
+  <rect width="800" height="600" fill="url(#g)"/>
+  <rect x="150" y="80" width="500" height="440" rx="8" fill="rgba(255,255,255,0.1)"/>
+  <text x="400" y="300" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="24" font-family="serif">Modern View 2</text>
+</svg>
