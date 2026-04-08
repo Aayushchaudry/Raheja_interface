@@ -477,7 +477,7 @@ export default function Screen2Timeline() {
             style={{
               width: i === centeredIndex ? 24 : 8,
               height: 8,
-              backgroundColor: i === centeredIndex ? COLORS.gold : 'rgba(248,249,249,0.15)',
+              backgroundColor: i === centeredIndex ? COLORS.gold : 'rgba(60,60,70,0.15)',
               boxShadow: i === centeredIndex ? `0 0 8px rgba(212,175,55,0.5)` : 'none',
             }}
           />

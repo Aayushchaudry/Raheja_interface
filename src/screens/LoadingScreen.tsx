@@ -58,7 +58,7 @@ export default function LoadingScreen() {
       </div>
 
       {/* Progress bar */}
-      <div className="w-64 h-0.5 bg-white/10 rounded-full overflow-hidden">
+      <div className="w-64 h-0.5 bg-pearl/10 rounded-full overflow-hidden">
         <div
           className="h-full rounded-full transition-all duration-500 ease-out"
           style={{
@@ -69,7 +69,7 @@ export default function LoadingScreen() {
       </div>
 
       {/* Progress text */}
-      <div className="mt-4 text-sm text-white/30 tracking-wider">
+      <div className="mt-4 text-sm text-pearl/30 tracking-wider">
         {progress < 100 ? 'Loading experience...' : 'Ready'}
       </div>
     </div>

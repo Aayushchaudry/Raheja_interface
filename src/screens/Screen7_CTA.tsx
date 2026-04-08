@@ -56,7 +56,7 @@ export default function Screen7CTA() {
           className="w-[clamp(40px,3.5vw,52px)] h-[clamp(40px,3.5vw,52px)] rounded-full flex items-center justify-center border transition-all hover:bg-white/5"
           style={{
             borderColor: 'rgba(212,175,55,0.4)',
-            background: 'rgba(0,0,0,0.4)',
+            background: 'rgba(255,255,255,0.6)',
             backdropFilter: 'blur(10px)',
           }}
         >

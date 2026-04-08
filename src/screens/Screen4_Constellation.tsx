@@ -210,7 +210,7 @@ export default function Screen4Constellation() {
           ctx.arc(dot.x, dot.y, dot.size, 0, Math.PI * 2)
           ctx.fillStyle = dot.isGold
             ? `rgba(212, 175, 55, ${alpha})`
-            : `rgba(248, 249, 249, ${alpha})`
+            : `rgba(80, 80, 90, ${alpha})`
           ctx.fill()
         }
       }
@@ -391,8 +391,8 @@ export default function Screen4Constellation() {
           <div
             className="absolute inset-0"
             style={{
-              background: 'rgba(0,0,0,0.7)',
-              backdropFilter: 'blur(8px)',
+              background: 'rgba(255,255,255,0.75)',
+              backdropFilter: 'blur(12px)',
               opacity: animPhase === 'closing' ? 0 : 1,
               transition: 'opacity 0.4s ease',
             }}
@@ -415,7 +415,7 @@ export default function Screen4Constellation() {
               className="w-12 h-12 rounded-full flex items-center justify-center border transition-all hover:bg-white/5"
               style={{
                 borderColor: 'rgba(212,175,55,0.4)',
-                background: 'rgba(0,0,0,0.5)',
+                background: 'rgba(255,255,255,0.6)',
                 backdropFilter: 'blur(10px)',
               }}
             >
