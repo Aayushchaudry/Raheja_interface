@@ -63,6 +63,39 @@ body { margin: 0; }
   to { transform: rotate(360deg); }
 }
 
+/* Circle expands from dot position (offset via CSS vars) to center */
+@keyframes dotExpandToCenter {
+  0% {
+    transform: translate(var(--dot-x), var(--dot-y)) scale(0.05);
+    opacity: 0.5;
+  }
+  40% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Left TV slides in from the left */
+@keyframes tvSlideFromLeft {
+  from { opacity: 0; transform: rotateY(35deg) translateX(-120px) scale(0.8); }
+  to { opacity: 1; transform: rotateY(35deg) translateX(0) scale(1); }
+}
+
+/* Right TV slides in from the right */
+@keyframes tvSlideFromRight {
+  from { opacity: 0; transform: rotateY(-35deg) translateX(120px) scale(0.8); }
+  to { opacity: 1; transform: rotateY(-35deg) translateX(0) scale(1); }
+}
+
+/* Text/element fades up */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 @keyframes lightBarMove {
   0% { transform: translateY(-100%); }
   100% { transform: translateY(100vh); }

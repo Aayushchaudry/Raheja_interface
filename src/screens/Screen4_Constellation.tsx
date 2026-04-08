@@ -36,6 +36,10 @@ export default function Screen4Constellation() {
   const [activeVideo, setActiveVideo] = useState<number | null>(null)
   const [showIntroText, setShowIntroText] = useState(true)
 
+  // Simple animation state: idle → opening → open → closing → idle
+  const [animPhase, setAnimPhase] = useState<'idle' | 'opening' | 'open' | 'closing'>('idle')
+  const [dotOrigin, setDotOrigin] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
+
   const swipeStartRef = useRef<{ x: number; y: number; time: number } | null>(null)
 
   // Init dots
@@ -236,9 +240,14 @@ export default function Screen4Constellation() {
       }
 
       if (best) {
+        const dot = dotsRef.current.find(d => d.familyIndex === best!.idx)
+        if (dot) setDotOrigin({ x: dot.x, y: dot.y })
         play('chimeSoft')
         setActiveVideo(best.idx)
+        setAnimPhase('opening')
         incrementVideosWatched()
+        // After animation completes, mark as fully open
+        setTimeout(() => setAnimPhase('open'), 700)
       }
     },
     [play, incrementVideosWatched, activeVideo]
@@ -269,7 +278,13 @@ export default function Screen4Constellation() {
     [setScreen, stop]
   )
 
-  const closeVideo = useCallback(() => setActiveVideo(null), [])
+  const closeVideo = useCallback(() => {
+    setAnimPhase('closing')
+    setTimeout(() => {
+      setActiveVideo(null)
+      setAnimPhase('idle')
+    }, 500)
+  }, [])
 
   return (
     <div
@@ -363,20 +378,34 @@ export default function Screen4Constellation() {
         </div>
       </div>
 
-      {/* Video modal — center CIRCLE + left/right TV screens (same family video) */}
+      {/* Video modal — single unified animation, no DOM swaps */}
       {activeVideo !== null && (
         <div
           className="absolute inset-0 z-30 flex flex-col items-center justify-center"
           onPointerDown={(e) => {
             e.stopPropagation()
-            closeVideo()
+            if (animPhase === 'open') closeVideo()
           }}
         >
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: 'rgba(0,0,0,0.7)',
+              backdropFilter: 'blur(8px)',
+              opacity: animPhase === 'closing' ? 0 : 1,
+              transition: 'opacity 0.4s ease',
+            }}
+          />
 
-          {/* Close button — top right X */}
+          {/* Close button */}
           <div
             className="absolute top-8 right-8 z-40 cursor-pointer"
+            style={{
+              animation: animPhase !== 'closing' ? 'fadeSlideUp 0.4s ease-out 0.4s both' : undefined,
+              opacity: animPhase === 'closing' ? 0 : undefined,
+              transition: animPhase === 'closing' ? 'opacity 0.3s ease' : undefined,
+            }}
             onPointerDown={(e) => {
               e.stopPropagation()
               closeVideo()
@@ -396,14 +425,26 @@ export default function Screen4Constellation() {
             </div>
           </div>
 
-          {/* Row: LEFT TV — CENTER CIRCLE — RIGHT TV (responsive) */}
+          {/* Row: LEFT TV — CENTER CIRCLE — RIGHT TV (all animate together) */}
           <div
             className="relative z-10 flex items-center justify-center"
             onPointerDown={(e) => e.stopPropagation()}
-            style={{ perspective: '1800px', gap: 'clamp(20px, 3vw, 50px)' }}
+            style={{
+              perspective: '1800px',
+              gap: 'clamp(20px, 3vw, 50px)',
+              opacity: animPhase === 'closing' ? 0 : 1,
+              transform: animPhase === 'closing' ? 'scale(0.85)' : 'scale(1)',
+              transition: animPhase === 'closing' ? 'opacity 0.4s ease, transform 0.4s ease' : undefined,
+            }}
           >
-            {/* LEFT TV */}
-            <div className="flex-shrink-0" style={{ transform: 'rotateY(35deg)', transformOrigin: 'right center' }}>
+            {/* LEFT TV — slides in from left with delay */}
+            <div
+              className="flex-shrink-0"
+              style={{
+                transformOrigin: 'right center',
+                animation: 'tvSlideFromLeft 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both',
+              }}
+            >
               <div
                 className="relative rounded-xl overflow-hidden w-[25vw] max-w-[420px] min-w-[180px] aspect-[16/10]"
                 style={{
@@ -414,27 +455,26 @@ export default function Screen4Constellation() {
                 }}
               >
                 <div className="w-full h-full rounded-lg overflow-hidden bg-black relative">
-                  <video
-                    src={families[activeVideo].video}
-                    className="w-full h-full object-cover"
-                    muted playsInline loop autoPlay
-                  />
+                  <video src={families[activeVideo].video} className="w-full h-full object-cover" muted playsInline loop autoPlay />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div
-                      className="w-[clamp(36px,4vw,64px)] h-[clamp(36px,4vw,64px)] rounded-full flex items-center justify-center"
-                      style={{ background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(6px)', border: `1.5px solid rgba(212,175,55,0.4)` }}
-                    >
-                      <svg className="w-[50%] h-[50%]" viewBox="0 0 24 24" fill={COLORS.gold}>
-                        <path d="M8 5v14l11-7z" />
-                      </svg>
+                    <div className="w-[clamp(36px,4vw,64px)] h-[clamp(36px,4vw,64px)] rounded-full flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(6px)', border: `1.5px solid rgba(212,175,55,0.4)` }}>
+                      <svg className="w-[50%] h-[50%]" viewBox="0 0 24 24" fill={COLORS.gold}><path d="M8 5v14l11-7z" /></svg>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* CENTER CIRCLE */}
-            <div className="flex-shrink-0" style={{ zIndex: 5 }}>
+            {/* CENTER CIRCLE — expands from the tapped dot position */}
+            <div
+              className="flex-shrink-0"
+              style={{
+                zIndex: 5,
+                '--dot-x': `${dotOrigin.x - window.innerWidth / 2}px`,
+                '--dot-y': `${dotOrigin.y - window.innerHeight / 2 + 40}px`,
+                animation: 'dotExpandToCenter 0.6s cubic-bezier(0.16, 1, 0.3, 1) both',
+              } as React.CSSProperties}
+            >
               <div
                 className="rounded-full overflow-hidden w-[28vw] max-w-[440px] min-w-[200px] aspect-square"
                 style={{
@@ -442,16 +482,18 @@ export default function Screen4Constellation() {
                   boxShadow: `0 0 80px rgba(212,175,55,0.3), 0 0 150px rgba(212,175,55,0.08), 0 10px 50px rgba(0,0,0,0.6)`,
                 }}
               >
-                <video
-                  src={families[activeVideo].video}
-                  className="w-full h-full object-cover"
-                  autoPlay muted playsInline loop
-                />
+                <video src={families[activeVideo].video} className="w-full h-full object-cover" autoPlay muted playsInline loop />
               </div>
             </div>
 
-            {/* RIGHT TV */}
-            <div className="flex-shrink-0" style={{ transform: 'rotateY(-35deg)', transformOrigin: 'left center' }}>
+            {/* RIGHT TV — slides in from right with delay */}
+            <div
+              className="flex-shrink-0"
+              style={{
+                transformOrigin: 'left center',
+                animation: 'tvSlideFromRight 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both',
+              }}
+            >
               <div
                 className="relative rounded-xl overflow-hidden w-[25vw] max-w-[420px] min-w-[180px] aspect-[16/10]"
                 style={{
@@ -462,19 +504,10 @@ export default function Screen4Constellation() {
                 }}
               >
                 <div className="w-full h-full rounded-lg overflow-hidden bg-black relative">
-                  <video
-                    src={families[activeVideo].video}
-                    className="w-full h-full object-cover"
-                    muted playsInline loop autoPlay
-                  />
+                  <video src={families[activeVideo].video} className="w-full h-full object-cover" muted playsInline loop autoPlay />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div
-                      className="w-[clamp(36px,4vw,64px)] h-[clamp(36px,4vw,64px)] rounded-full flex items-center justify-center"
-                      style={{ background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(6px)', border: `1.5px solid rgba(212,175,55,0.4)` }}
-                    >
-                      <svg className="w-[50%] h-[50%]" viewBox="0 0 24 24" fill={COLORS.gold}>
-                        <path d="M8 5v14l11-7z" />
-                      </svg>
+                    <div className="w-[clamp(36px,4vw,64px)] h-[clamp(36px,4vw,64px)] rounded-full flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(6px)', border: `1.5px solid rgba(212,175,55,0.4)` }}>
+                      <svg className="w-[50%] h-[50%]" viewBox="0 0 24 24" fill={COLORS.gold}><path d="M8 5v14l11-7z" /></svg>
                     </div>
                   </div>
                 </div>
@@ -482,10 +515,15 @@ export default function Screen4Constellation() {
             </div>
           </div>
 
-          {/* Family info BELOW */}
+          {/* Family info BELOW — fades up with delay */}
           <div
             className="relative z-10 text-center mt-[3vh]"
             onPointerDown={(e) => e.stopPropagation()}
+            style={{
+              animation: animPhase !== 'closing' ? 'fadeSlideUp 0.5s ease-out 0.3s both' : undefined,
+              opacity: animPhase === 'closing' ? 0 : undefined,
+              transition: animPhase === 'closing' ? 'opacity 0.3s ease' : undefined,
+            }}
           >
             <p className="font-display text-[clamp(1.2rem,2vw,1.5rem)]" style={{ color: COLORS.gold }}>
               {families[activeVideo].name}
