@@ -23,6 +23,7 @@ export interface FamilyData {
   id: number
   name: string
   quote: string
+  photo: string
   video: string
 }
 

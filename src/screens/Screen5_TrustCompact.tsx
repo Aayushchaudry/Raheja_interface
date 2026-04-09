@@ -25,6 +25,7 @@ export default function Screen5TrustCompact() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const dropZoneRef = useRef<HTMLDivElement>(null)
   const animRef = useRef(0)
+  const hoveringDropRef = useRef(false)
 
   // Canvas for gold thread line + particles
   useEffect(() => {
@@ -133,14 +134,35 @@ export default function Screen5TrustCompact() {
     (e: React.PointerEvent) => {
       if (!drag) return
       setDrag({ ...drag, currentX: e.clientX, currentY: e.clientY })
+
+      // Check if hovering over drop zone — play hint sound
+      const dropZone = dropZoneRef.current
+      if (dropZone) {
+        const rect = dropZone.getBoundingClientRect()
+        if (e.clientX >= rect.left && e.clientX <= rect.right &&
+            e.clientY >= rect.top && e.clientY <= rect.bottom) {
+          // Inside drop zone — MetallicShimmer plays as loop while dragging
+          if (!hoveringDropRef.current) {
+            hoveringDropRef.current = true
+            play('metallicShimmer')
+          }
+        } else {
+          if (hoveringDropRef.current) {
+            hoveringDropRef.current = false
+            stop('metallicShimmer')
+          }
+        }
+      }
     },
-    [drag]
+    [drag, play, stop]
   )
 
   const handlePointerUp = useCallback(
     (e: React.PointerEvent) => {
       if (!drag) return
       stop('stringPull')
+      stop('metallicShimmer')
+      hoveringDropRef.current = false
 
       const dropZone = dropZoneRef.current
       if (dropZone) {

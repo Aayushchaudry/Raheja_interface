@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useMemo } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { OrbitControls, useGLTF, Environment } from '@react-three/drei'
+import { OrbitControls, useGLTF, Environment, Html } from '@react-three/drei'
 import * as THREE from 'three'
 import { useAppStore } from '../store/useAppStore'
 import { useAudio } from '../hooks/useAudio'
@@ -120,6 +120,56 @@ function GoldLines({ active }: { active: boolean }) {
   )
 }
 
+// "RAHEJA AWANA" — 3D perspective split: RAHEJA tilts inward left, AWANA comes outward right
+function BackgroundText() {
+  return (
+    <Html
+      position={[0, -0.5, -1]}
+      center
+      style={{ pointerEvents: 'none' }}
+      zIndexRange={[0, 0]}
+    >
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 'clamp(20px, 3vw, 50px)',
+        perspective: '600px',
+        userSelect: 'none',
+      }}>
+        {/* RAHEJA — left side: R comes out toward viewer, A goes into screen toward building */}
+        <div style={{
+          fontFamily: 'Playfair Display, Georgia, serif',
+          fontSize: 'clamp(40px, 5.5vw, 70px)',
+          letterSpacing: '0.25em',
+          color: COLORS.gold,
+          opacity: 0.35,
+          whiteSpace: 'nowrap',
+          transform: 'rotateY(55deg)',
+          transformOrigin: 'right center',
+          textShadow: `0 0 30px rgba(212,175,55,0.15)`,
+        }}>
+          RAHEJA
+        </div>
+
+        {/* AWANA — right side: A (first) goes into screen toward building, A (last) comes out toward viewer */}
+        <div style={{
+          fontFamily: 'Playfair Display, Georgia, serif',
+          fontSize: 'clamp(40px, 5.5vw, 70px)',
+          letterSpacing: '0.25em',
+          color: COLORS.gold,
+          opacity: 0.35,
+          whiteSpace: 'nowrap',
+          transform: 'rotateY(-55deg)',
+          transformOrigin: 'left center',
+          textShadow: `0 0 30px rgba(212,175,55,0.15)`,
+        }}>
+          AWANA
+        </div>
+      </div>
+    </Html>
+  )
+}
+
 function Scene({ phase }: { phase: number }) {
   const [textureProgress, setTextureProgress] = useState(0)
 
@@ -144,6 +194,7 @@ function Scene({ phase }: { phase: number }) {
       <directionalLight position={[5, 5, 5]} intensity={1} />
       <pointLight position={[0, 3, 0]} color={COLORS.gold} intensity={2} />
 
+      <BackgroundText />
       <GoldLines active={phase >= 0} />
       <ProceduralSkyscraper progress={textureProgress} />
 
@@ -175,7 +226,10 @@ export default function Screen6LuxeReveal() {
         setPhase(2)
         play('grandReveal')
       }, 3000),   // Start texture
-      setTimeout(() => setShowText(true), 6500),  // Show headline
+      setTimeout(() => {
+        setShowText(true)
+        play('harmonicChime')
+      }, 6500),  // Show headline
       setTimeout(() => {
         play('luxeAmbient')
       }, 7000),

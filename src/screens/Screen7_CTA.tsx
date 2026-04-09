@@ -76,7 +76,10 @@ export default function Screen7CTA() {
       {/* Back arrow on left center — same style as constellation NEXT */}
       <div
         className="absolute left-6 top-1/2 -translate-y-1/2 z-20 cursor-pointer"
-        onPointerDown={() => setScreen(Screen.LuxeReveal)}
+        onPointerDown={() => {
+          play('descendingTone')
+          setScreen(Screen.LuxeReveal)
+        }}
       >
         <div className="flex flex-col items-center gap-2">
           <div
