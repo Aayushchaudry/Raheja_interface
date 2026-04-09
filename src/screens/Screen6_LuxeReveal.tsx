@@ -139,7 +139,7 @@ function BackgroundText() {
         {/* RAHEJA — left side: R comes out toward viewer, A goes into screen toward building */}
         <div style={{
           fontFamily: 'Playfair Display, Georgia, serif',
-          fontSize: 'clamp(40px, 5.5vw, 70px)',
+          fontSize: 'clamp(50px, 7vw, 100px)',
           letterSpacing: '0.25em',
           color: COLORS.gold,
           opacity: 0.35,
@@ -154,7 +154,7 @@ function BackgroundText() {
         {/* AWANA — right side: A (first) goes into screen toward building, A (last) comes out toward viewer */}
         <div style={{
           fontFamily: 'Playfair Display, Georgia, serif',
-          fontSize: 'clamp(40px, 5.5vw, 70px)',
+          fontSize: 'clamp(50px, 7vw, 100px)',
           letterSpacing: '0.25em',
           color: COLORS.gold,
           opacity: 0.35,
@@ -256,9 +256,9 @@ export default function Screen6LuxeReveal() {
 
       {/* Text overlay */}
       {showText && (
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-end pb-24 pointer-events-none">
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-end pb-16 pointer-events-none">
           <h1
-            className="font-display text-6xl tracking-[0.2em] uppercase"
+            className="font-display text-[clamp(3rem,6vw,5.5rem)] tracking-[0.2em] uppercase"
             style={{
               color: COLORS.gold,
               textShadow: `0 0 30px rgba(212,175,55,0.4)`,
@@ -268,7 +268,7 @@ export default function Screen6LuxeReveal() {
             Proven Trust. Refined.
           </h1>
           <p
-            className="mt-4 font-display text-xl italic tracking-wider text-pearl/80"
+            className="mt-4 font-display text-[clamp(1.1rem,2vw,1.6rem)] italic tracking-wider text-pearl/80"
             style={{ animation: 'screenFadeIn 1s ease-out 0.5s forwards', opacity: 0 }}
           >
             Step into your first true sanctuary of vision.

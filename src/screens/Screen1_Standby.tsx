@@ -102,7 +102,7 @@ export default function Screen1Standby() {
 
       {/* Logo */}
       <div
-        className="absolute top-[3vh] left-[3vw] font-display text-[clamp(1rem,2vw,1.5rem)] tracking-widest"
+        className="absolute top-[3vh] left-[3vw] font-display text-[clamp(1.3rem,2.5vw,2rem)] tracking-widest"
         style={{ color: COLORS.gold }}
       >
         RAHEJA LUXE
@@ -111,7 +111,7 @@ export default function Screen1Standby() {
       {/* Breathing Orb */}
       <div
         ref={orbRef}
-        className="w-[clamp(80px,10vw,130px)] h-[clamp(80px,10vw,130px)] rounded-full cursor-pointer"
+        className="w-[clamp(120px,15vw,200px)] h-[clamp(120px,15vw,200px)] rounded-full cursor-pointer"
         style={{
           background: `radial-gradient(circle, ${COLORS.gold} 0%, rgba(212,175,55,0.3) 50%, transparent 70%)`,
           boxShadow: `0 0 40px rgba(212,175,55,0.3), 0 0 80px rgba(212,175,55,0.15)`,
@@ -120,14 +120,14 @@ export default function Screen1Standby() {
       />
 
       {/* Center text */}
-      <div className="mt-8 text-center breathing">
+      <div className="mt-10 text-center breathing">
         <p
-          className="font-display text-[clamp(0.9rem,1.5vw,1.25rem)] tracking-wider italic"
+          className="font-display text-[clamp(1.3rem,2.5vw,2rem)] tracking-wider italic"
           style={{ color: COLORS.pearl }}
         >
           The legacy is in the details.
         </p>
-        <p className="mt-2 text-sm tracking-widest" style={{ color: COLORS.gold }}>
+        <p className="mt-3 text-[clamp(0.9rem,1.2vw,1.1rem)] tracking-widest" style={{ color: COLORS.gold }}>
           Touch to begin
         </p>
       </div>
