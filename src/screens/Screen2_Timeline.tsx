@@ -447,7 +447,7 @@ export default function Screen2Timeline() {
       {/* Text ABOVE centered card — Year & Name */}
       <div
         className="absolute left-0 right-0 text-center z-10 pointer-events-none transition-all duration-500"
-        style={{ top: 'clamp(70px, 14vh, 140px)' }}
+        style={{ top: 'clamp(50px, 9vh, 100px)' }}
       >
         <div
           className="inline-block"
