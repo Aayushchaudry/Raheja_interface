@@ -2,406 +2,676 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { useAppStore } from '../store/useAppStore'
 import { useAudio } from '../hooks/useAudio'
 import { Screen } from '../types'
-import { milestones } from '../data/milestones'
 import { COLORS } from '../utils/constants'
+
+type Phase = 'idle' | 'beam' | 'shatter' | 'flow' | 'matched'
 
 interface DragState {
   sourceIndex: number
-  startX: number
-  startY: number
+  sourceRect: { x: number; y: number; w: number; h: number }
   currentX: number
   currentY: number
-  sourceRect: { x: number; y: number; w: number; h: number }
 }
+
+interface Sparkle {
+  x: number
+  y: number
+  vx: number
+  vy: number
+  size: number
+  life: number
+}
+
+const DNA_PAIRS = [
+  {
+    heritage: { name: 'Raheja Tower', year: 2011, promise: 'Structural Integrity' },
+    luxe: {
+      title: 'Material Elevation',
+      description: 'Material selection, evolved through global sourcing.',
+    },
+  },
+  {
+    heritage: { name: 'Raheja Residency', year: 2014, promise: 'Crafted Interiors' },
+    luxe: {
+      title: 'Artisanal Finish',
+      description: 'Hand-crafted detailing, applied at scale.',
+    },
+  },
+  {
+    heritage: { name: 'Raheja Sky Scapes', year: 2016, promise: 'Connected Living' },
+    luxe: {
+      title: 'Intelligent Environments',
+      description: 'Connected systems, tuned for wellness and predictive comfort.',
+    },
+  },
+  {
+    heritage: { name: 'Raheja Nirwana', year: 2021, promise: 'Curated Sanctuary' },
+    luxe: {
+      title: 'Ultra-Luxe Concierge',
+      description: 'Global lifestyle management, scaled to 24/7 personal service.',
+    },
+  },
+]
+
+const HeritageIcons = [
+  // tower
+  <path d="M9 21V3h6v18M4 21h16M11 6h2M11 10h2M11 14h2M11 18h2" />,
+  // residence
+  <path d="M3 21h18M5 21V11l7-6 7 6v10M9 21v-6h6v6" />,
+  // skyline / building tall
+  <path d="M3 21h18M5 21V8l4-2 4 2v15M13 21V11l4-2 4 2v10M9 11h2M9 15h2M17 13h2M17 17h2" />,
+  // sanctuary / leaf
+  <path d="M4 21c0-9 6-15 16-16-1 10-7 16-16 16M4 21l9-9" />,
+]
+
+const LuxeIcons = [
+  // material layers
+  <path d="M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5M3 18l9 5 9-5" />,
+  // brush / artisanal
+  <path d="M9 11V3h2v8M15 11V3h2v8M5 11h14M5 11v3a4 4 0 004 4h6a4 4 0 004-4v-3M12 18v3" />,
+  // smart / wifi-home
+  <path d="M3 21h18M5 21V11l7-6 7 6v10M9 14a3 3 0 016 0M11 18h2" />,
+  // concierge / bell
+  <path d="M6 17h12M5 14a7 7 0 0114 0M10 5a2 2 0 014 0M12 5v2M10 20h4" />,
+]
 
 export default function Screen5TrustCompact() {
   const setScreen = useAppStore((s) => s.setScreen)
   const { play, stop } = useAudio()
 
-  const [drag, setDrag] = useState<DragState | null>(null)
-  const [validated, setValidated] = useState(false)
-  const [validatedIndex, setValidatedIndex] = useState<number | null>(null)
+  const [phase, setPhase] = useState<Phase>('idle')
+  const [activeSource, setActiveSource] = useState<number | null>(null)
+  const [matchedIndex, setMatchedIndex] = useState<number | null>(null)
+
+  const phaseRef = useRef<Phase>('idle')
+  const dragRef = useRef<DragState | null>(null)
+  const sparklesRef = useRef<Sparkle[]>([])
+  const targetRectRef = useRef<{ x: number; y: number; w: number; h: number } | null>(null)
+  const sourceCardRef = useRef<{ x: number; y: number; w: number; h: number } | null>(null)
+  const flowProgressRef = useRef(0)
+  const luxeCardRefs = useRef<(HTMLDivElement | null)[]>([])
+  const spineRef = useRef<HTMLDivElement>(null)
 
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const dropZoneRef = useRef<HTMLDivElement>(null)
   const animRef = useRef(0)
-  const hoveringDropRef = useRef(false)
 
-  // Canvas for gold thread line + particles
+  useEffect(() => {
+    phaseRef.current = phase
+  }, [phase])
+
+  // Canvas animation
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')!
-    canvas.width = window.innerWidth
-    canvas.height = window.innerHeight
+    const resize = () => {
+      canvas.width = window.innerWidth
+      canvas.height = window.innerHeight
+    }
+    resize()
+    window.addEventListener('resize', resize)
+
+    function getSpineCenter(): { x: number; y: number } {
+      const el = spineRef.current
+      if (!el) return { x: window.innerWidth / 2, y: window.innerHeight / 2 }
+      const r = el.getBoundingClientRect()
+      return { x: r.left + r.width / 2, y: r.top + r.height / 2 }
+    }
 
     function animate() {
       ctx.clearRect(0, 0, canvas!.width, canvas!.height)
+      const ph = phaseRef.current
+      const drag = dragRef.current
 
-      if (drag) {
-        const midX = window.innerWidth * 0.375
-        const midY = window.innerHeight / 2
+      // Active beam from heritage to finger
+      if (ph === 'beam' && drag) {
+        const sx = drag.sourceRect.x + drag.sourceRect.w / 2
+        const sy = drag.sourceRect.y + drag.sourceRect.h / 2
+        const ex = drag.currentX
+        const ey = drag.currentY
+        const mx = (sx + ex) / 2
+        const my = (sy + ey) / 2
 
-        // Bezier gold thread
         ctx.beginPath()
-        ctx.moveTo(drag.sourceRect.x + drag.sourceRect.w / 2, drag.sourceRect.y + drag.sourceRect.h / 2)
-        ctx.quadraticCurveTo(midX, midY, drag.currentX, drag.currentY)
-
-        const grad = ctx.createLinearGradient(
-          drag.sourceRect.x, drag.sourceRect.y,
-          drag.currentX, drag.currentY
-        )
-        grad.addColorStop(0, 'rgba(212, 175, 55, 0.3)')
-        grad.addColorStop(0.5, 'rgba(212, 175, 55, 0.8)')
-        grad.addColorStop(1, 'rgba(245, 230, 163, 0.9)')
-
+        ctx.moveTo(sx, sy)
+        ctx.quadraticCurveTo(mx, my, ex, ey)
+        const grad = ctx.createLinearGradient(sx, sy, ex, ey)
+        grad.addColorStop(0, 'rgba(212,175,55,0.35)')
+        grad.addColorStop(0.5, 'rgba(212,175,55,0.85)')
+        grad.addColorStop(1, 'rgba(245,230,163,0.95)')
         ctx.strokeStyle = grad
-        ctx.lineWidth = 4
-        ctx.shadowColor = 'rgba(212, 175, 55, 0.6)'
+        ctx.lineWidth = 3.5
+        ctx.shadowColor = 'rgba(212,175,55,0.55)'
         ctx.shadowBlur = 18
         ctx.lineCap = 'round'
         ctx.stroke()
         ctx.shadowBlur = 0
 
-        // Particles
-        const steps = 20
-        for (let i = 0; i < steps; i++) {
-          const t = i / steps
-          const sx = drag.sourceRect.x + drag.sourceRect.w / 2
-          const sy = drag.sourceRect.y + drag.sourceRect.h / 2
-          const px = (1 - t) * (1 - t) * sx + 2 * (1 - t) * t * midX + t * t * drag.currentX
-          const py = (1 - t) * (1 - t) * sy + 2 * (1 - t) * t * midY + t * t * drag.currentY
-
-          ctx.beginPath()
-          ctx.arc(px + (Math.random() - 0.5) * 8, py + (Math.random() - 0.5) * 8, 1 + Math.random() * 2.5, 0, Math.PI * 2)
-          ctx.fillStyle = `rgba(212, 175, 55, ${0.2 + Math.random() * 0.4})`
-          ctx.fill()
-        }
-
-        // Glow at finger
+        // Fingertip glow
+        const grd = ctx.createRadialGradient(ex, ey, 0, ex, ey, 14)
+        grd.addColorStop(0, 'rgba(245,230,163,0.8)')
+        grd.addColorStop(1, 'rgba(212,175,55,0)')
         ctx.beginPath()
-        ctx.arc(drag.currentX, drag.currentY, 12, 0, Math.PI * 2)
-        const grd = ctx.createRadialGradient(drag.currentX, drag.currentY, 0, drag.currentX, drag.currentY, 12)
-        grd.addColorStop(0, 'rgba(245, 230, 163, 0.8)')
-        grd.addColorStop(1, 'rgba(212, 175, 55, 0)')
+        ctx.arc(ex, ey, 14, 0, Math.PI * 2)
         ctx.fillStyle = grd
         ctx.fill()
       }
 
-      // Validation burst
-      if (validated) {
-        const cx = window.innerWidth * 0.875
-        const cy = window.innerHeight / 2
+      // Source-to-spine beam during shatter/flow
+      if ((ph === 'shatter' || ph === 'flow' || ph === 'matched') && sourceCardRef.current) {
+        const src = sourceCardRef.current
+        const sx = src.x + src.w
+        const sy = src.y + src.h / 2
+        const spine = getSpineCenter()
+        const mx = (sx + spine.x) / 2
+        const my = (sy + spine.y) / 2 - 30
+
+        ctx.beginPath()
+        ctx.moveTo(sx, sy)
+        ctx.quadraticCurveTo(mx, my, spine.x, spine.y)
+        const grad = ctx.createLinearGradient(sx, sy, spine.x, spine.y)
+        grad.addColorStop(0, 'rgba(212,175,55,0.6)')
+        grad.addColorStop(1, 'rgba(245,230,163,0.95)')
+        ctx.strokeStyle = grad
+        ctx.lineWidth = 3
+        ctx.shadowColor = 'rgba(212,175,55,0.6)'
+        ctx.shadowBlur = 16
+        ctx.lineCap = 'round'
+        ctx.stroke()
+        ctx.shadowBlur = 0
+      }
+
+      // Sparkle particles
+      const sparkles = sparklesRef.current
+      const targetingTarget = (ph === 'flow' || ph === 'matched') && targetRectRef.current
+      const tx = targetingTarget ? targetRectRef.current!.x + 30 : 0
+      const ty = targetingTarget ? targetRectRef.current!.y + targetRectRef.current!.h / 2 : 0
+
+      for (let i = sparkles.length - 1; i >= 0; i--) {
+        const s = sparkles[i]
+        if (targetingTarget) {
+          const dx = tx - s.x
+          const dy = ty - s.y
+          const d = Math.hypot(dx, dy) || 1
+          s.vx += (dx / d) * 0.45
+          s.vy += (dy / d) * 0.45
+          s.vx *= 0.94
+          s.vy *= 0.94
+        }
+        s.x += s.vx
+        s.y += s.vy
+        s.life -= 0.012
+        if (s.life <= 0) {
+          sparkles.splice(i, 1)
+          continue
+        }
+        ctx.beginPath()
+        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(245,230,163,${s.life})`
+        ctx.shadowColor = 'rgba(212,175,55,0.7)'
+        ctx.shadowBlur = 8
+        ctx.fill()
+      }
+      ctx.shadowBlur = 0
+
+      // Spine-to-target beam during flow/matched
+      if ((ph === 'flow' || ph === 'matched') && targetRectRef.current) {
+        flowProgressRef.current = Math.min(1, flowProgressRef.current + 0.04)
+        const t = targetRectRef.current
+        const spine = getSpineCenter()
+        const ex = t.x
+        const ey = t.y + t.h / 2
+        const mx = (spine.x + ex) / 2
+        const my = (spine.y + ey) / 2 - 30
+
+        const p = flowProgressRef.current
+        // animate path with progress (draw 0..p)
+        ctx.beginPath()
+        const steps = 30
+        for (let i = 0; i <= steps; i++) {
+          const tt = (i / steps) * p
+          const px = (1 - tt) * (1 - tt) * spine.x + 2 * (1 - tt) * tt * mx + tt * tt * ex
+          const py = (1 - tt) * (1 - tt) * spine.y + 2 * (1 - tt) * tt * my + tt * tt * ey
+          if (i === 0) ctx.moveTo(px, py)
+          else ctx.lineTo(px, py)
+        }
+        ctx.strokeStyle = 'rgba(245,230,163,0.8)'
+        ctx.lineWidth = 2.5
+        ctx.shadowColor = 'rgba(212,175,55,0.55)'
+        ctx.shadowBlur = 14
+        ctx.stroke()
+        ctx.shadowBlur = 0
+      }
+
+      // Validation ring burst on matched
+      if (ph === 'matched' && targetRectRef.current) {
+        const t = targetRectRef.current
+        const cx = t.x + t.w / 2
+        const cy = t.y + t.h / 2
         const time = Date.now() * 0.003
-        for (let i = 0; i < 30; i++) {
-          const angle = (i / 30) * Math.PI * 2 + time
-          const r = 40 + Math.sin(time * 2 + i) * 60
+        for (let i = 0; i < 24; i++) {
+          const a = (i / 24) * Math.PI * 2 + time
+          const r = 50 + Math.sin(time * 2 + i) * 40
           ctx.beginPath()
-          ctx.arc(cx + Math.cos(angle) * r, cy + Math.sin(angle) * r, 2 + Math.random() * 3, 0, Math.PI * 2)
-          ctx.fillStyle = `rgba(212, 175, 55, ${0.3 + Math.random() * 0.4})`
+          ctx.arc(cx + Math.cos(a) * r, cy + Math.sin(a) * r, 1.5 + Math.random() * 2, 0, Math.PI * 2)
+          ctx.fillStyle = `rgba(212,175,55,${0.3 + Math.random() * 0.4})`
           ctx.fill()
         }
       }
 
       animRef.current = requestAnimationFrame(animate)
     }
+    animate()
 
-    animRef.current = requestAnimationFrame(animate)
-    return () => cancelAnimationFrame(animRef.current)
-  }, [drag, validated])
+    return () => {
+      cancelAnimationFrame(animRef.current)
+      window.removeEventListener('resize', resize)
+    }
+  }, [])
 
-  const handleProjectDown = useCallback(
+  const cancelDrag = useCallback(() => {
+    stop('stringPull')
+    play('descendingTone')
+    dragRef.current = null
+    sourceCardRef.current = null
+    setActiveSource(null)
+    setPhase('idle')
+  }, [play, stop])
+
+  const triggerShatter = useCallback(
+    (index: number) => {
+      const luxeEl = luxeCardRefs.current[index]
+      if (!luxeEl) return
+      const r = luxeEl.getBoundingClientRect()
+      targetRectRef.current = { x: r.left, y: r.top, w: r.width, h: r.height }
+
+      // Spawn sparkles at spine
+      const spine = spineRef.current?.getBoundingClientRect()
+      const sx = spine ? spine.left + spine.width / 2 : window.innerWidth / 2
+      const sy = spine ? spine.top + spine.height / 2 : window.innerHeight / 2
+      const sparkles: Sparkle[] = []
+      for (let i = 0; i < 90; i++) {
+        const angle = Math.random() * Math.PI * 2
+        const speed = 1 + Math.random() * 5
+        sparkles.push({
+          x: sx + (Math.random() - 0.5) * 10,
+          y: sy + (Math.random() - 0.5) * 10,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed * 0.7,
+          size: 1 + Math.random() * 2.5,
+          life: 1,
+        })
+      }
+      sparklesRef.current = sparkles
+      flowProgressRef.current = 0
+
+      stop('stringPull')
+      play('metallicShimmer')
+      setPhase('shatter')
+
+      setTimeout(() => {
+        play('validationClick')
+        setPhase('flow')
+      }, 500)
+
+      setTimeout(() => {
+        play('orchestralSwell')
+        if (navigator.vibrate) navigator.vibrate([100, 50, 200])
+        setMatchedIndex(index)
+        setPhase('matched')
+      }, 1400)
+
+      setTimeout(() => {
+        stop('metallicShimmer')
+        setScreen(Screen.LuxeReveal)
+      }, 4200)
+    },
+    [play, stop, setScreen]
+  )
+
+  const handleHeritageDown = useCallback(
     (e: React.PointerEvent, index: number) => {
-      if (validated) return
+      if (phaseRef.current !== 'idle') return
       e.stopPropagation()
       const target = e.currentTarget as HTMLElement
       const rect = target.getBoundingClientRect()
-
-      setDrag({
+      const srcRect = { x: rect.left, y: rect.top, w: rect.width, h: rect.height }
+      dragRef.current = {
         sourceIndex: index,
-        startX: e.clientX,
-        startY: e.clientY,
+        sourceRect: srcRect,
         currentX: e.clientX,
         currentY: e.clientY,
-        sourceRect: { x: rect.left, y: rect.top, w: rect.width, h: rect.height },
-      })
+      }
+      sourceCardRef.current = srcRect
+      setActiveSource(index)
+      setPhase('beam')
       play('stringPull')
     },
-    [play, validated]
+    [play]
   )
 
   const handlePointerMove = useCallback(
     (e: React.PointerEvent) => {
-      if (!drag) return
-      setDrag({ ...drag, currentX: e.clientX, currentY: e.clientY })
+      if (phaseRef.current !== 'beam' || !dragRef.current) return
+      dragRef.current = { ...dragRef.current, currentX: e.clientX, currentY: e.clientY }
 
-      // Check if hovering over drop zone — play hint sound
-      const dropZone = dropZoneRef.current
-      if (dropZone) {
-        const rect = dropZone.getBoundingClientRect()
-        if (e.clientX >= rect.left && e.clientX <= rect.right &&
-            e.clientY >= rect.top && e.clientY <= rect.bottom) {
-          // Inside drop zone — MetallicShimmer plays as loop while dragging
-          if (!hoveringDropRef.current) {
-            hoveringDropRef.current = true
-            play('metallicShimmer')
-          }
-        } else {
-          if (hoveringDropRef.current) {
-            hoveringDropRef.current = false
-            stop('metallicShimmer')
-          }
+      const spine = spineRef.current
+      if (spine) {
+        const r = spine.getBoundingClientRect()
+        if (e.clientX >= r.left + r.width / 2) {
+          triggerShatter(dragRef.current.sourceIndex)
         }
       }
     },
-    [drag, play, stop]
+    [triggerShatter]
   )
 
-  const handlePointerUp = useCallback(
-    (e: React.PointerEvent) => {
-      if (!drag) return
-      stop('stringPull')
-      stop('metallicShimmer')
-      hoveringDropRef.current = false
-
-      const dropZone = dropZoneRef.current
-      if (dropZone) {
-        const rect = dropZone.getBoundingClientRect()
-        if (
-          e.clientX >= rect.left &&
-          e.clientX <= rect.right &&
-          e.clientY >= rect.top &&
-          e.clientY <= rect.bottom
-        ) {
-          play('validationClick')
-          setTimeout(() => play('orchestralSwell'), 200)
-          if (navigator.vibrate) navigator.vibrate([100, 50, 200])
-
-          setValidated(true)
-          setValidatedIndex(drag.sourceIndex)
-          setDrag(null)
-
-          setTimeout(() => setScreen(Screen.LuxeReveal), 3500)
-          return
-        }
-      }
-
-      play('descendingTone')
-      setDrag(null)
-    },
-    [drag, play, stop, setScreen]
-  )
+  const handlePointerUp = useCallback(() => {
+    if (phaseRef.current !== 'beam') return
+    cancelDrag()
+  }, [cancelDrag])
 
   return (
     <div
-      className="w-full h-full bg-charcoal relative overflow-hidden screen-enter flex"
+      className="w-full h-full bg-charcoal relative overflow-hidden screen-enter flex flex-col"
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerUp}
     >
-      {/* Background */}
+      {/* Subtle gold radial background */}
       <div
         className="absolute inset-0 transition-all duration-1000"
         style={{
-          background: validated
-            ? 'radial-gradient(ellipse at 85% 50%, rgba(212,175,55,0.15) 0%, #F8F9F9 60%)'
-            : 'radial-gradient(ellipse at 40% 50%, rgba(212,175,55,0.04) 0%, #F8F9F9 70%)',
+          background:
+            phase === 'matched'
+              ? 'radial-gradient(ellipse at 50% 50%, rgba(212,175,55,0.10) 0%, #F8F9F9 60%)'
+              : 'radial-gradient(ellipse at 50% 50%, rgba(212,175,55,0.04) 0%, #F8F9F9 70%)',
         }}
       />
 
-      {/* Canvas for gold thread + particles */}
       <canvas ref={canvasRef} className="absolute inset-0 z-20 pointer-events-none" />
 
-      {/* ===== LEFT 75% — flex: projects grid + center heading ===== */}
-      <div className="relative w-3/4 h-full z-10 flex">
+      {/* Header */}
+      <div className="relative z-10 pt-[clamp(16px,2.5vh,32px)] text-center">
+        <h1
+          className="font-display text-[clamp(1.3rem,2.1vw,2.2rem)] tracking-[0.22em] uppercase"
+          style={{ color: COLORS.gold }}
+        >
+          Rebuilding the Legacy DNA
+        </h1>
+        <p
+          className="mt-1 text-[clamp(0.7rem,0.9vw,0.95rem)] tracking-[0.3em] uppercase"
+          style={{ color: 'rgba(60,60,70,0.5)' }}
+        >
+          Heritage, evolved into Raheja Luxe
+        </p>
+      </div>
 
-        {/* Project grid — left side, vertically centered */}
-        <div className="flex-shrink-0 flex items-center">
-          <div className="grid grid-cols-4 gap-[0.8vw]" style={{ marginLeft: 'clamp(10px, 1vw, 20px)' }}>
-          {milestones.map((m, i) => {
-            const isValidatedItem = validatedIndex === i
-            return (
-              <div
-                key={m.id}
-                className="relative cursor-grab active:cursor-grabbing"
-                style={{
-                  opacity: validated && !isValidatedItem ? 0.3 : 1,
-                  transition: 'all 0.5s ease',
-                }}
-                onPointerDown={(e) => handleProjectDown(e, i)}
-              >
+      {/* Three columns */}
+      <div className="relative z-10 flex-1 flex items-stretch px-[clamp(10px,1.5vw,30px)] pb-[clamp(20px,3vh,40px)] pt-[clamp(10px,1.5vh,24px)]">
+        {/* LEFT — Heritage Anchors */}
+        <div className="flex-1 flex flex-col justify-center">
+          <p
+            className="text-center text-[clamp(1rem,1.25vw,1.45rem)] font-display tracking-[0.18em] uppercase mb-[clamp(6px,0.9vh,14px)]"
+            style={{ color: COLORS.gold, opacity: 0.7 }}
+          >
+            Heritage Anchors · 2011–2021
+          </p>
+          <div className="flex flex-col gap-[clamp(8px,1.3vh,16px)]">
+            {DNA_PAIRS.map((pair, i) => {
+              const isActive = activeSource === i && phase !== 'idle'
+              const dimmed = phase !== 'idle' && activeSource !== i
+              return (
                 <div
-                  className="w-[clamp(90px,9vw,160px)] aspect-[4/3] rounded-lg overflow-hidden border transition-all duration-300"
+                  key={i}
+                  onPointerDown={(e) => handleHeritageDown(e, i)}
+                  className="cursor-grab active:cursor-grabbing rounded-xl p-[clamp(14px,1.6vw,24px)] transition-all duration-300"
                   style={{
-                    borderColor: isValidatedItem
-                      ? COLORS.gold
-                      : drag?.sourceIndex === i
-                        ? COLORS.goldLight
-                        : 'rgba(212,175,55,0.15)',
-                    boxShadow: isValidatedItem
-                      ? `0 0 20px rgba(212,175,55,0.4)`
-                      : drag?.sourceIndex === i
-                        ? `0 0 15px rgba(212,175,55,0.3)`
-                        : '0 2px 8px rgba(0,0,0,0.3)',
+                    border: `1px solid ${isActive ? COLORS.gold : 'rgba(212,175,55,0.25)'}`,
+                    background: isActive ? 'rgba(212,175,55,0.10)' : 'rgba(255,255,255,0.55)',
+                    boxShadow: isActive
+                      ? `0 0 22px rgba(212,175,55,0.35)`
+                      : '0 2px 8px rgba(0,0,0,0.04)',
+                    opacity: dimmed ? 0.35 : 1,
+                    backdropFilter: 'blur(4px)',
                   }}
                 >
-                  <div
-                    className="w-full h-full bg-cover bg-center"
-                    style={{
-                      backgroundImage: `url(${m.sepiaImage})`,
-                      backgroundColor: 'rgba(212,175,55,0.08)',
-                      filter: 'sepia(0.5) brightness(0.7)',
-                    }}
-                  />
+                  <div className="flex items-center gap-[clamp(8px,1vw,14px)]">
+                    <div
+                      className="flex-shrink-0 rounded-md flex items-center justify-center"
+                      style={{
+                        width: 'clamp(44px,3.8vw,60px)',
+                        height: 'clamp(44px,3.8vw,60px)',
+                        background: 'rgba(212,175,55,0.10)',
+                        border: '1px solid rgba(212,175,55,0.3)',
+                      }}
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke={COLORS.gold}
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        style={{ width: '55%', height: '55%' }}
+                      >
+                        {HeritageIcons[i]}
+                      </svg>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p
+                        className="font-display text-[clamp(0.85rem,1.05vw,1.15rem)] tracking-wider uppercase truncate"
+                        style={{ color: COLORS.gold }}
+                      >
+                        {pair.heritage.name} ({pair.heritage.year})
+                      </p>
+                      <p
+                        className="text-[clamp(0.7rem,0.85vw,0.95rem)] tracking-wide mt-0.5 truncate"
+                        style={{ color: 'rgba(60,60,70,0.65)' }}
+                      >
+                        Promise: {pair.heritage.promise}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <p className="mt-1 text-[clamp(10px,0.8vw,13px)] text-pearl/50 text-center truncate">
-                  {m.year} — {m.name}
-                </p>
-              </div>
-            )
-          })}
+              )
+            })}
           </div>
         </div>
 
-        {/* Heading + Compass — fills remaining space in the left panel, centered */}
-        <div className="flex-1 flex flex-col items-center justify-center pointer-events-none min-w-0">
-          <div className="text-center mb-4 px-2">
-            {validated ? (
-              <div style={{ animation: 'screenFadeIn 0.6s ease-out' }}>
-                <p className="font-display text-[clamp(1.6rem,2.5vw,2.8rem)] tracking-wider" style={{ color: COLORS.gold }}>
-                  VALIDATED
-                </p>
-                <p className="mt-1 font-display text-[clamp(0.9rem,1.2vw,1.2rem)] text-pearl/70 italic">
-                  Craftsmanship is our legacy, refined.
-                </p>
-              </div>
-            ) : (
-              <>
-                <p className="font-display text-[clamp(1.6rem,2.5vw,2.8rem)] tracking-wider leading-tight" style={{ color: COLORS.gold }}>
-                  Connect the Past<br />to the Future
-                </p>
-                <p className="mt-2 text-[clamp(0.8rem,1vw,1rem)] text-pearl/40">
-                  Drag a project to the right to validate
-                </p>
-              </>
-            )}
-          </div>
-          <svg
-            className="w-[clamp(60px,6vw,120px)] h-[clamp(60px,6vw,120px)]"
-            viewBox="0 0 80 80" fill="none"
-            style={{ animation: 'spin 20s linear infinite' }}
+        {/* CENTER — DNA Spine */}
+        <div
+          className="relative flex flex-col items-center justify-center"
+          style={{ width: 'clamp(110px,12vw,180px)' }}
+        >
+          <p
+            className="text-center text-[clamp(1rem,1.25vw,1.45rem)] font-display tracking-[0.18em] uppercase mb-[clamp(6px,0.9vh,14px)]"
+            style={{ color: COLORS.gold, opacity: 0.7 }}
           >
-            <path d="M40 0 L45 35 L80 40 L45 45 L40 80 L35 45 L0 40 L35 35 Z" fill="none" stroke={COLORS.gold} strokeWidth="1" opacity="0.3" />
-            <path d="M40 10 L43 35 L70 40 L43 45 L40 70 L37 45 L10 40 L37 35 Z" fill="none" stroke={COLORS.gold} strokeWidth="0.5" opacity="0.2" />
-            <circle cx="40" cy="40" r="5" fill={COLORS.gold} opacity="0.25" />
-            <circle cx="40" cy="40" r="2" fill={COLORS.gold} opacity="0.5" />
-          </svg>
+            DNA Spine
+          </p>
+          <div ref={spineRef} className="relative flex items-center justify-center w-full">
+            <DnaHelix active={phase !== 'idle'} />
+          </div>
         </div>
 
+        {/* RIGHT — Luxe Attributes */}
+        <div className="flex-1 flex flex-col justify-center">
+          <p
+            className="text-center text-[clamp(1rem,1.25vw,1.45rem)] font-display tracking-[0.18em] uppercase mb-[clamp(6px,0.9vh,14px)]"
+            style={{ color: COLORS.gold, opacity: 0.7 }}
+          >
+            Raheja Luxe Attributes
+          </p>
+          <div className="flex flex-col gap-[clamp(8px,1.3vh,16px)]">
+            {DNA_PAIRS.map((pair, i) => {
+              const isMatched = matchedIndex === i
+              return (
+                <div
+                  key={i}
+                  ref={(el) => {
+                    luxeCardRefs.current[i] = el
+                  }}
+                  className="rounded-xl p-[clamp(14px,1.6vw,24px)] transition-all duration-500"
+                  style={{
+                    border: `1px solid ${isMatched ? COLORS.gold : 'rgba(212,175,55,0.25)'}`,
+                    background: isMatched
+                      ? 'rgba(212,175,55,0.14)'
+                      : 'rgba(255,255,255,0.55)',
+                    boxShadow: isMatched
+                      ? `0 0 32px rgba(212,175,55,0.55)`
+                      : '0 2px 8px rgba(0,0,0,0.04)',
+                    transform: isMatched ? 'scale(1.03)' : 'scale(1)',
+                    backdropFilter: 'blur(4px)',
+                  }}
+                >
+                  <div className="flex items-center gap-[clamp(8px,1vw,14px)]">
+                    <div
+                      className="flex-shrink-0 rounded-md flex items-center justify-center"
+                      style={{
+                        width: 'clamp(44px,3.8vw,60px)',
+                        height: 'clamp(44px,3.8vw,60px)',
+                        background: 'rgba(212,175,55,0.10)',
+                        border: '1px solid rgba(212,175,55,0.3)',
+                      }}
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke={COLORS.gold}
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        style={{ width: '55%', height: '55%' }}
+                      >
+                        {LuxeIcons[i]}
+                      </svg>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p
+                        className="font-display text-[clamp(0.85rem,1.05vw,1.15rem)] tracking-wider uppercase truncate"
+                        style={{ color: COLORS.gold }}
+                      >
+                        {pair.luxe.title}
+                      </p>
+                      <p
+                        className="text-[clamp(0.7rem,0.85vw,0.95rem)] tracking-wide mt-0.5"
+                        style={{ color: 'rgba(60,60,70,0.65)' }}
+                      >
+                        {pair.luxe.description}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
       </div>
 
-      {/* Divider line */}
-      <div
-        className="absolute top-[10%] bottom-[10%] z-10"
-        style={{
-          left: '75%',
-          width: '1px',
-          background: `linear-gradient(to bottom, transparent, rgba(212,175,55,0.15) 30%, rgba(212,175,55,0.15) 70%, transparent)`,
-        }}
-      />
+      {/* Validated banner */}
+      {phase === 'matched' && (
+        <div
+          className="absolute top-[clamp(16px,2.5vh,32px)] right-[clamp(20px,3vw,40px)] z-30"
+          style={{ animation: 'screenFadeIn 0.5s ease-out' }}
+        >
+          <div
+            className="rounded-md border px-[clamp(18px,2vw,36px)] py-[clamp(6px,1vh,14px)]"
+            style={{
+              borderColor: COLORS.gold,
+              background: 'rgba(212,175,55,0.12)',
+              boxShadow: `0 0 28px rgba(212,175,55,0.4)`,
+            }}
+          >
+            <p
+              className="font-display text-[clamp(1.1rem,1.7vw,1.8rem)] tracking-[0.22em]"
+              style={{ color: COLORS.gold }}
+            >
+              VALIDATED
+            </p>
+            <p
+              className="mt-0.5 text-[clamp(0.6rem,0.75vw,0.85rem)] tracking-[0.2em] uppercase"
+              style={{ color: 'rgba(60,60,70,0.5)' }}
+            >
+              Auto-advancing to climax
+            </p>
+          </div>
+        </div>
+      )}
 
-      {/* ===== RIGHT 25% — Drop zone ===== */}
-      <div
-        ref={dropZoneRef}
-        className="relative w-1/4 h-full flex flex-col items-center justify-center z-10 transition-all duration-500"
-        style={{
-          background: validated
-            ? 'rgba(212,175,55,0.06)'
-            : drag
-              ? 'rgba(212,175,55,0.03)'
-              : 'transparent',
-        }}
+      {/* Hint */}
+      {phase === 'idle' && (
+        <div className="absolute bottom-[clamp(12px,1.8vh,28px)] left-0 right-0 text-center z-10 pointer-events-none">
+          <p
+            className="text-[clamp(0.7rem,0.9vw,0.95rem)] tracking-[0.2em] uppercase"
+            style={{ color: 'rgba(60,60,70,0.4)' }}
+          >
+            Drag a heritage anchor through the spine
+          </p>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function DnaHelix({ active }: { active: boolean }) {
+  const HEIGHT = 600
+  const WIDTH = 80
+  const TURNS = 4
+  const steps = 100
+  const points1: string[] = []
+  const points2: string[] = []
+  const bars: { y: number; x1: number; x2: number }[] = []
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps
+    const y = t * HEIGHT
+    const ph = t * TURNS * Math.PI * 2
+    const a = WIDTH / 2 + Math.sin(ph) * (WIDTH / 2 - 6)
+    const b = WIDTH / 2 - Math.sin(ph) * (WIDTH / 2 - 6)
+    points1.push(`${a.toFixed(2)},${y.toFixed(2)}`)
+    points2.push(`${b.toFixed(2)},${y.toFixed(2)}`)
+  }
+  for (let i = 0; i < 16; i++) {
+    const t = (i + 0.5) / 16
+    const y = t * HEIGHT
+    const ph = t * TURNS * Math.PI * 2
+    const a = WIDTH / 2 + Math.sin(ph) * (WIDTH / 2 - 6)
+    const b = WIDTH / 2 - Math.sin(ph) * (WIDTH / 2 - 6)
+    bars.push({ y, x1: Math.min(a, b), x2: Math.max(a, b) })
+  }
+  return (
+    <div
+      className="relative h-full w-full flex items-center justify-center"
+      style={{ filter: active ? 'drop-shadow(0 0 14px rgba(212,175,55,0.6))' : 'none', transition: 'filter 0.4s ease' }}
+    >
+      <svg
+        viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+        preserveAspectRatio="xMidYMid meet"
+        className="h-full"
+        style={{ maxHeight: '70vh', width: 'auto' }}
       >
-        {validated && validatedIndex !== null ? (
-          <div className="text-center px-4" style={{ animation: 'screenFadeIn 0.5s ease-out' }}>
-            <div
-              className="w-[16vw] max-w-[260px] aspect-[4/3] rounded-lg overflow-hidden border-2 mx-auto"
-              style={{ borderColor: COLORS.gold, boxShadow: `0 0 20px rgba(212,175,55,0.4)` }}
-            >
-              <div
-                className="w-full h-full bg-cover bg-center"
-                style={{
-                  backgroundImage: `url(${milestones[validatedIndex].modernImage})`,
-                  backgroundColor: 'rgba(212,175,55,0.1)',
-                }}
-              />
-            </div>
-            <p className="mt-4 font-display text-[clamp(1.2rem,1.6vw,1.5rem)]" style={{ color: COLORS.gold }}>
-              {milestones[validatedIndex].name}
-            </p>
-            <p className="mt-1 text-[clamp(0.9rem,1.1vw,1.1rem)] text-pearl/60">
-              {milestones[validatedIndex].year}
-            </p>
-            <div className="mt-3 flex items-center gap-2 justify-center">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill={COLORS.gold}>
-                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-              </svg>
-              <span className="text-xs tracking-wider" style={{ color: COLORS.gold }}>
-                Trust Validated
-              </span>
-            </div>
-          </div>
-        ) : (
-          <div className="flex flex-col items-center px-4">
-            {/* Crosshair / Aim icon */}
-            <div
-              className="w-[7vw] max-w-[110px] min-w-[60px] aspect-square rounded-full flex items-center justify-center border-2 transition-all duration-300"
-              style={{
-                borderColor: drag ? COLORS.gold : 'rgba(212,175,55,0.25)',
-                background: drag ? 'rgba(212,175,55,0.1)' : 'transparent',
-                boxShadow: drag ? `0 0 25px rgba(212,175,55,0.2)` : 'none',
-              }}
-            >
-              <svg
-                width="60%" height="60%" viewBox="0 0 24 24" fill="none"
-                stroke={drag ? COLORS.gold : 'rgba(212,175,55,0.35)'}
-                strokeWidth="1.5" strokeLinecap="round"
-                className="transition-colors duration-300"
-              >
-                {/* Crosshair */}
-                <circle cx="12" cy="12" r="10" />
-                <circle cx="12" cy="12" r="4" />
-                <path d="M12 2v4M12 18v4M2 12h4M18 12h4" />
-              </svg>
-            </div>
-
-            <p
-              className="mt-4 text-[clamp(1rem,1.4vw,1.25rem)] font-display tracking-wide text-center transition-colors duration-300"
-              style={{ color: drag ? COLORS.gold : 'rgba(60,60,70,0.35)' }}
-            >
-              {drag ? 'Drop here to validate' : 'Drag a project here'}
-            </p>
-
-            <p
-              className="mt-1 text-[clamp(0.8rem,0.9vw,0.95rem)] tracking-wider text-center transition-colors duration-300"
-              style={{ color: drag ? `${COLORS.gold}88` : 'rgba(60,60,70,0.15)' }}
-            >
-              Raheja Luxe
-            </p>
-
-            {/* Pulsing border when dragging */}
-            {drag && (
-              <div
-                className="absolute inset-2 rounded-2xl border-2 pointer-events-none"
-                style={{
-                  borderColor: COLORS.gold,
-                  animation: 'breathe 1.5s ease-in-out infinite',
-                  opacity: 0.3,
-                }}
-              />
-            )}
-          </div>
-        )}
-      </div>
+        <defs>
+          <linearGradient id="dnaStroke" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={COLORS.gold} stopOpacity="0.3" />
+            <stop offset="50%" stopColor={COLORS.gold} stopOpacity="0.95" />
+            <stop offset="100%" stopColor={COLORS.gold} stopOpacity="0.3" />
+          </linearGradient>
+        </defs>
+        <polyline points={points1.join(' ')} fill="none" stroke="url(#dnaStroke)" strokeWidth="2.5" strokeLinecap="round" />
+        <polyline points={points2.join(' ')} fill="none" stroke="url(#dnaStroke)" strokeWidth="2.5" strokeLinecap="round" />
+        {bars.map((b, i) => (
+          <line
+            key={i}
+            x1={b.x1}
+            y1={b.y}
+            x2={b.x2}
+            y2={b.y}
+            stroke={COLORS.gold}
+            strokeWidth="1"
+            opacity="0.45"
+          />
+        ))}
+      </svg>
     </div>
   )
 }
