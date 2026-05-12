@@ -33,7 +33,7 @@ export default function BackButton() {
         className="w-[clamp(36px,3.5vw,48px)] h-[clamp(36px,3.5vw,48px)] rounded-full flex items-center justify-center border transition-all hover:bg-white/5"
         style={{
           borderColor: 'rgba(212,175,55,0.3)',
-          background: 'rgba(0,0,0,0.3)',
+          background: 'rgba(255,255,255,0.6)',
           backdropFilter: 'blur(8px)',
         }}
       >

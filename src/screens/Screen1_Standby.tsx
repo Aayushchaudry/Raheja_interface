@@ -113,8 +113,8 @@ export default function Screen1Standby() {
         ref={orbRef}
         className="w-[clamp(80px,10vw,130px)] h-[clamp(80px,10vw,130px)] rounded-full cursor-pointer"
         style={{
-          background: `radial-gradient(circle, ${COLORS.pearl} 0%, rgba(248,249,249,0.3) 50%, transparent 70%)`,
-          boxShadow: `0 0 40px rgba(248,249,249,0.3), 0 0 80px rgba(212,175,55,0.2)`,
+          background: `radial-gradient(circle, ${COLORS.gold} 0%, rgba(212,175,55,0.3) 50%, transparent 70%)`,
+          boxShadow: `0 0 40px rgba(212,175,55,0.3), 0 0 80px rgba(212,175,55,0.15)`,
           transform: 'scale(0.8)',
         }}
       />

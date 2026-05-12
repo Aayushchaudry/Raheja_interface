@@ -56,6 +56,8 @@ export default function Screen2Timeline() {
   const velocityRef = useRef(0)
   const lastXRef = useRef(0)
   const lastTimeRef = useRef(0)
+  const lastCardIndexRef = useRef(0)
+  const dragSoundThrottleRef = useRef(0)
 
   // Canvas refs
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -63,6 +65,12 @@ export default function Screen2Timeline() {
   const particlesRef = useRef<Particle[]>([])
   const fingerPosRef = useRef<{ x: number; y: number } | null>(null)
   const animFrameRef = useRef(0)
+
+  // Ambient background bubbles
+  const bubblesRef = useRef<Array<{
+    x: number; y: number; vx: number; vy: number
+    size: number; baseSize: number; opacity: number; phase: number
+  }>>([])
 
   // Free-flowing gold thread + particles rendering
   useEffect(() => {
@@ -76,6 +84,24 @@ export default function Screen2Timeline() {
     }
     resize()
 
+    // Initialize ambient bubbles
+    if (bubblesRef.current.length === 0) {
+      const w = window.innerWidth
+      const h = window.innerHeight
+      for (let i = 0; i < 80; i++) {
+        bubblesRef.current.push({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: (Math.random() - 0.5) * 0.3,
+          size: 3 + Math.random() * 8,
+          baseSize: 3 + Math.random() * 8,
+          opacity: 0.03 + Math.random() * 0.06,
+          phase: Math.random() * Math.PI * 2,
+        })
+      }
+    }
+
     function animate() {
       const w = window.innerWidth
       const h = window.innerHeight
@@ -83,6 +109,59 @@ export default function Screen2Timeline() {
 
       const trail = trailRef.current
       const particles = particlesRef.current
+      const bubbles = bubblesRef.current
+      const finger = fingerPosRef.current
+      const time = Date.now() * 0.001
+
+      // ---- Draw ambient background bubbles ----
+      for (const b of bubbles) {
+        // Gentle drift
+        b.x += b.vx
+        b.y += b.vy
+
+        // Subtle sine wobble
+        const wobbleX = Math.sin(time * 0.5 + b.phase) * 0.3
+        const wobbleY = Math.cos(time * 0.4 + b.phase * 1.3) * 0.3
+        b.x += wobbleX
+        b.y += wobbleY
+
+        // Touch/drag interaction — bubbles gently push away
+        if (finger) {
+          const dx = b.x - finger.x
+          const dy = b.y - finger.y
+          const dist = Math.sqrt(dx * dx + dy * dy)
+          if (dist < 200 && dist > 0) {
+            const force = (200 - dist) / 200 * 0.8
+            b.vx += (dx / dist) * force * 0.15
+            b.vy += (dy / dist) * force * 0.15
+          }
+        }
+
+        // Damping — slowly return to base drift
+        b.vx *= 0.995
+        b.vy *= 0.995
+
+        // Wrap edges
+        if (b.x < -20) b.x = w + 20
+        if (b.x > w + 20) b.x = -20
+        if (b.y < -20) b.y = h + 20
+        if (b.y > h + 20) b.y = -20
+
+        // Pulsing size
+        const pulseSize = b.baseSize + Math.sin(time * 0.8 + b.phase) * 1.5
+
+        // Draw bubble — very light gold/gray circle
+        ctx.beginPath()
+        ctx.arc(b.x, b.y, pulseSize, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(212, 175, 55, ${b.opacity})`
+        ctx.fill()
+
+        // Softer outer ring
+        ctx.beginPath()
+        ctx.arc(b.x, b.y, pulseSize * 1.8, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(212, 175, 55, ${b.opacity * 0.3})`
+        ctx.fill()
+      }
 
       // Age out trail points
       for (let i = trail.length - 1; i >= 0; i--) {
@@ -165,7 +244,6 @@ export default function Screen2Timeline() {
       }
 
       // Draw a glowing orb at finger position (matches ribbon width)
-      const finger = fingerPosRef.current
       if (finger) {
         // Wide soft glow
         ctx.beginPath()
@@ -281,8 +359,21 @@ export default function Screen2Timeline() {
       // Spawn particles at finger
       spawnParticles(e.clientX, e.clientY)
 
-      // Check if reached end
+      // Play chime when crossing to a new card
       const ci = Math.round(-newScroll / CARD_UNIT)
+      if (ci !== lastCardIndexRef.current) {
+        lastCardIndexRef.current = ci
+        play('waterPing')
+      }
+
+      // Play shimmer sound periodically during fast drag
+      const now2 = Date.now()
+      const speed = Math.abs(velocityRef.current)
+      if (speed > 3 && now2 - dragSoundThrottleRef.current > 400) {
+        dragSoundThrottleRef.current = now2
+        play('harmonicChime')
+      }
+
       if (ci >= milestones.length - 1) {
         setReachedEnd(true)
       }
@@ -307,11 +398,17 @@ export default function Screen2Timeline() {
       onUpdate: () => setScrollX(obj.val),
     })
     play('chimeSoft')
+
+    // Extra sound if we've reached the last card
+    if (targetIndex >= milestones.length - 1) {
+      play('celloSwell')
+    }
   }, [scrollX, play, stop])
 
   const handleContinueToConstellation = useCallback(() => {
+    play('celloSustain')
     setScreen(Screen.Constellation)
-  }, [setScreen])
+  }, [setScreen, play])
 
   // Centered card index
   const centeredIndex = clamp(Math.round(-scrollX / CARD_UNIT), 0, milestones.length - 1)
@@ -325,13 +422,7 @@ export default function Screen2Timeline() {
       onPointerUp={handlePointerUp}
       onPointerLeave={handlePointerUp}
     >
-      {/* Background glow */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: `radial-gradient(ellipse at 50% 60%, rgba(212,175,55,0.06) 0%, transparent 70%)`,
-        }}
-      />
+      {/* Background — plain white, no gradient */}
 
       {/* Free-flowing gold thread + particles canvas */}
       <canvas
@@ -477,7 +568,7 @@ export default function Screen2Timeline() {
             style={{
               width: i === centeredIndex ? 24 : 8,
               height: 8,
-              backgroundColor: i === centeredIndex ? COLORS.gold : 'rgba(248,249,249,0.15)',
+              backgroundColor: i === centeredIndex ? COLORS.gold : 'rgba(60,60,70,0.15)',
               boxShadow: i === centeredIndex ? `0 0 8px rgba(212,175,55,0.5)` : 'none',
             }}
           />
