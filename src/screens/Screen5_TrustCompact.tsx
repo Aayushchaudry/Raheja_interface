@@ -215,8 +215,8 @@ export default function Screen5TrustCompact() {
       <div className="relative w-3/4 h-full z-10 flex">
 
         {/* Project grid — left side, vertically centered */}
-        <div className="flex-shrink-0 flex items-center pl-[2vw]">
-          <div className="grid grid-cols-2 gap-[1.2vw]">
+        <div className="flex-shrink-0 flex items-center">
+          <div className="grid grid-cols-4 gap-[0.8vw]" style={{ marginLeft: 'clamp(10px, 1vw, 20px)' }}>
           {milestones.map((m, i) => {
             const isValidatedItem = validatedIndex === i
             return (
@@ -230,7 +230,7 @@ export default function Screen5TrustCompact() {
                 onPointerDown={(e) => handleProjectDown(e, i)}
               >
                 <div
-                  className="w-[clamp(160px,16vw,280px)] aspect-[4/3] rounded-lg overflow-hidden border transition-all duration-300"
+                  className="w-[clamp(90px,9vw,160px)] aspect-[4/3] rounded-lg overflow-hidden border transition-all duration-300"
                   style={{
                     borderColor: isValidatedItem
                       ? COLORS.gold

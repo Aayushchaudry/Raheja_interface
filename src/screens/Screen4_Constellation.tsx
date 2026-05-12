@@ -489,12 +489,7 @@ export default function Screen4Constellation() {
                 }}
               >
                 <div className="w-full h-full rounded-lg overflow-hidden bg-black relative">
-                  <video src={families[activeVideo].video} className="w-full h-full object-cover" muted playsInline loop autoPlay />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-[clamp(36px,4vw,64px)] h-[clamp(36px,4vw,64px)] rounded-full flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(6px)', border: `1.5px solid rgba(212,175,55,0.4)` }}>
-                      <svg className="w-[50%] h-[50%]" viewBox="0 0 24 24" fill={COLORS.gold}><path d="M8 5v14l11-7z" /></svg>
-                    </div>
-                  </div>
+                  <video src={families[activeVideo].videoLeft} className="w-full h-full object-cover" muted playsInline loop autoPlay />
                 </div>
               </div>
             </div>
@@ -538,12 +533,7 @@ export default function Screen4Constellation() {
                 }}
               >
                 <div className="w-full h-full rounded-lg overflow-hidden bg-black relative">
-                  <video src={families[activeVideo].video} className="w-full h-full object-cover" muted playsInline loop autoPlay />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-[clamp(36px,4vw,64px)] h-[clamp(36px,4vw,64px)] rounded-full flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(6px)', border: `1.5px solid rgba(212,175,55,0.4)` }}>
-                      <svg className="w-[50%] h-[50%]" viewBox="0 0 24 24" fill={COLORS.gold}><path d="M8 5v14l11-7z" /></svg>
-                    </div>
-                  </div>
+                  <video src={families[activeVideo].videoRight} className="w-full h-full object-cover" muted playsInline loop autoPlay />
                 </div>
               </div>
             </div>

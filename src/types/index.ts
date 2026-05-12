@@ -11,7 +11,7 @@ export enum Screen {
 
 export interface MilestoneData {
   id: number
-  year: number
+  year: number | string
   name: string
   sepiaImage: string
   modernImage: string
@@ -24,13 +24,14 @@ export interface FamilyData {
   name: string
   quote: string
   photo: string
-  video: string
+  videoLeft: string
+  videoRight: string
 }
 
 export interface LegacyItem {
   id: number
   name: string
-  year: number
+  year: number | string
   image: string
 }
 
