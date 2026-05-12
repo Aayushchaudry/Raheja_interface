@@ -1,13 +1,14 @@
-export enum Screen {
-  Loading = 'loading',
-  Standby = 'standby',
-  Timeline = 'timeline',
-  Milestone = 'milestone',
-  Constellation = 'constellation',
-  TrustCompact = 'trustCompact',
-  LuxeReveal = 'luxeReveal',
-  CTA = 'cta',
-}
+export const Screen = {
+  Loading: 'loading',
+  Standby: 'standby',
+  Timeline: 'timeline',
+  Milestone: 'milestone',
+  Constellation: 'constellation',
+  TrustCompact: 'trustCompact',
+  LuxeReveal: 'luxeReveal',
+  CTA: 'cta',
+} as const
+export type Screen = typeof Screen[keyof typeof Screen]
 
 export interface MilestoneData {
   id: number
