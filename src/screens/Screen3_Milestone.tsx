@@ -133,7 +133,7 @@ export default function Screen3Milestone() {
       <div
         className="absolute inset-0"
         style={{
-          background: 'radial-gradient(ellipse at center, rgba(139,109,56,0.15) 0%, #1A1A1B 70%)',
+          background: 'radial-gradient(ellipse at center, rgba(139,109,56,0.15) 0%, #F8F9F9 70%)',
         }}
       />
 

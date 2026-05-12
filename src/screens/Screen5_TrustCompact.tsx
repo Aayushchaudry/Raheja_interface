@@ -25,6 +25,7 @@ export default function Screen5TrustCompact() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const dropZoneRef = useRef<HTMLDivElement>(null)
   const animRef = useRef(0)
+  const hoveringDropRef = useRef(false)
 
   // Canvas for gold thread line + particles
   useEffect(() => {
@@ -133,14 +134,35 @@ export default function Screen5TrustCompact() {
     (e: React.PointerEvent) => {
       if (!drag) return
       setDrag({ ...drag, currentX: e.clientX, currentY: e.clientY })
+
+      // Check if hovering over drop zone — play hint sound
+      const dropZone = dropZoneRef.current
+      if (dropZone) {
+        const rect = dropZone.getBoundingClientRect()
+        if (e.clientX >= rect.left && e.clientX <= rect.right &&
+            e.clientY >= rect.top && e.clientY <= rect.bottom) {
+          // Inside drop zone — MetallicShimmer plays as loop while dragging
+          if (!hoveringDropRef.current) {
+            hoveringDropRef.current = true
+            play('metallicShimmer')
+          }
+        } else {
+          if (hoveringDropRef.current) {
+            hoveringDropRef.current = false
+            stop('metallicShimmer')
+          }
+        }
+      }
     },
-    [drag]
+    [drag, play, stop]
   )
 
   const handlePointerUp = useCallback(
     (e: React.PointerEvent) => {
       if (!drag) return
       stop('stringPull')
+      stop('metallicShimmer')
+      hoveringDropRef.current = false
 
       const dropZone = dropZoneRef.current
       if (dropZone) {
@@ -181,8 +203,8 @@ export default function Screen5TrustCompact() {
         className="absolute inset-0 transition-all duration-1000"
         style={{
           background: validated
-            ? 'radial-gradient(ellipse at 85% 50%, rgba(212,175,55,0.15) 0%, #1A1A1B 60%)'
-            : 'radial-gradient(ellipse at 40% 50%, rgba(212,175,55,0.04) 0%, #1A1A1B 70%)',
+            ? 'radial-gradient(ellipse at 85% 50%, rgba(212,175,55,0.15) 0%, #F8F9F9 60%)'
+            : 'radial-gradient(ellipse at 40% 50%, rgba(212,175,55,0.04) 0%, #F8F9F9 70%)',
         }}
       />
 
@@ -357,14 +379,14 @@ export default function Screen5TrustCompact() {
 
             <p
               className="mt-4 text-[clamp(0.8rem,1.1vw,1rem)] font-display tracking-wide text-center transition-colors duration-300"
-              style={{ color: drag ? COLORS.gold : 'rgba(248,249,249,0.35)' }}
+              style={{ color: drag ? COLORS.gold : 'rgba(60,60,70,0.35)' }}
             >
               {drag ? 'Drop here to validate' : 'Drag a project here'}
             </p>
 
             <p
               className="mt-1 text-[clamp(0.6rem,0.7vw,0.75rem)] tracking-wider text-center transition-colors duration-300"
-              style={{ color: drag ? `${COLORS.gold}88` : 'rgba(248,249,249,0.15)' }}
+              style={{ color: drag ? `${COLORS.gold}88` : 'rgba(60,60,70,0.15)' }}
             >
               Raheja Luxe
             </p>

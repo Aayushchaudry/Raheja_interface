@@ -2,9 +2,9 @@ export const COLORS = {
   gold: '#D4AF37',
   goldLight: '#F5E6A3',
   goldRgb: '212, 175, 55',
-  charcoal: '#1A1A1B',
-  pearl: '#F8F9F9',
-  nightSky: '#0D0D1A',
+  charcoal: '#F8F9F9',   // was dark, now white background
+  pearl: '#1A1A1B',       // was light, now dark text
+  nightSky: '#EAECED',    // was dark navy, now light gray
 } as const
 
 export const TIMING = {

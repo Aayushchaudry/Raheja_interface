@@ -56,7 +56,7 @@ export default function Screen7CTA() {
           className="w-[clamp(40px,3.5vw,52px)] h-[clamp(40px,3.5vw,52px)] rounded-full flex items-center justify-center border transition-all hover:bg-white/5"
           style={{
             borderColor: 'rgba(212,175,55,0.4)',
-            background: 'rgba(0,0,0,0.4)',
+            background: 'rgba(255,255,255,0.6)',
             backdropFilter: 'blur(10px)',
           }}
         >
@@ -76,7 +76,10 @@ export default function Screen7CTA() {
       {/* Back arrow on left center — same style as constellation NEXT */}
       <div
         className="absolute left-6 top-1/2 -translate-y-1/2 z-20 cursor-pointer"
-        onPointerDown={() => setScreen(Screen.LuxeReveal)}
+        onPointerDown={() => {
+          play('descendingTone')
+          setScreen(Screen.LuxeReveal)
+        }}
       >
         <div className="flex flex-col items-center gap-2">
           <div

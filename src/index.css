@@ -3,9 +3,9 @@
 @theme {
   --color-gold: #D4AF37;
   --color-gold-light: #F5E6A3;
-  --color-charcoal: #1A1A1B;
-  --color-pearl: #F8F9F9;
-  --color-night-sky: #0D0D1A;
+  --color-charcoal: #F8F9F9;
+  --color-pearl: #1A1A1B;
+  --color-night-sky: #EAECED;
 }
 
 @font-face {

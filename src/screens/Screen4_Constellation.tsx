@@ -41,6 +41,8 @@ export default function Screen4Constellation() {
   const [dotOrigin, setDotOrigin] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
 
   const swipeStartRef = useRef<{ x: number; y: number; time: number } | null>(null)
+  const lastNearDotRef = useRef<number | null>(null)
+  const scatterSoundTimeRef = useRef(0)
 
   // Init dots
   useEffect(() => {
@@ -169,11 +171,14 @@ export default function Screen4Constellation() {
         if (dot.familyIndex !== null) {
           const isClosest = dot.familyIndex === closestActiveRef.current
 
-          // Only the closest dot grows; others stay normal
+          // Breathing zoom in/out pulse on all active dots
+          const breathe = 1 + Math.sin(time * 1.8 + (dot.familyIndex ?? 0) * 1.5) * 0.35
+
+          // Closest dot also grows on cursor proximity
           const proximityScale = isClosest && cursorDist < 150
             ? 1 + (1 - cursorDist / 150) * 2
             : 1
-          const drawSize = dot.size * proximityScale
+          const drawSize = dot.size * breathe * proximityScale
           const glowIntensity = isClosest && cursorDist < 150
             ? 0.2 + (1 - cursorDist / 150) * 0.5
             : 0.08
@@ -210,7 +215,7 @@ export default function Screen4Constellation() {
           ctx.arc(dot.x, dot.y, dot.size, 0, Math.PI * 2)
           ctx.fillStyle = dot.isGold
             ? `rgba(212, 175, 55, ${alpha})`
-            : `rgba(248, 249, 249, ${alpha})`
+            : `rgba(80, 80, 90, ${alpha})`
           ctx.fill()
         }
       }
@@ -242,7 +247,8 @@ export default function Screen4Constellation() {
       if (best) {
         const dot = dotsRef.current.find(d => d.familyIndex === best!.idx)
         if (dot) setDotOrigin({ x: dot.x, y: dot.y })
-        play('chimeSoft')
+        play('harmonicChime')
+        setTimeout(() => play('celloSwell'), 200)
         setActiveVideo(best.idx)
         setAnimPhase('opening')
         incrementVideosWatched()
@@ -255,7 +261,32 @@ export default function Screen4Constellation() {
 
   const handlePointerMove = useCallback((e: React.PointerEvent) => {
     touchRef.current = { x: e.clientX, y: e.clientY }
-  }, [])
+
+    // Play shimmer when cursor gets close to an active dot
+    const now = Date.now()
+    if (now - scatterSoundTimeRef.current > 600) {
+      let nearestFamily: number | null = null
+      let nearestDist = Infinity
+      for (const dot of dotsRef.current) {
+        if (dot.familyIndex === null) continue
+        const d = distance(e.clientX, e.clientY, dot.x, dot.y)
+        if (d < nearestDist) { nearestDist = d; nearestFamily = dot.familyIndex }
+      }
+      // Play water ping when entering proximity of a new active dot
+      if (nearestFamily !== null && nearestDist < 120 && nearestFamily !== lastNearDotRef.current) {
+        play('waterPing')
+        lastNearDotRef.current = nearestFamily
+        scatterSoundTimeRef.current = now
+      }
+      // Play subtle shimmer when dots scatter away from cursor
+      if (nearestDist < 180 && nearestDist > 60 && now - scatterSoundTimeRef.current > 1200) {
+        // Dots are scattering — play subtle sound
+      }
+      if (nearestDist > 200) {
+        lastNearDotRef.current = null
+      }
+    }
+  }, [play])
 
   const handlePointerUp = useCallback(
     (e: React.PointerEvent) => {
@@ -279,12 +310,13 @@ export default function Screen4Constellation() {
   )
 
   const closeVideo = useCallback(() => {
+    play('descendingTone')
     setAnimPhase('closing')
     setTimeout(() => {
       setActiveVideo(null)
       setAnimPhase('idle')
     }, 500)
-  }, [])
+  }, [play])
 
   return (
     <div
@@ -327,6 +359,7 @@ export default function Screen4Constellation() {
         className="absolute left-6 top-1/2 -translate-y-1/2 z-20 cursor-pointer"
         onPointerDown={(e) => {
           e.stopPropagation()
+          play('fadeExhale')
           stop('etherealPad')
           setScreen(Screen.Timeline)
         }}
@@ -355,6 +388,7 @@ export default function Screen4Constellation() {
         className="absolute right-6 top-1/2 -translate-y-1/2 z-20 cursor-pointer"
         onPointerDown={(e) => {
           e.stopPropagation()
+          play('celloSustain')
           stop('etherealPad')
           setScreen(Screen.TrustCompact)
         }}
@@ -391,8 +425,8 @@ export default function Screen4Constellation() {
           <div
             className="absolute inset-0"
             style={{
-              background: 'rgba(0,0,0,0.7)',
-              backdropFilter: 'blur(8px)',
+              background: 'rgba(255,255,255,0.75)',
+              backdropFilter: 'blur(12px)',
               opacity: animPhase === 'closing' ? 0 : 1,
               transition: 'opacity 0.4s ease',
             }}
@@ -415,7 +449,7 @@ export default function Screen4Constellation() {
               className="w-12 h-12 rounded-full flex items-center justify-center border transition-all hover:bg-white/5"
               style={{
                 borderColor: 'rgba(212,175,55,0.4)',
-                background: 'rgba(0,0,0,0.5)',
+                background: 'rgba(255,255,255,0.6)',
                 backdropFilter: 'blur(10px)',
               }}
             >
@@ -482,7 +516,7 @@ export default function Screen4Constellation() {
                   boxShadow: `0 0 80px rgba(212,175,55,0.3), 0 0 150px rgba(212,175,55,0.08), 0 10px 50px rgba(0,0,0,0.6)`,
                 }}
               >
-                <video src={families[activeVideo].video} className="w-full h-full object-cover" autoPlay muted playsInline loop />
+                <img src={families[activeVideo].photo} alt={families[activeVideo].name} className="w-full h-full object-cover" />
               </div>
             </div>
 
