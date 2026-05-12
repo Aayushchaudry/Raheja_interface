@@ -83,7 +83,7 @@ export default function Screen7CTA() {
       >
         <div className="flex flex-col items-center gap-2">
           <div
-            className="w-14 h-14 rounded-full flex items-center justify-center border breathing"
+            className="w-[clamp(56px,5vw,76px)] h-[clamp(56px,5vw,76px)] rounded-full flex items-center justify-center border breathing"
             style={{
               borderColor: COLORS.gold,
               background: 'rgba(212,175,55,0.08)',
@@ -120,11 +120,11 @@ export default function Screen7CTA() {
 
       {/* Content */}
       <div className="absolute inset-0 flex items-center justify-center z-5">
-        <div className="flex items-center gap-16">
+        <div className="flex items-center gap-[clamp(40px,6vw,100px)]">
           {/* Text */}
-          <div className="max-w-lg">
+          <div className="max-w-2xl">
             <p
-              className="font-display text-4xl leading-snug tracking-wide"
+              className="font-display text-[clamp(2.5rem,5vw,4.5rem)] leading-snug tracking-wide"
               style={{ color: COLORS.pearl }}
             >
               Your journey continues
@@ -135,7 +135,7 @@ export default function Screen7CTA() {
               </span>
               .
             </p>
-            <p className="mt-6 text-sm tracking-wider text-pearl/40">
+            <p className="mt-6 text-[clamp(0.9rem,1.2vw,1.15rem)] tracking-wider text-pearl/40">
               Proceed to Wall 2 — Coterie of Curators
             </p>
           </div>
@@ -143,8 +143,7 @@ export default function Screen7CTA() {
           {/* Golden arrow */}
           <div ref={arrowRef} className="flex-shrink-0">
             <svg
-              width="100"
-              height="100"
+              className="w-[clamp(100px,10vw,160px)] h-[clamp(100px,10vw,160px)]"
               viewBox="0 0 100 100"
               fill="none"
               style={{ filter: `drop-shadow(0 0 20px rgba(212,175,55,0.4))` }}
@@ -165,7 +164,7 @@ export default function Screen7CTA() {
 
       {/* Bottom text */}
       <div className="absolute bottom-8 left-0 right-0 text-center z-10">
-        <p className="text-xs tracking-widest text-pearl/20">
+        <p className="text-[clamp(0.7rem,0.9vw,0.9rem)] tracking-widest text-pearl/20">
           Experience will reset momentarily
         </p>
       </div>

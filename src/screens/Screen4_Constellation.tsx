@@ -62,7 +62,7 @@ export default function Screen4Constellation() {
         vy: randomRange(-0.1, 0.1),
         baseVx: randomRange(-0.1, 0.1),
         baseVy: randomRange(-0.1, 0.1),
-        size: 7,
+        size: 10,
         opacity: 1,
         isGold: true,
         familyIndex: i,
@@ -332,7 +332,7 @@ export default function Screen4Constellation() {
       {showIntroText && (
         <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
           <p
-            className="font-display text-4xl tracking-wide text-center"
+            className="font-display text-[clamp(2.5rem,5vw,4.5rem)] tracking-wide text-center"
             style={{ color: COLORS.pearl, textShadow: '0 0 40px rgba(0,0,0,0.8)' }}
           >
             A legacy of life, measured in trust.
@@ -342,7 +342,7 @@ export default function Screen4Constellation() {
 
       {/* Legend */}
       <div className="absolute bottom-8 right-8 z-10 pointer-events-none">
-        <p className="text-sm tracking-wider" style={{ color: COLORS.gold }}>
+        <p className="text-[clamp(0.9rem,1.2vw,1.1rem)] tracking-wider" style={{ color: COLORS.gold }}>
           10,000+ Happy Families
         </p>
       </div>
@@ -366,7 +366,7 @@ export default function Screen4Constellation() {
       >
         <div className="flex flex-col items-center gap-2">
           <div
-            className="w-14 h-14 rounded-full flex items-center justify-center border breathing"
+            className="w-[clamp(56px,5vw,76px)] h-[clamp(56px,5vw,76px)] rounded-full flex items-center justify-center border breathing"
             style={{
               borderColor: COLORS.gold,
               background: 'rgba(212,175,55,0.08)',
@@ -395,7 +395,7 @@ export default function Screen4Constellation() {
       >
         <div className="flex flex-col items-center gap-2">
           <div
-            className="w-14 h-14 rounded-full flex items-center justify-center border breathing"
+            className="w-[clamp(56px,5vw,76px)] h-[clamp(56px,5vw,76px)] rounded-full flex items-center justify-center border breathing"
             style={{
               borderColor: COLORS.gold,
               background: 'rgba(212,175,55,0.08)',
@@ -480,7 +480,7 @@ export default function Screen4Constellation() {
               }}
             >
               <div
-                className="relative rounded-xl overflow-hidden w-[25vw] max-w-[420px] min-w-[180px] aspect-[16/10]"
+                className="relative rounded-xl overflow-hidden w-[28vw] max-w-[500px] min-w-[200px] aspect-[16/10]"
                 style={{
                   border: `2px solid rgba(212,175,55,0.5)`,
                   boxShadow: `0 6px 40px rgba(0,0,0,0.6), 0 0 25px rgba(212,175,55,0.15)`,
@@ -489,12 +489,7 @@ export default function Screen4Constellation() {
                 }}
               >
                 <div className="w-full h-full rounded-lg overflow-hidden bg-black relative">
-                  <video src={families[activeVideo].video} className="w-full h-full object-cover" muted playsInline loop autoPlay />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-[clamp(36px,4vw,64px)] h-[clamp(36px,4vw,64px)] rounded-full flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(6px)', border: `1.5px solid rgba(212,175,55,0.4)` }}>
-                      <svg className="w-[50%] h-[50%]" viewBox="0 0 24 24" fill={COLORS.gold}><path d="M8 5v14l11-7z" /></svg>
-                    </div>
-                  </div>
+                  <video src={families[activeVideo].videoLeft} className="w-full h-full object-cover" muted playsInline loop autoPlay />
                 </div>
               </div>
             </div>
@@ -510,7 +505,7 @@ export default function Screen4Constellation() {
               } as React.CSSProperties}
             >
               <div
-                className="rounded-full overflow-hidden w-[28vw] max-w-[440px] min-w-[200px] aspect-square"
+                className="rounded-full overflow-hidden w-[35vw] max-w-[560px] min-w-[250px] aspect-square"
                 style={{
                   border: `3px solid ${COLORS.gold}`,
                   boxShadow: `0 0 80px rgba(212,175,55,0.3), 0 0 150px rgba(212,175,55,0.08), 0 10px 50px rgba(0,0,0,0.6)`,
@@ -529,7 +524,7 @@ export default function Screen4Constellation() {
               }}
             >
               <div
-                className="relative rounded-xl overflow-hidden w-[25vw] max-w-[420px] min-w-[180px] aspect-[16/10]"
+                className="relative rounded-xl overflow-hidden w-[28vw] max-w-[500px] min-w-[200px] aspect-[16/10]"
                 style={{
                   border: `2px solid rgba(212,175,55,0.5)`,
                   boxShadow: `0 6px 40px rgba(0,0,0,0.6), 0 0 25px rgba(212,175,55,0.15)`,
@@ -538,12 +533,7 @@ export default function Screen4Constellation() {
                 }}
               >
                 <div className="w-full h-full rounded-lg overflow-hidden bg-black relative">
-                  <video src={families[activeVideo].video} className="w-full h-full object-cover" muted playsInline loop autoPlay />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-[clamp(36px,4vw,64px)] h-[clamp(36px,4vw,64px)] rounded-full flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(6px)', border: `1.5px solid rgba(212,175,55,0.4)` }}>
-                      <svg className="w-[50%] h-[50%]" viewBox="0 0 24 24" fill={COLORS.gold}><path d="M8 5v14l11-7z" /></svg>
-                    </div>
-                  </div>
+                  <video src={families[activeVideo].videoRight} className="w-full h-full object-cover" muted playsInline loop autoPlay />
                 </div>
               </div>
             </div>
@@ -559,10 +549,10 @@ export default function Screen4Constellation() {
               transition: animPhase === 'closing' ? 'opacity 0.3s ease' : undefined,
             }}
           >
-            <p className="font-display text-[clamp(1.2rem,2vw,1.5rem)]" style={{ color: COLORS.gold }}>
+            <p className="font-display text-[clamp(1.5rem,2.5vw,2rem)]" style={{ color: COLORS.gold }}>
               {families[activeVideo].name}
             </p>
-            <p className="mt-2 font-display text-[clamp(0.9rem,1.3vw,1.15rem)] italic text-pearl/60 max-w-md mx-auto">
+            <p className="mt-2 font-display text-[clamp(1.1rem,1.6vw,1.4rem)] italic text-pearl/60 max-w-xl mx-auto">
               &ldquo;{families[activeVideo].quote}&rdquo;
             </p>
           </div>

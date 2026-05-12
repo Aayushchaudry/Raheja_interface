@@ -211,34 +211,12 @@ export default function Screen5TrustCompact() {
       {/* Canvas for gold thread + particles */}
       <canvas ref={canvasRef} className="absolute inset-0 z-20 pointer-events-none" />
 
-      {/* ===== LEFT 75% — Heading top-left, projects left column, compass center ===== */}
-      <div className="relative w-3/4 h-full z-10">
+      {/* ===== LEFT 75% — flex: projects grid + center heading ===== */}
+      <div className="relative w-3/4 h-full z-10 flex">
 
-        {/* Heading — top center of the left panel */}
-        <div className="absolute top-[3vh] left-0 right-0 text-center z-10">
-          {validated ? (
-            <div style={{ animation: 'screenFadeIn 0.6s ease-out' }}>
-              <p className="font-display text-[clamp(1.5rem,2.5vw,2.2rem)] tracking-wider" style={{ color: COLORS.gold }}>
-                VALIDATED
-              </p>
-              <p className="mt-1 font-display text-[clamp(0.8rem,1.2vw,1.1rem)] text-pearl/70 italic">
-                Craftsmanship is our legacy, refined.
-              </p>
-            </div>
-          ) : (
-            <>
-              <p className="font-display text-[clamp(1.5rem,2.5vw,2.2rem)] tracking-wider" style={{ color: COLORS.gold }}>
-                Connect the Past to the Future
-              </p>
-              <p className="mt-1 text-[clamp(0.7rem,1vw,0.9rem)] text-pearl/40">
-                Drag a project to the right to validate
-              </p>
-            </>
-          )}
-        </div>
-
-        {/* Project grid — 2 columns on the left side, vertically centered */}
-        <div className="absolute left-[2vw] top-1/2 -translate-y-1/2 grid grid-cols-2 gap-[0.8vw]">
+        {/* Project grid — left side, vertically centered */}
+        <div className="flex-shrink-0 flex items-center">
+          <div className="grid grid-cols-4 gap-[0.8vw]" style={{ marginLeft: 'clamp(10px, 1vw, 20px)' }}>
           {milestones.map((m, i) => {
             const isValidatedItem = validatedIndex === i
             return (
@@ -252,7 +230,7 @@ export default function Screen5TrustCompact() {
                 onPointerDown={(e) => handleProjectDown(e, i)}
               >
                 <div
-                  className="w-[clamp(120px,14vw,220px)] aspect-[4/3] rounded-lg overflow-hidden border transition-all duration-300"
+                  className="w-[clamp(90px,9vw,160px)] aspect-[4/3] rounded-lg overflow-hidden border transition-all duration-300"
                   style={{
                     borderColor: isValidatedItem
                       ? COLORS.gold
@@ -275,24 +253,42 @@ export default function Screen5TrustCompact() {
                     }}
                   />
                 </div>
-                <p className="mt-0.5 text-[clamp(8px,0.6vw,11px)] text-pearl/50 text-center truncate">
+                <p className="mt-1 text-[clamp(10px,0.8vw,13px)] text-pearl/50 text-center truncate">
                   {m.year} — {m.name}
                 </p>
               </div>
             )
           })}
+          </div>
         </div>
 
-        {/* Compass Rose — centered on the full screen horizontally */}
-        <div
-          className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-15"
-        >
+        {/* Heading + Compass — fills remaining space in the left panel, centered */}
+        <div className="flex-1 flex flex-col items-center justify-center pointer-events-none min-w-0">
+          <div className="text-center mb-4 px-2">
+            {validated ? (
+              <div style={{ animation: 'screenFadeIn 0.6s ease-out' }}>
+                <p className="font-display text-[clamp(1.6rem,2.5vw,2.8rem)] tracking-wider" style={{ color: COLORS.gold }}>
+                  VALIDATED
+                </p>
+                <p className="mt-1 font-display text-[clamp(0.9rem,1.2vw,1.2rem)] text-pearl/70 italic">
+                  Craftsmanship is our legacy, refined.
+                </p>
+              </div>
+            ) : (
+              <>
+                <p className="font-display text-[clamp(1.6rem,2.5vw,2.8rem)] tracking-wider leading-tight" style={{ color: COLORS.gold }}>
+                  Connect the Past<br />to the Future
+                </p>
+                <p className="mt-2 text-[clamp(0.8rem,1vw,1rem)] text-pearl/40">
+                  Drag a project to the right to validate
+                </p>
+              </>
+            )}
+          </div>
           <svg
-            className="w-[clamp(60px,6vw,100px)] h-[clamp(60px,6vw,100px)]"
+            className="w-[clamp(60px,6vw,120px)] h-[clamp(60px,6vw,120px)]"
             viewBox="0 0 80 80" fill="none"
-            style={{
-              animation: 'spin 20s linear infinite',
-            }}
+            style={{ animation: 'spin 20s linear infinite' }}
           >
             <path d="M40 0 L45 35 L80 40 L45 45 L40 80 L35 45 L0 40 L35 35 Z" fill="none" stroke={COLORS.gold} strokeWidth="1" opacity="0.3" />
             <path d="M40 10 L43 35 L70 40 L43 45 L40 70 L37 45 L10 40 L37 35 Z" fill="none" stroke={COLORS.gold} strokeWidth="0.5" opacity="0.2" />
@@ -300,6 +296,7 @@ export default function Screen5TrustCompact() {
             <circle cx="40" cy="40" r="2" fill={COLORS.gold} opacity="0.5" />
           </svg>
         </div>
+
       </div>
 
       {/* Divider line */}
@@ -327,7 +324,7 @@ export default function Screen5TrustCompact() {
         {validated && validatedIndex !== null ? (
           <div className="text-center px-4" style={{ animation: 'screenFadeIn 0.5s ease-out' }}>
             <div
-              className="w-[12vw] max-w-[180px] aspect-[4/3] rounded-lg overflow-hidden border-2 mx-auto"
+              className="w-[16vw] max-w-[260px] aspect-[4/3] rounded-lg overflow-hidden border-2 mx-auto"
               style={{ borderColor: COLORS.gold, boxShadow: `0 0 20px rgba(212,175,55,0.4)` }}
             >
               <div
@@ -338,10 +335,10 @@ export default function Screen5TrustCompact() {
                 }}
               />
             </div>
-            <p className="mt-4 font-display text-[clamp(1rem,1.2vw,1.25rem)]" style={{ color: COLORS.gold }}>
+            <p className="mt-4 font-display text-[clamp(1.2rem,1.6vw,1.5rem)]" style={{ color: COLORS.gold }}>
               {milestones[validatedIndex].name}
             </p>
-            <p className="mt-1 text-[clamp(0.75rem,0.9vw,1rem)] text-pearl/60">
+            <p className="mt-1 text-[clamp(0.9rem,1.1vw,1.1rem)] text-pearl/60">
               {milestones[validatedIndex].year}
             </p>
             <div className="mt-3 flex items-center gap-2 justify-center">
@@ -357,7 +354,7 @@ export default function Screen5TrustCompact() {
           <div className="flex flex-col items-center px-4">
             {/* Crosshair / Aim icon */}
             <div
-              className="w-[5vw] max-w-[80px] min-w-[50px] aspect-square rounded-full flex items-center justify-center border-2 transition-all duration-300"
+              className="w-[7vw] max-w-[110px] min-w-[60px] aspect-square rounded-full flex items-center justify-center border-2 transition-all duration-300"
               style={{
                 borderColor: drag ? COLORS.gold : 'rgba(212,175,55,0.25)',
                 background: drag ? 'rgba(212,175,55,0.1)' : 'transparent',
@@ -378,14 +375,14 @@ export default function Screen5TrustCompact() {
             </div>
 
             <p
-              className="mt-4 text-[clamp(0.8rem,1.1vw,1rem)] font-display tracking-wide text-center transition-colors duration-300"
+              className="mt-4 text-[clamp(1rem,1.4vw,1.25rem)] font-display tracking-wide text-center transition-colors duration-300"
               style={{ color: drag ? COLORS.gold : 'rgba(60,60,70,0.35)' }}
             >
               {drag ? 'Drop here to validate' : 'Drag a project here'}
             </p>
 
             <p
-              className="mt-1 text-[clamp(0.6rem,0.7vw,0.75rem)] tracking-wider text-center transition-colors duration-300"
+              className="mt-1 text-[clamp(0.8rem,0.9vw,0.95rem)] tracking-wider text-center transition-colors duration-300"
               style={{ color: drag ? `${COLORS.gold}88` : 'rgba(60,60,70,0.15)' }}
             >
               Raheja Luxe

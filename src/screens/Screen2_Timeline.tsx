@@ -9,10 +9,10 @@ import gsap from 'gsap'
 
 // Responsive card sizing — uses vw but clamped
 function getCardWidth() {
-  return Math.max(200, Math.min(400, window.innerWidth * 0.22))
+  return Math.max(280, Math.min(550, window.innerWidth * 0.3))
 }
 function getCardGap() {
-  return Math.max(30, Math.min(70, window.innerWidth * 0.035))
+  return Math.max(30, Math.min(60, window.innerWidth * 0.03))
 }
 
 let CARD_WIDTH = getCardWidth()
@@ -432,13 +432,13 @@ export default function Screen2Timeline() {
       />
 
       {/* Heading — always visible */}
-      <div className="absolute top-12 left-0 right-0 text-center z-30 pointer-events-none">
-        <p className="font-display text-[clamp(1.2rem,2.5vw,2rem)] tracking-wider" style={{ color: COLORS.gold }}>
+      <div className="absolute top-6 left-0 right-0 text-center z-30 pointer-events-none">
+        <p className="font-display text-[clamp(1.5rem,3vw,2.5rem)] tracking-wider" style={{ color: COLORS.gold }}>
           Trace the thread to prove our promise.
         </p>
         {/* Subtitle — disappears on first drag */}
         {showPrompt && (
-          <p className="mt-3 text-sm text-pearl/40 tracking-wider">
+          <p className="mt-2 text-[clamp(0.8rem,1vw,1rem)] text-pearl/40 tracking-wider">
             Drag your finger across the screen
           </p>
         )}
@@ -447,17 +447,17 @@ export default function Screen2Timeline() {
       {/* Text ABOVE centered card — Year & Name */}
       <div
         className="absolute left-0 right-0 text-center z-10 pointer-events-none transition-all duration-500"
-        style={{ top: 'clamp(90px, 20vh, 180px)' }}
+        style={{ top: 'clamp(50px, 9vh, 100px)' }}
       >
         <div
           className="inline-block"
           key={centeredIndex}
           style={{ animation: 'screenFadeIn 0.4s ease-out' }}
         >
-          <p className="font-display text-[clamp(2rem,4vw,3.5rem)] font-bold" style={{ color: COLORS.gold }}>
+          <p className="font-display text-[clamp(2.5rem,5vw,4.5rem)] font-bold" style={{ color: COLORS.gold }}>
             {centeredMilestone.year}
           </p>
-          <p className="mt-1 text-[clamp(0.9rem,1.5vw,1.3rem)] tracking-wider text-pearl/90">
+          <p className="mt-1 text-[clamp(1.1rem,2vw,1.6rem)] tracking-wider text-pearl/90">
             {centeredMilestone.name}
           </p>
         </div>
@@ -543,31 +543,31 @@ export default function Screen2Timeline() {
       {/* Text BELOW centered card — Stat & Narrative */}
       <div
         className="absolute left-0 right-0 text-center z-10 pointer-events-none transition-all duration-500"
-        style={{ top: 'calc(50% + 140px)' }}
+        style={{ bottom: 'clamp(50px, 10vh, 100px)' }}
       >
         <div
-          className="inline-block max-w-lg"
+          className="inline-block max-w-2xl"
           key={`below-${centeredIndex}`}
           style={{ animation: 'screenFadeIn 0.4s ease-out' }}
         >
-          <p className="font-display text-lg italic" style={{ color: COLORS.pearl }}>
+          <p className="font-display text-[clamp(1.1rem,1.8vw,1.5rem)] italic" style={{ color: COLORS.pearl }}>
             &ldquo;{centeredMilestone.narrative}&rdquo;
           </p>
-          <p className="mt-2 text-sm tracking-wider" style={{ color: `${COLORS.gold}99` }}>
+          <p className="mt-2 text-[clamp(0.8rem,1.2vw,1.1rem)] tracking-wider" style={{ color: `${COLORS.gold}99` }}>
             {centeredMilestone.stat}
           </p>
         </div>
       </div>
 
       {/* Progress dots */}
-      <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-2.5 z-30">
+      <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-3 z-30">
         {milestones.map((_, i) => (
           <div
             key={i}
             className="rounded-full transition-all duration-300"
             style={{
-              width: i === centeredIndex ? 24 : 8,
-              height: 8,
+              width: i === centeredIndex ? 28 : 10,
+              height: 10,
               backgroundColor: i === centeredIndex ? COLORS.gold : 'rgba(60,60,70,0.15)',
               boxShadow: i === centeredIndex ? `0 0 8px rgba(212,175,55,0.5)` : 'none',
             }}
@@ -584,7 +584,7 @@ export default function Screen2Timeline() {
         >
           <div className="flex flex-col items-center gap-3">
             <div
-              className="w-14 h-14 rounded-full flex items-center justify-center border-2"
+              className="w-[clamp(56px,5vw,80px)] h-[clamp(56px,5vw,80px)] rounded-full flex items-center justify-center border-2"
               style={{
                 borderColor: COLORS.gold,
                 background: 'rgba(212,175,55,0.1)',
