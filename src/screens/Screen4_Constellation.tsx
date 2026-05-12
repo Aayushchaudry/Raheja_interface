@@ -24,7 +24,6 @@ const DOT_COUNT = 1500
 export default function Screen4Constellation() {
   const setScreen = useAppStore((s) => s.setScreen)
   const incrementVideosWatched = useAppStore((s) => s.incrementVideosWatched)
-  const videosWatched = useAppStore((s) => s.videosWatched)
   const { play, stop } = useAudio()
 
   const canvasRef = useRef<HTMLCanvasElement>(null)

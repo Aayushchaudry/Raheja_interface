@@ -4,7 +4,6 @@ import { useAudio } from '../hooks/useAudio'
 import { Screen } from '../types'
 import { milestones } from '../data/milestones'
 import { COLORS } from '../utils/constants'
-import gsap from 'gsap'
 
 export default function Screen3Milestone() {
   const selectedIndex = useAppStore((s) => s.selectedMilestoneIndex)

@@ -6,7 +6,6 @@ import { TIMING } from '../utils/constants'
 export function useInactivityTimer() {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const currentScreen = useAppStore((s) => s.currentScreen)
-  const setScreen = useAppStore((s) => s.setScreen)
   const reset = useAppStore((s) => s.reset)
 
   const resetTimer = useCallback(() => {
