@@ -374,7 +374,7 @@ export default function Screen2Timeline() {
         play('harmonicChime')
       }
 
-      if (ci >= milestones.length - 1) {
+      if (ci >= 2) {
         setReachedEnd(true)
       }
     },
