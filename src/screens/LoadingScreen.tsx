@@ -3,6 +3,7 @@ import { useAppStore } from '../store/useAppStore'
 import { AudioManager } from '../audio/AudioManager'
 import { Screen } from '../types'
 import { COLORS } from '../utils/constants'
+import { milestones } from '../data/milestones'
 
 export default function LoadingScreen() {
   const [progress, setProgress] = useState(0)
@@ -17,8 +18,8 @@ export default function LoadingScreen() {
       if (cancelled) return
       setProgress(40)
 
-      // Preload critical images
-      const imageUrls = Array.from({ length: 8 }, (_, i) => `/assets/images/projects/project-${i + 1}.jpg`)
+      // Preload the real project images used by the timeline carousel
+      const imageUrls = [...new Set(milestones.map((m) => m.sepiaImage))]
       await Promise.all(
         imageUrls.map(
           (src) =>
