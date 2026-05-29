@@ -2,6 +2,7 @@ import { useAppStore } from './store/useAppStore'
 import { useInactivityTimer } from './hooks/useInactivityTimer'
 import { Screen } from './types'
 import BackButton from './components/BackButton'
+import FullscreenButton from './components/FullscreenButton'
 import LoadingScreen from './screens/LoadingScreen'
 import Screen1Standby from './screens/Screen1_Standby'
 import Screen2Timeline from './screens/Screen2_Timeline'
@@ -32,6 +33,7 @@ function App() {
       {currentScreen === Screen.LuxeReveal && <Screen6LuxeReveal />}
       {currentScreen === Screen.CTA && <Screen7CTA />}
       {showBack && <BackButton />}
+      {currentScreen !== Screen.Loading && <FullscreenButton />}
     </div>
   )
 }
