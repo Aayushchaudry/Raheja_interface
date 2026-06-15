@@ -3,13 +3,13 @@ import Header from "./components/Header.jsx";
 import MediaModal from "./components/MediaModal.jsx";
 import NavArrows from "./components/NavArrows.jsx";
 import PageIndicator from "./components/PageIndicator.jsx";
-import AboutSection from "./sections/AboutSection.jsx";
-import AllProjectsSection from "./sections/AllProjectsSection.jsx";
-import DirectorSection from "./sections/DirectorSection.jsx";
-import HeroSection from "./sections/HeroSection.jsx";
-import LuxurySection from "./sections/LuxurySection.jsx";
-import ProjectDetailSection from "./sections/ProjectDetailSection.jsx";
-import ThanksSection from "./sections/ThanksSection.jsx";
+import AboutSection from "./screens/AboutSection.jsx";
+import AllProjectsSection from "./screens/AllProjectsSection.jsx";
+import DirectorSection from "./screens/DirectorSection.jsx";
+import HeroSection from "./screens/HeroSection.jsx";
+import LuxurySection from "./screens/LuxurySection.jsx";
+import ProjectDetailSection from "./screens/ProjectDetailSection.jsx";
+import ThanksSection from "./screens/ThanksSection.jsx";
 
 // The guided step flow. Luxury → Avana → Thanks.
 const pageOrder = ["standby", "about", "director", "projects", "luxury", "avana", "thanks"];

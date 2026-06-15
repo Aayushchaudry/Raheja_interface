@@ -3,9 +3,11 @@ dist/
 .DS_Store
 
 # Original uncompressed / oversized videos (>100MB GitHub limit)
-assets/4k.mp4
-assets/4k_compressed.mp4
-assets/Raheja Avana 11-06-26.mp4
-assets/Raheja Model Walkthrough.mp4
-assets/raheja-walkthrough11.mp4
-assets/The Artist's Confession - Raheja.mp4
+public/assets/videos/4k.mp4
+public/assets/videos/4k_compressed.mp4
+public/assets/videos/Raheja Avana 11-06-26.mp4
+public/assets/videos/Raheja Model Walkthrough.mp4
+public/assets/videos/raheja-walkthrough11.mp4
+public/assets/videos/The Artist's Confession - Raheja.mp4
+# Legacy root-level assets folder (superseded by public/assets/)
+/assets/

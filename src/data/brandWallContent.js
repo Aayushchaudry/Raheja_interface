@@ -10,12 +10,12 @@ export const heroContent = {
   tagline: "Raipur's most trusted name in premium real estate & construction",
   desc: "Touch to explore the legacy",
   slides: [
-    { image: "/assets/NIRWANA 1.png", caption: "Nirwana", captionHi: "निर्वाना", label: "Plots & Villas" },
-    { image: "/assets/NIRWANA CLUB HOUSE.jpg", caption: "Nirwana", captionHi: "निर्वाना", label: "Clubhouse" },
-    { image: "/assets/RAHEHA SKYSCAPES.png", caption: "Skyscapes", captionHi: "स्काईस्केप्स", label: "Apartments" },
-    { image: "/assets/RAHEJA GALLERIA.png", caption: "Galleria", captionHi: "गैलेरिया", label: "Commercial" },
-    { image: "/assets/RAHEJA AMBARA.jpg", caption: "Ambara", captionHi: "अंबरा", label: "Luxury Plots" },
-    { image: "/assets/RAHEJA AMBARA/CLUB HOUSE.jpg", caption: "Ambara", captionHi: "अंबरा", label: "Clubhouse" },
+    { image: "/assets/images/NIRWANA 1.png", caption: "Nirwana", captionHi: "निर्वाना", label: "Plots & Villas" },
+    { image: "/assets/images/NIRWANA CLUB HOUSE.jpg", caption: "Nirwana", captionHi: "निर्वाना", label: "Clubhouse" },
+    { image: "/assets/images/RAHEHA SKYSCAPES.png", caption: "Skyscapes", captionHi: "स्काईस्केप्स", label: "Apartments" },
+    { image: "/assets/images/RAHEJA GALLERIA.png", caption: "Galleria", captionHi: "गैलेरिया", label: "Commercial" },
+    { image: "/assets/images/RAHEJA AMBARA.jpg", caption: "Ambara", captionHi: "अंबरा", label: "Luxury Plots" },
+    { image: "/assets/images/RAHEJA AMBARA/CLUB HOUSE.jpg", caption: "Ambara", captionHi: "अंबरा", label: "Clubhouse" },
   ],
 };
 
@@ -78,7 +78,7 @@ export const directorContent = {
   ],
   author: "Mr. Sanjay Raheja",
   role: "Managing Director · Raheja Group",
-  image: "/assets/director.png",
+  image: "/assets/images/director.png",
   exploreLabel: "Explore Our Projects",
 };
 
@@ -91,7 +91,7 @@ export const projects = [
     rera: "RERA: PCGRERA290621001228",
     cta: "View Details",
     page: "avana",
-    image: "/assets/NIRWANA 1.png",
+    image: "/assets/images/NIRWANA 1.png",
   },
   {
     title: "Raheja Riveria",
@@ -111,7 +111,7 @@ export const projects = [
     rera: "RERA: PCGRERA310125001875",
     cta: "View Details",
     page: "luxury",
-    image: "/assets/RAHEJA AMBARA.jpg",
+    image: "/assets/images/RAHEJA AMBARA.jpg",
   },
 ];
 
@@ -124,7 +124,7 @@ export const allProjects = [
     body:
       "A prominent commercial complex in the heart of Raipur on Jail Road, housing offices, showrooms, and restaurants with full modern infrastructure.",
     rera: "RERA: PCGRERA150618000197",
-    image: "/assets/opt/towers.jpg",
+    image: "/assets/images/opt/towers.jpg",
   },
   {
     title: "Raheja Residency",
@@ -134,7 +134,7 @@ export const allProjects = [
     body:
       "Premium residential development with comprehensive world-class amenities in a secure, high-end lifestyle setting.",
     rera: "RERA: PCGRERA280618000375",
-    image: "/assets/opt/residency.jpg",
+    image: "/assets/images/opt/residency.jpg",
   },
   {
     title: "Raheja Arth",
@@ -143,7 +143,7 @@ export const allProjects = [
     location: "Near Professor Colony, Sai Vihar, Labhandi, Raipur",
     body: "93 flats across 8 floors with 2BHK and 3BHK configurations, modern amenities, podium garden, and club house.",
     rera: "RERA: PCGRERA070718000490",
-    image: "/assets/opt/arth.jpg",
+    image: "/assets/images/opt/arth.jpg",
   },
   {
     title: "Raheja Greens",
@@ -153,7 +153,7 @@ export const allProjects = [
     body:
       "Designed to perfection and nestled with amenities, a gated plotted community with strong city connectivity.",
     rera: "RERA: PCGRERA220618000291",
-    image: "/assets/opt/greens.jpg",
+    image: "/assets/images/opt/greens.jpg",
   },
   {
     title: "Raheja SkyScapes",
@@ -162,7 +162,7 @@ export const allProjects = [
     location: "Behind Ambuja Mall, Saddu, Raipur",
     body: "A premium residential community with luxury-oriented living, clean surroundings, and strong urban connectivity.",
     rera: "RERA: PCGRERA180718000592",
-    image: "/assets/opt/skyscapes.jpg",
+    image: "/assets/images/opt/skyscapes.jpg",
   },
   {
     title: "Raheja Homes",
@@ -171,7 +171,7 @@ export const allProjects = [
     location: "Daldal Seoni, Raipur",
     body: "Ready-to-move housing society spread across 4.63 acres, designed for comfort, lifestyle convenience, and family living.",
     rera: "RERA: PCGRERA131118000843",
-    image: "/assets/opt/homes.jpg",
+    image: "/assets/images/opt/homes.jpg",
   },
   {
     title: "Raheja Nirwana 2",
@@ -181,7 +181,7 @@ export const allProjects = [
     body:
       "Luxurious plots surrounded by tranquillity, an amalgamation of modern luxury and serene nature.",
     rera: "RERA: PCGRERA061023001683",
-    image: "/assets/opt/nirwana-2.jpg",
+    image: "/assets/images/opt/nirwana-2.jpg",
   },
   {
     title: "Raheja Ambara",
@@ -191,7 +191,7 @@ export const allProjects = [
     body:
       "A design-forward luxury plotted community with iconic entry architecture, resort-style clubhouse frontage, and curated green boulevards.",
     rera: "RERA: PCGRERA310125001875",
-    image: "/assets/opt/ambara.jpg",
+    image: "/assets/images/opt/ambara.jpg",
   },
   {
     title: "Raheja Riveria",
@@ -200,7 +200,7 @@ export const allProjects = [
     location: "Raipur, Chhattisgarh (NH 53 Corridor)",
     body: "Nature-first plotted community designed for peaceful living, breathable open spaces, and premium lifestyle infrastructure.",
     rera: "RERA: PCGRERA300326002076",
-    image: "/assets/riviera.jpg",
+    image: "/assets/images/riviera.jpg",
   },
 ];
 
@@ -216,11 +216,11 @@ export const luxuryContent = {
     "Three extraordinary residences, one uncompromising vision. Welcome to Raheja Luxe, where legacy becomes address.",
   mediaLabel: "Luxury background image carousel placeholder",
   carouselImages: [
-    "/assets/RAHEHA SKYSCAPES.png",
-    "/assets/RAHEJA AMBARA.jpg",
-    "/assets/RAHEJA AMBARA/CLUB HOUSE.jpg",
-    "/assets/Raheja Waterfront.jpeg",
-    "/assets/NIRWANA CLUB HOUSE(1).jpg",
+    "/assets/images/RAHEHA SKYSCAPES.png",
+    "/assets/images/RAHEJA AMBARA.jpg",
+    "/assets/images/RAHEJA AMBARA/CLUB HOUSE.jpg",
+    "/assets/images/Raheja Waterfront.jpeg",
+    "/assets/images/NIRWANA CLUB HOUSE(1).jpg",
   ],
   stats: [
     { value: "20+", label: "Years of Legacy" },
@@ -252,7 +252,7 @@ export const luxuryContent = {
       location: "Infront of Kachna Lake, Kachna Main Road, Raipur",
       cta: "Explore Residence",
       page: "avana",
-      image: "/assets/avana.jpg",
+      image: "/assets/images/avana.jpg",
     },
     {
       eyebrow: "Privacy is the Ultimate Luxury",
@@ -261,7 +261,7 @@ export const luxuryContent = {
       location: "Make in India Square, Telibandha, Raipur",
       cta: "",
       page: "avana",
-      image: "/assets/prive.jpg",
+      image: "/assets/images/prive.jpg",
       badge: "Upcoming",
     },
     {
@@ -271,7 +271,7 @@ export const luxuryContent = {
       location: "Sector 15, Naya Raipur, Atal Nagar, Raipur",
       cta: "Explore Residence",
       page: "avana",
-      image: "/assets/Raheja Waterfront.jpeg",
+      image: "/assets/images/Raheja Waterfront.jpeg",
       badge: "Launching Soon",
     },
   ],
