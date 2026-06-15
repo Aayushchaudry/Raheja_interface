@@ -1,0 +1,305 @@
+export const navItems = [
+  { page: "about", label: "About Raheja Group" },
+  { page: "director", label: "From Director's Desk" },
+  { page: "projects", label: "Explore Projects" },
+  { page: "luxury", label: "Enter into Luxury Experience" },
+];
+
+export const heroContent = {
+  eyebrow: "Since 2005",
+  tagline: "Raipur's most trusted name in premium real estate & construction",
+  desc: "Touch to explore the legacy",
+  slides: [
+    { image: "/assets/images/NIRWANA 1.png", caption: "Nirwana", captionHi: "निर्वाना", label: "Plots & Villas" },
+    { image: "/assets/images/NIRWANA CLUB HOUSE.jpg", caption: "Nirwana", captionHi: "निर्वाना", label: "Clubhouse" },
+    { image: "/assets/images/RAHEHA SKYSCAPES.png", caption: "Skyscapes", captionHi: "स्काईस्केप्स", label: "Apartments" },
+    { image: "/assets/images/RAHEJA GALLERIA.png", caption: "Galleria", captionHi: "गैलेरिया", label: "Commercial" },
+    { image: "/assets/images/RAHEJA AMBARA.jpg", caption: "Ambara", captionHi: "अंबरा", label: "Luxury Plots" },
+    { image: "/assets/images/RAHEJA AMBARA/CLUB HOUSE.jpg", caption: "Ambara", captionHi: "अंबरा", label: "Clubhouse" },
+  ],
+};
+
+export const aboutContent = {
+  pageLabel: "Page 1: About Raheja Group",
+  eyebrow: "About Raheja Group",
+  title: "Built on Principles. Guided by Purpose.",
+  subtitle: "What We Stand For",
+  scrollLabel: "Page 1: About Raheja Group (Scroll Down)",
+  scrollEyebrow: "The Weight of a Legacy",
+  scrollTitle: "Numbers That Tell the Truth",
+  scrollQuote:
+    "Behind every number is a family that found their home, a dream that was honoured, a life that was changed.",
+  principles: [
+    {
+      number: "01",
+      title: "Trust Above All",
+      body:
+        "Every commitment made is a commitment kept. For two decades, the Raheja name has been a covenant between builder and buyer.",
+    },
+    {
+      number: "02",
+      title: "Craft Without Compromise",
+      body:
+        "We do not build structures. We create environments. Each project is conceived with obsessive attention to material, proportion, and the lived experience of every resident.",
+    },
+    {
+      number: "03",
+      title: "Community at the Core",
+      body:
+        "We develop not just real estate but neighbourhoods where lives are lived and legacies are passed down.",
+    },
+    {
+      number: "04",
+      title: "Vision Over Convention",
+      body:
+        "Where others follow market trends, Raheja has always led them. We transcend what exists to create what should endure.",
+    },
+  ],
+  stats: [
+    { value: "20+", label: "Yrs of Trust & Excellence" },
+    { value: "5,000+", label: "Happy Families" },
+    { value: "25+", label: "Projects Delivered" },
+    { value: "10", label: "Mn Sq Ft Developed" },
+    { value: "1st", label: "Luxury Project in Raipur" },
+    { value: "Avana", label: "The Crown Jewel" },
+  ],
+};
+
+export const directorContent = {
+  eyebrow: "From the Director's Desk",
+  titleLead: "A Vision",
+  titleRest: "Built on ",
+  titleEm: "Trust.",
+  quote:
+    "When we broke ground on our first project in Raipur, we carried one belief — that a home is not merely a structure. It is a feeling. A legacy. A promise kept across time.",
+  body: [
+    "Over two decades, the Raheja Group has grown from a single vision to Raipur's most trusted name in premium real estate. We have built more than twenty-five projects, housed more than five thousand families, and developed ten million square feet of spaces that people are proud to call home.",
+    "Avana is our crown jewel — the culmination of everything we have learned, refined, and perfected. It is not just our finest work. It is Raipur's finest address.",
+  ],
+  author: "Mr. Sanjay Raheja",
+  role: "Managing Director · Raheja Group",
+  image: "/assets/images/director.png",
+  exploreLabel: "Explore Our Projects",
+};
+
+export const projects = [
+  {
+    title: "Raheja Nirwana",
+    category: "Premium Plots & Villas",
+    status: "Completed",
+    location: "Kachna Road, Raipur",
+    rera: "RERA: PCGRERA290621001228",
+    cta: "View Details",
+    page: "avana",
+    image: "/assets/images/NIRWANA 1.png",
+  },
+  {
+    title: "Raheja Riveria",
+    category: "Premium Residential Plots",
+    status: "Ongoing",
+    location: "Raipur, Chhattisgarh (NH 53 Corridor)",
+    rera: "RERA: PCGRERA300326002076",
+    cta: "View Details",
+    page: "luxury",
+    image: null,
+  },
+  {
+    title: "Raheja Ambara",
+    category: "Luxury Plots",
+    status: "Ongoing",
+    location: "Raipur, Chhattisgarh",
+    rera: "RERA: PCGRERA310125001875",
+    cta: "View Details",
+    page: "luxury",
+    image: "/assets/images/RAHEJA AMBARA.jpg",
+  },
+];
+
+export const allProjects = [
+  {
+    title: "Raheja Towers",
+    category: "Commercial Office & Showroom Spaces",
+    status: "Completed",
+    location: "Jail Road, Near Hotel Celebration, Fafadih, Raipur",
+    body:
+      "A prominent commercial complex in the heart of Raipur on Jail Road, housing offices, showrooms, and restaurants with full modern infrastructure.",
+    rera: "RERA: PCGRERA150618000197",
+    image: "/assets/images/opt/towers.jpg",
+  },
+  {
+    title: "Raheja Residency",
+    category: "2, 2.5, 3, 4 BHK Apartments",
+    status: "Completed",
+    location: "Opp. St Xavier's High School, Avanti Vihar, Raipur",
+    body:
+      "Premium residential development with comprehensive world-class amenities in a secure, high-end lifestyle setting.",
+    rera: "RERA: PCGRERA280618000375",
+    image: "/assets/images/opt/residency.jpg",
+  },
+  {
+    title: "Raheja Arth",
+    category: "Residential Flats",
+    status: "Completed",
+    location: "Near Professor Colony, Sai Vihar, Labhandi, Raipur",
+    body: "93 flats across 8 floors with 2BHK and 3BHK configurations, modern amenities, podium garden, and club house.",
+    rera: "RERA: PCGRERA070718000490",
+    image: "/assets/images/opt/arth.jpg",
+  },
+  {
+    title: "Raheja Greens",
+    category: "Residential Plots & Township",
+    status: "Completed",
+    location: "Near Ring Road No. 3, Pirda, Raipur",
+    body:
+      "Designed to perfection and nestled with amenities, a gated plotted community with strong city connectivity.",
+    rera: "RERA: PCGRERA220618000291",
+    image: "/assets/images/opt/greens.jpg",
+  },
+  {
+    title: "Raheja SkyScapes",
+    category: "Premium Residential Apartments",
+    status: "Completed",
+    location: "Behind Ambuja Mall, Saddu, Raipur",
+    body: "A premium residential community with luxury-oriented living, clean surroundings, and strong urban connectivity.",
+    rera: "RERA: PCGRERA180718000592",
+    image: "/assets/images/opt/skyscapes.jpg",
+  },
+  {
+    title: "Raheja Homes",
+    category: "1, 2, 3 BHK Apartments",
+    status: "Completed",
+    location: "Daldal Seoni, Raipur",
+    body: "Ready-to-move housing society spread across 4.63 acres, designed for comfort, lifestyle convenience, and family living.",
+    rera: "RERA: PCGRERA131118000843",
+    image: "/assets/images/opt/homes.jpg",
+  },
+  {
+    title: "Raheja Nirwana 2",
+    category: "Premium Plots",
+    status: "Ongoing",
+    location: "Kachna Road, Raipur",
+    body:
+      "Luxurious plots surrounded by tranquillity, an amalgamation of modern luxury and serene nature.",
+    rera: "RERA: PCGRERA061023001683",
+    image: "/assets/images/opt/nirwana-2.jpg",
+  },
+  {
+    title: "Raheja Ambara",
+    category: "Luxury Plots",
+    status: "Ongoing",
+    location: "Raipur, Chhattisgarh",
+    body:
+      "A design-forward luxury plotted community with iconic entry architecture, resort-style clubhouse frontage, and curated green boulevards.",
+    rera: "RERA: PCGRERA310125001875",
+    image: "/assets/images/opt/ambara.jpg",
+  },
+  {
+    title: "Raheja Riveria",
+    category: "Premium Residential Plots",
+    status: "Ongoing",
+    location: "Raipur, Chhattisgarh (NH 53 Corridor)",
+    body: "Nature-first plotted community designed for peaceful living, breathable open spaces, and premium lifestyle infrastructure.",
+    rera: "RERA: PCGRERA300326002076",
+    image: "/assets/images/riviera.jpg",
+  },
+];
+
+export const luxuryContent = {
+  pageLabel: "Page 3: Enter into Luxury Experience",
+  scrollLabels: [
+    "Page 3: Enter into Luxury Experience (Scroll Down)",
+    "Page 3: Enter into Luxury Experience (Scroll Down) - Teaser",
+  ],
+  eyebrow: "Raheja Luxe",
+  title: "Curated Luxury",
+  body:
+    "Three extraordinary residences, one uncompromising vision. Welcome to Raheja Luxe, where legacy becomes address.",
+  mediaLabel: "Luxury background image carousel placeholder",
+  carouselImages: [
+    "/assets/images/RAHEHA SKYSCAPES.png",
+    "/assets/images/RAHEJA AMBARA.jpg",
+    "/assets/images/RAHEJA AMBARA/CLUB HOUSE.jpg",
+    "/assets/images/Raheja Waterfront.jpeg",
+    "/assets/images/NIRWANA CLUB HOUSE(1).jpg",
+  ],
+  stats: [
+    { value: "20+", label: "Years of Legacy" },
+    { value: "3", label: "Curated Collections" },
+    { value: "200+", label: "Luxury Homes" },
+  ],
+  principles: [
+    {
+      eyebrow: "Craftsmanship",
+      title: "Every detail is considered.",
+      body: "Material language becomes part of the luxury signal: Italian marble, hand-finished surfaces, bespoke joinery.",
+    },
+    {
+      eyebrow: "Thoughtful Design",
+      title: "Space is edited with discipline.",
+      body: "Generous scale, quiet circulation, and proportion-led planning remain central to the Luxe philosophy.",
+    },
+    {
+      eyebrow: "Signature Quality",
+      title: "The benchmark is intentional.",
+      body: "An uncompromising commitment to the finest finishes, engineering, and attention to invisible detail.",
+    },
+  ],
+  collections: [
+    {
+      eyebrow: "Where Architecture Meets Artistry",
+      title: "Raheja Avana",
+      body: "An ultra-luxury residential masterpiece featuring sweeping panoramic views, bespoke interiors, and an address that redefines prestige in Raipur.",
+      location: "Infront of Kachna Lake, Kachna Main Road, Raipur",
+      cta: "Explore Residence",
+      page: "avana",
+      image: "/assets/images/avana.jpg",
+    },
+    {
+      eyebrow: "Privacy is the Ultimate Luxury",
+      title: "Raheja Prive",
+      body: "An exclusive collection of residences designed for those who seek seclusion without sacrificing sophistication.",
+      location: "Make in India Square, Telibandha, Raipur",
+      cta: "",
+      page: "avana",
+      image: "/assets/images/prive.jpg",
+      badge: "Upcoming",
+    },
+    {
+      eyebrow: "Live Where the Water Meets the Sky",
+      title: "Raheja Waterfront Villas",
+      body: "Exclusive waterfront villas offering private water access, resort-scale amenities, and architecture inspired by nature.",
+      location: "Sector 15, Naya Raipur, Atal Nagar, Raipur",
+      cta: "Explore Residence",
+      page: "avana",
+      image: "/assets/images/Raheja Waterfront.jpeg",
+      badge: "Launching Soon",
+    },
+  ],
+  actions: [
+    { label: "Enter the Collection", type: "scroll", value: "collection" },
+  ],
+};
+
+export const avanaDetail = {
+  pageLabel: "Page 4: Enter into any of the 3 Luxury Project",
+  scrollLabel: "Page 4: Enter into any of the 3 Luxury Project (Scroll Down)",
+  eyebrow: "Raheja Luxe",
+  title: "Raheja Avana",
+  mediaLabel: "Avana background image with logo placeholder",
+  actions: [
+    "Exterior renders",
+    "360 villa view",
+    "Avana walkthrough",
+    "Amenities with renders",
+    "Curators of Avana",
+    "Mr. Raheja message",
+  ],
+};
+
+export const thanksContent = {
+  pageLabel: "Thank You",
+  headingLead: "Your journey continues with the ",
+  headingAccent: "Master Architects",
+  sub: "Proceed to Wall 2 — Coterie of Curators",
+  resetNote: "Experience will reset momentarily",
+};

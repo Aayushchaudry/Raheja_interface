@@ -1,18 +1,39 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Raheja Luxe — The Golden Thread Experience</title>
-    <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      html, body, #root { width: 100%; height: 100%; overflow: hidden; }
-      body { background: #F8F9F9; }
-    </style>
+    <meta charset="utf-8" />
+    <!-- Kiosk: lay the UI out at a fixed 1920-wide design and let the browser
+         upscale it to fill the physical screen (~2x on a 4K 65" panel). Keeps
+         every tuned size proportional and preserves vertical scrolling. -->
+    <meta name="viewport" content="width=1920" />
+    <title>Raheja Brand Wall Interface</title>
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // Kiosk scaler. The viewport meta locks a 1920-wide layout and most
+      // TV / Android / commercial-display browsers upscale it to fill the
+      // screen automatically. Desktop Chromium ignores the meta, so when we
+      // detect a viewport wider than the design we zoom to fill instead, and
+      // pin one-screen height (--screen-h) so full-height sections stay 1 screen.
+      (function () {
+        var DESIGN_W = 1920;
+        function fit() {
+          var html = document.documentElement;
+          html.style.zoom = "";
+          html.style.setProperty("--screen-h", "100vh");
+          var w = html.clientWidth;
+          if (w > DESIGN_W + 80) {
+            var scale = w / DESIGN_W;
+            html.style.setProperty("--screen-h", window.innerHeight / scale + "px");
+            html.style.zoom = scale;
+          }
+        }
+        fit();
+        window.addEventListener("resize", fit);
+        window.addEventListener("orientationchange", fit);
+      })();
+    </script>
+    <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
