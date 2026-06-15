@@ -32,6 +32,10 @@
         fit();
         window.addEventListener("resize", fit);
         window.addEventListener("orientationchange", fit);
+        // Re-fit when TV wakes from standby — resolution can change on resume.
+        document.addEventListener("visibilitychange", function () {
+          if (document.visibilityState === "visible") fit();
+        });
       })();
     </script>
     <script type="module" src="/src/main.jsx"></script>
