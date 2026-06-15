@@ -1698,6 +1698,7 @@ h3 {
 
 .luxe-page {
   min-height: var(--screen-h);
+  overflow-x: hidden;
   background:
     radial-gradient(circle at 80% 10%, rgba(201, 169, 110, 0.12), transparent 28%),
     radial-gradient(circle at 10% 60%, rgba(191, 141, 87, 0.08), transparent 24%),
@@ -3373,8 +3374,10 @@ h3 {
 .crown-collection {
   display: flex;
   width: 100vw;
+  max-width: 100vw;
   margin-left: calc(50% - 50vw);
   margin-top: 48px;
+  overflow: hidden;
 }
 
 .crown-card {
