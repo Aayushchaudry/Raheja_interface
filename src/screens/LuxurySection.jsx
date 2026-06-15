@@ -1,23 +1,24 @@
 import { useEffect, useRef, useState } from "react";
-import { luxuryContent } from "../data/brandWallContent.js";
 
 const VIDEO_START = 15;
 const VIDEO_END = 28;
+const CONFESSION_START = 21;
+const CONFESSION_END = 26;
 
 export default function LuxurySection({ onNavigate }) {
   const [phase, setPhase] = useState("video");
-  const [activeCrown, setActiveCrown] = useState(null);
   const videoRef = useRef(null);
+  const confessionRef = useRef(null);
 
+  // Intro video: 15s → 28s, one time
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return undefined;
 
     const begin = () => {
-      try { video.currentTime = VIDEO_START; } catch { /* seeking before ready */ }
+      try { video.currentTime = VIDEO_START; } catch { /* seek before ready */ }
       video.play().catch(() => setPhase("logo"));
     };
-
     const onTime = () => {
       if (video.currentTime >= VIDEO_END) {
         video.pause();
@@ -35,23 +36,58 @@ export default function LuxurySection({ onNavigate }) {
     };
   }, []);
 
+  // Confession video: 21s → 26s, triggered when phase becomes avana-video
+  useEffect(() => {
+    if (phase !== "avana-video") return undefined;
+    const video = confessionRef.current;
+    if (!video) return undefined;
+
+    const begin = () => {
+      try { video.currentTime = CONFESSION_START; } catch {}
+      video.play().catch(() => setPhase("avana-logo"));
+    };
+    const onTime = () => {
+      if (video.currentTime >= CONFESSION_END) {
+        video.pause();
+        setPhase("avana-fade");
+      }
+    };
+
+    video.addEventListener("loadedmetadata", begin);
+    video.addEventListener("timeupdate", onTime);
+    if (video.readyState >= 1) begin();
+
+    return () => {
+      video.removeEventListener("loadedmetadata", begin);
+      video.removeEventListener("timeupdate", onTime);
+    };
+  }, [phase]);
+
+  // Auto-navigate to Avana once the logo has settled
+  useEffect(() => {
+    if (phase !== "avana-logo") return undefined;
+    const timer = setTimeout(() => onNavigate("avana"), 2200);
+    return () => clearTimeout(timer);
+  }, [phase, onNavigate]);
+
   const handleBlackoutEnd = () => {
     if (phase === "fade-out") setPhase("logo");
+    else if (phase === "avana-fade") setPhase("avana-logo");
+    // avana-video: blackout just faded out revealing the video — nothing to do
   };
 
   const handleRuleEnd = () => {
     if (phase === "logo") setPhase("ready");
   };
 
-  const scrollToCollection = () => {
-    document.querySelector(".luxe-collection")?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  const showReveal = phase === "logo" || phase === "ready";
+  const showIntroReveal = phase === "logo" || phase === "ready";
+  const isAvanaPhase = ["avana-cta", "avana-video", "avana-fade", "avana-logo"].includes(phase);
 
   return (
     <section id="luxury" className="luxe-page">
       <div className="luxe-cinematic-hero">
+
+        {/* Intro video */}
         <video
           ref={videoRef}
           className={`luxe-intro-video${phase === "video" ? " is-playing" : ""}`}
@@ -63,29 +99,42 @@ export default function LuxurySection({ onNavigate }) {
           onError={() => setPhase("logo")}
         />
 
+        {/* Confession video — preloads during ready phase, plays during avana-video */}
+        {(phase === "ready" || isAvanaPhase) && (
+          <video
+            ref={confessionRef}
+            className={`luxe-confession-video${phase === "avana-video" ? " is-playing" : ""}`}
+            src="/confession.mp4"
+            muted
+            playsInline
+            preload="auto"
+            aria-hidden="true"
+            onError={() => setPhase("avana-logo")}
+          />
+        )}
+
+        {/* Shared blackout — handles both intro and avana fade transitions */}
         <div
           className={`luxe-blackout luxe-blackout--${phase}`}
           onAnimationEnd={handleBlackoutEnd}
         />
 
-        {showReveal && (
+        {/* Intro reveal: Raheja Luxe logo + gold rule + scroll cue */}
+        {showIntroReveal && (
           <div className="luxe-reveal">
             <img
               className="luxe-logo-reveal"
               src="/assets/images/Raheja-luxe-logo-gold.png"
               alt="Raheja Luxe"
             />
-            <div
-              className="luxe-gold-rule"
-              onAnimationEnd={handleRuleEnd}
-            />
+            <div className="luxe-gold-rule" onAnimationEnd={handleRuleEnd} />
             {phase === "ready" && (
               <div className="luxe-cta-group">
                 <button
                   className="luxe-scroll-cue"
                   type="button"
-                  onClick={scrollToCollection}
-                  aria-label="Scroll to collection"
+                  onClick={() => setPhase("avana-cta")}
+                  aria-label="Enter Avana"
                 >
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <polyline points="6 9 12 15 18 9" />
@@ -96,64 +145,28 @@ export default function LuxurySection({ onNavigate }) {
             )}
           </div>
         )}
-      </div>
 
-      <div className="luxe-collection">
-        <div className="luxe-section-heading">
-          <p className="eyebrow">Our Curations</p>
-          <h2>The Private Collection</h2>
-          <p>Three extraordinary residences, each conceived as a distinct expression of luxury, place, and the Raheja promise.</p>
-        </div>
+        {/* Avana CTA — full-screen royal button */}
+        {phase === "avana-cta" && (
+          <button
+            className="luxe-avana-btn"
+            type="button"
+            onClick={() => setPhase("avana-video")}
+          >
+            <span className="luxe-avana-btn-eyebrow">Enter Luxury of</span>
+            <em className="luxe-avana-btn-title">Raheja Avana</em>
+          </button>
+        )}
 
-        <div className="crown-collection">
-          {luxuryContent.collections.map((item, index) => {
-            const [first, ...rest] = item.title.split(" ");
-            return (
-              <article
-                className={`crown-card crown-card--${index + 1}${activeCrown === index ? " is-active" : ""}`}
-                key={item.title}
-                onMouseEnter={() => setActiveCrown(index)}
-                onMouseLeave={() => setActiveCrown(null)}
-                onPointerDown={() => setActiveCrown(index)}
-              >
-                <div className="crown-content">
-                  {item.image ? (
-                    <div
-                      className="crown-photo"
-                      style={{ backgroundImage: `url("${item.image}")` }}
-                    >
-                      {item.badge ? <span className="crown-badge">{item.badge}</span> : null}
-                    </div>
-                  ) : null}
-                  <p className="crown-eyebrow">
-                    <span className="crown-dash" aria-hidden="true" />
-                    {item.eyebrow}
-                  </p>
-                  <h3 className="crown-title">
-                    {first} {rest.length ? <em>{rest.join(" ")}</em> : null}
-                  </h3>
-                  <p className="crown-tagline">{item.location}</p>
-                  <div className="crown-reveal">
-                    <p className="crown-body">{item.body}</p>
-                  </div>
-                  {item.title === "Raheja Avana" ? (
-                    <button
-                      className="crown-explore"
-                      type="button"
-                      onPointerDown={(e) => e.stopPropagation()}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onNavigate("avana");
-                      }}
-                    >
-                      Explore Avana <span aria-hidden="true">→</span>
-                    </button>
-                  ) : null}
-                </div>
-              </article>
-            );
-          })}
-        </div>
+        {/* Avana logo — appears after confession video, then auto-navigates */}
+        {phase === "avana-logo" && (
+          <img
+            className="luxe-avana-logo"
+            src="/assets/images/avanalogo.png"
+            alt="Raheja Avana"
+          />
+        )}
+
       </div>
     </section>
   );
