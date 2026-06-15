@@ -1,37 +1,13 @@
-# Dependencies
 node_modules/
-
-# Build output
 dist/
-dist-ssr/
-
-# Vite
-*.local
-.vite/
-
-# TypeScript
-*.tsbuildinfo
-
-# Logs
-logs/
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-# Environment variables
-.env
-.env.local
-.env.*.local
-
-# Editor / OS
 .DS_Store
-Thumbs.db
-.idea/
-.vscode/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+
+# Original uncompressed / oversized videos (>100MB GitHub limit)
+public/assets/videos/4k.mp4
+public/assets/videos/4k_compressed.mp4
+public/assets/videos/Raheja Avana 11-06-26.mp4
+public/assets/videos/Raheja Model Walkthrough.mp4
+public/assets/videos/raheja-walkthrough11.mp4
+public/assets/videos/The Artist's Confession - Raheja.mp4
+# Legacy root-level assets folder (superseded by public/assets/)
+/assets/
