@@ -176,7 +176,7 @@ export const allProjects = [
   {
     title: "Raheja Nirwana 2",
     category: "Premium Plots",
-    status: "Ongoing",
+    status: "Completed",
     location: "Kachna Road, Raipur",
     body:
       "Luxurious plots surrounded by tranquillity, an amalgamation of modern luxury and serene nature.",
