@@ -15,7 +15,7 @@ export default function LuxurySection({ onNavigate }) {
 
     const begin = () => {
       try { video.currentTime = VIDEO_START; } catch { /* seeking before ready */ }
-      video.play().catch(() => {});
+      video.play().catch(() => setPhase("logo"));
     };
 
     const onTime = () => {
@@ -60,6 +60,7 @@ export default function LuxurySection({ onNavigate }) {
           playsInline
           preload="auto"
           aria-hidden="true"
+          onError={() => setPhase("logo")}
         />
 
         <div
@@ -109,6 +110,7 @@ export default function LuxurySection({ onNavigate }) {
                 className={`crown-card crown-card--${index + 1}${activeCrown === index ? " is-active" : ""}`}
                 key={item.title}
                 onMouseEnter={() => setActiveCrown(index)}
+                onMouseLeave={() => setActiveCrown(null)}
                 onPointerDown={() => setActiveCrown(index)}
               >
                 <div className="crown-content">
