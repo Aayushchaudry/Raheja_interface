@@ -80,16 +80,19 @@ export default function LuxurySection({ onNavigate }) {
               onAnimationEnd={handleRuleEnd}
             />
             {phase === "ready" && (
-              <button
-                className="luxe-scroll-cue"
-                type="button"
-                onClick={scrollToCollection}
-                aria-label="Scroll to collection"
-              >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
-              </button>
+              <div className="luxe-cta-group">
+                <button
+                  className="luxe-scroll-cue"
+                  type="button"
+                  onClick={scrollToCollection}
+                  aria-label="Scroll to collection"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </button>
+                <p className="luxe-enter-text">Enter Luxury</p>
+              </div>
             )}
           </div>
         )}

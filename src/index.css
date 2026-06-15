@@ -1769,10 +1769,10 @@ h3 {
 }
 
 .luxe-logo-reveal {
-  height: clamp(80px, 10vw, 150px);
+  height: clamp(240px, 30vw, 450px);
   width: auto;
   animation: luxeLogoRise 900ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  filter: drop-shadow(0 0 48px rgba(201, 169, 110, 0.45));
+  filter: drop-shadow(0 0 80px rgba(201, 169, 110, 0.55));
 }
 
 @keyframes luxeLogoRise {
@@ -1798,17 +1798,25 @@ h3 {
   to   { width: clamp(120px, 14vw, 220px); }
 }
 
+.luxe-cta-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(16px, 2vw, 28px);
+  animation: luxeChevronFadeIn 600ms ease forwards;
+}
+
 .luxe-scroll-cue {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10px;
+  padding: 30px;
   background: none;
   border: 1px solid rgba(201, 169, 110, 0.3);
   border-radius: 50%;
   color: var(--gold);
   cursor: pointer;
-  animation: luxeChevronFadeIn 600ms ease forwards, luxeChevronBob 1.8s ease-in-out 700ms infinite;
+  animation: luxeChevronBob 1.8s ease-in-out 700ms infinite;
   transition: border-color 200ms ease, background 200ms ease;
 }
 
@@ -1820,8 +1828,30 @@ h3 {
 }
 
 .luxe-scroll-cue svg {
-  width: clamp(28px, 3vw, 40px);
-  height: clamp(28px, 3vw, 40px);
+  width: clamp(84px, 9vw, 120px);
+  height: clamp(84px, 9vw, 120px);
+}
+
+.luxe-enter-text {
+  margin: 0;
+  color: var(--gold);
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(22px, 2.8vw, 42px);
+  font-weight: 300;
+  letter-spacing: 0.38em;
+  text-transform: uppercase;
+  animation: luxeEnterTextReveal 1s ease 200ms both;
+}
+
+@keyframes luxeEnterTextReveal {
+  from {
+    opacity: 0;
+    letter-spacing: 0.6em;
+  }
+  to {
+    opacity: 1;
+    letter-spacing: 0.38em;
+  }
 }
 
 @keyframes luxeChevronFadeIn {
