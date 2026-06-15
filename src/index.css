@@ -34,10 +34,13 @@
 
 html {
   scroll-behavior: smooth;
+  width: 100%;
 }
 
 body {
   margin: 0;
+  width: 100%;
+  overflow-x: hidden;
   background: #0a0906;
   color: var(--ink-dark);
   font-family: Inter, -apple-system, "system-ui", sans-serif;
