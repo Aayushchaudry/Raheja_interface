@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import ScrollCue from "../components/ScrollCue.jsx";
 import { avanaDetail } from "../data/brandWallContent.js";
 
-const WALKTHROUGH_SRC = "/assets/videos/4k_web.mp4";
+const WALKTHROUGH_SRC = "https://d1ovqzmursgzel.cloudfront.net/raheja_avana/Explore_avana.mp4";
 
 const ARCH_SLIDES = [
   {
@@ -31,7 +31,7 @@ const FEATURES = [
   {
     title: "Amenities",
     body: "Curated leisure, wellness, and social spaces that elevate everyday living into an ongoing experience.",
-    video: "/assets/videos/Raheja Avana 11-06-26_compressed.mp4",
+    video: "https://d1ovqzmursgzel.cloudfront.net/raheja_avana/Amenities.mp4",
   },
 ];
 

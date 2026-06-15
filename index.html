@@ -2,20 +2,20 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <!-- Kiosk: lay the UI out at a fixed 1920-wide design and let the browser
-         upscale it to fill the physical screen (~2x on a 4K 65" panel). Keeps
-         every tuned size proportional and preserves vertical scrolling. -->
-    <meta name="viewport" content="width=1920" />
+    <!-- Responsive scaler: design is authored at 1920px. JS below zooms the
+         root element so the 1920px layout fills any screen proportionally —
+         smaller screens scale down, larger screens scale up. CSS always sees
+         a ~1920px-wide viewport regardless of physical screen size. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Raheja Brand Wall Interface</title>
   </head>
   <body>
     <div id="root"></div>
     <script>
-      // Kiosk scaler. The viewport meta locks a 1920-wide layout and most
-      // TV / Android / commercial-display browsers upscale it to fill the
-      // screen automatically. Desktop Chromium ignores the meta, so when we
-      // detect a viewport wider than the design we zoom to fill instead, and
-      // pin one-screen height (--screen-h) so full-height sections stay 1 screen.
+      // Proportional scaler — works at any screen size.
+      // Resets zoom, measures the real viewport width, then applies a zoom
+      // factor so the 1920px design fills the screen exactly.
+      // --screen-h compensates for zoom affecting vh units.
       (function () {
         var DESIGN_W = 1920;
         function fit() {
@@ -23,8 +23,8 @@
           html.style.zoom = "";
           html.style.setProperty("--screen-h", "100vh");
           var w = html.clientWidth;
-          if (w > DESIGN_W + 80) {
-            var scale = w / DESIGN_W;
+          var scale = w / DESIGN_W;
+          if (Math.abs(scale - 1) > 0.02) {
             html.style.setProperty("--screen-h", window.innerHeight / scale + "px");
             html.style.zoom = scale;
           }
@@ -32,6 +32,10 @@
         fit();
         window.addEventListener("resize", fit);
         window.addEventListener("orientationchange", fit);
+        // Re-fit when TV wakes from standby — resolution can change on resume.
+        document.addEventListener("visibilitychange", function () {
+          if (document.visibilityState === "visible") fit();
+        });
       })();
     </script>
     <script type="module" src="/src/main.jsx"></script>
