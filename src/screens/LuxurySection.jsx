@@ -1,40 +1,27 @@
 import { useEffect, useRef, useState } from "react";
-import CountUp from "../components/CountUp.jsx";
-import ScrollCue from "../components/ScrollCue.jsx";
 import { luxuryContent } from "../data/brandWallContent.js";
 
-// Background video plays full length at normal speed, then loops.
-const VIDEO_START = 0;
-const VIDEO_TAIL = 0;
-const VIDEO_RATE = 1;
+const VIDEO_START = 15;
+const VIDEO_END = 28;
 
-export default function LuxurySection({ onNavigate, onOpenMedia }) {
+export default function LuxurySection({ onNavigate }) {
+  const [phase, setPhase] = useState("video");
   const [activeCrown, setActiveCrown] = useState(null);
   const videoRef = useRef(null);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return undefined;
-    let end = Infinity;
 
     const begin = () => {
-      end = Math.max(VIDEO_START + 0.1, (video.duration || 0) - VIDEO_TAIL);
-      video.playbackRate = VIDEO_RATE;
-      try {
-        video.currentTime = VIDEO_START;
-      } catch {
-        /* seeking before ready is a no-op */
-      }
+      try { video.currentTime = VIDEO_START; } catch { /* seeking before ready */ }
       video.play().catch(() => {});
     };
 
     const onTime = () => {
-      if (video.currentTime >= end) {
-        try {
-          video.currentTime = VIDEO_START;
-        } catch {
-          /* ignore */
-        }
+      if (video.currentTime >= VIDEO_END) {
+        video.pause();
+        setPhase("fade-out");
       }
     };
 
@@ -48,63 +35,64 @@ export default function LuxurySection({ onNavigate, onOpenMedia }) {
     };
   }, []);
 
+  const handleBlackoutEnd = () => {
+    if (phase === "fade-out") setPhase("logo");
+  };
+
+  const handleRuleEnd = () => {
+    if (phase === "logo") setPhase("ready");
+  };
+
   const scrollToCollection = () => {
     document.querySelector(".luxe-collection")?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const showReveal = phase === "logo" || phase === "ready";
+
   return (
     <section id="luxury" className="luxe-page">
-      <div className="luxe-hero">
+      <div className="luxe-cinematic-hero">
         <video
           ref={videoRef}
-          className="luxe-video-bg"
-          src="/assets/videos/raheja-walkthrough.mp4"
+          className={`luxe-intro-video${phase === "video" ? " is-playing" : ""}`}
+          src="/luxury.mp4"
           muted
-          loop
           playsInline
           preload="auto"
           aria-hidden="true"
         />
-        <div className="luxe-video-overlay" aria-hidden="true" />
 
-        <div className="luxe-hero-content">
-          <div className="luxe-lockup">
-            <img className="luxe-lockup-logo" src="/assets/images/Raheja-luxe-logo-gold.png" alt="Raheja Luxe" />
-            <small>The Private Collection</small>
+        <div
+          className={`luxe-blackout luxe-blackout--${phase}`}
+          onAnimationEnd={handleBlackoutEnd}
+        />
+
+        {showReveal && (
+          <div className="luxe-reveal">
+            <img
+              className="luxe-logo-reveal"
+              src="/assets/images/Raheja-luxe-logo-gold.png"
+              alt="Raheja Luxe"
+            />
+            <div
+              className="luxe-gold-rule"
+              onAnimationEnd={handleRuleEnd}
+            />
+            {phase === "ready" && (
+              <button
+                className="luxe-scroll-cue"
+                type="button"
+                onClick={scrollToCollection}
+                aria-label="Scroll to collection"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </button>
+            )}
           </div>
-          <h1>
-            Curated
-            <br />
-            <span>Luxury</span>
-          </h1>
-          <p>{luxuryContent.body}</p>
-          <div className="luxe-actions">
-            <button className="primary-action" type="button" onClick={scrollToCollection}>
-              Enter the Collection <span aria-hidden="true">→</span>
-            </button>
-          </div>
-        </div>
-
-        <div className="luxe-stats" aria-label="Raheja Luxe highlights">
-          {luxuryContent.stats.map((stat) => (
-            <div key={stat.label}>
-              <strong><CountUp value={stat.value} /></strong>
-              <span>{stat.label}</span>
-            </div>
-          ))}
-        </div>
+        )}
       </div>
-
-      <div className="luxe-principles">
-        {luxuryContent.principles.map((principle) => (
-          <article key={principle.title}>
-            <p className="eyebrow">{principle.eyebrow}</p>
-            <h2>{principle.title}</h2>
-            <p>{principle.body}</p>
-          </article>
-        ))}
-      </div>
-
 
       <div className="luxe-collection">
         <div className="luxe-section-heading">
@@ -162,7 +150,6 @@ export default function LuxurySection({ onNavigate, onOpenMedia }) {
           })}
         </div>
       </div>
-      <ScrollCue />
     </section>
   );
 }
