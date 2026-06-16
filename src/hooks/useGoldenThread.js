@@ -217,14 +217,19 @@ export function useGoldenThread(canvasRef) {
 
   const toLocal = (clientX, clientY) => {
     const canvas = canvasRef.current;
-    if (!canvas) return { x: clientX, y: clientY };
-    const r = canvas.getBoundingClientRect();
-    // Some Chromium TV kiosk builds return zoom-corrected visual coordinates from
-    // getBoundingClientRect while pointer clientX/Y remain in CSS px. Detect the
-    // discrepancy via offsetWidth (always in CSS layout px) and scale accordingly.
-    const scaleX = canvas.offsetWidth ? r.width / canvas.offsetWidth : 1;
-    const scaleY = canvas.offsetHeight ? r.height / canvas.offsetHeight : 1;
-    return { x: clientX * scaleX - r.left, y: clientY * scaleY - r.top };
+    if (!canvas) return { x: 0, y: 0 };
+    const dpr = window.devicePixelRatio || 1;
+    // clientX/Y are CSS viewport pixels (always in the 0→window.innerWidth range,
+    // regardless of CSS zoom on <html> or devicePixelRatio). canvas.width/height
+    // are device pixels; dividing by dpr gives logical drawing coordinates.
+    // The canvas fills the full viewport (inset:0 in a screen-height section),
+    // so normalising by viewport dimensions maps finger position exactly.
+    // This works with both old Chrome (getBoundingClientRect in layout px) and
+    // new Chrome (returns visual px under CSS zoom) without needing to detect which.
+    return {
+      x: (clientX / window.innerWidth) * (canvas.width / dpr),
+      y: (clientY / window.innerHeight) * (canvas.height / dpr),
+    };
   };
 
   const spawn = (x, y) => {

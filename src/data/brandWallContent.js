@@ -116,6 +116,7 @@ export const projects = [
 ];
 
 export const allProjects = [
+
   {
     title: "Raheja Towers",
     category: "Commercial Office & Showroom Spaces",
@@ -237,6 +238,15 @@ export const allProjects = [
     image: "/assets/images/opt/ambara.jpg",
   },
   {
+    title: "Raheja Avana",
+    category: "Ultra-Luxury Apartments",
+    status: "Ongoing",
+    location: "Infront of Kachna Lake, Kachna Main Road, Raipur",
+    body: "An ultra-luxury residential masterpiece featuring sweeping panoramic views, bespoke interiors, and an address that redefines prestige in Raipur.",
+    rera: "",
+    image: "/assets/images/projects/raheja-avana.jpg",
+  },
+  {
     title: "Raheja Riveria",
     category: "Premium Residential Plots",
     status: "Pre-Launch",
@@ -245,16 +255,6 @@ export const allProjects = [
     body: "Nature-first plotted community designed for peaceful living, breathable open spaces, and premium lifestyle infrastructure.",
     rera: "RERA: PCGRERA300326002076",
     image: "/assets/images/riviera.jpg",
-  },
-  {
-    title: "Raheja Avana",
-    category: "Ultra-Luxury Apartments",
-    status: "Pre-Launch",
-    launched: "Pre-Launch",
-    location: "Infront of Kachna Lake, Kachna Main Road, Raipur",
-    body: "An ultra-luxury residential masterpiece featuring sweeping panoramic views, bespoke interiors, and an address that redefines prestige in Raipur.",
-    rera: "",
-    image: "/assets/images/projects/raheja-avana.jpg",
   },
   {
     title: "Raheja Waterfront",

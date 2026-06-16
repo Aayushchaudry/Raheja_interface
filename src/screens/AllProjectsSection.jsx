@@ -33,6 +33,11 @@ export default function AllProjectsSection({ onNavigate }) {
   const [scrollX, setScrollX] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
 
+  // scrollXRef is the source of truth during drag; setScrollX is only called
+  // once per animation frame so React re-renders stay at ≤60fps.
+  const scrollXRef = useRef(0);
+  const rafDragRef = useRef(null);
+  const isDraggingRef = useRef(false); // avoids stale closure in move/up handlers
   const dragStartRef = useRef(0);
   const scrollStartRef = useRef(0);
   const dragMovedRef = useRef(false);
@@ -58,30 +63,42 @@ export default function AllProjectsSection({ onNavigate }) {
     return () => window.removeEventListener("resize", measure);
   }, []);
 
-  useEffect(() => () => cancelAnimationFrame(tweenRef.current), []);
-
-  // Ease scrollX to a target with a snappier 320ms duration.
-  const snapTo = (index) => {
+  useEffect(() => () => {
     cancelAnimationFrame(tweenRef.current);
-    const from = scrollX;
+    cancelAnimationFrame(rafDragRef.current);
+  }, []);
+
+  // Ease scrollX to a snap position. fromX is the starting scroll value;
+  // defaults to scrollXRef.current so we always start from the live position.
+  const snapTo = (index, fromX) => {
+    cancelAnimationFrame(tweenRef.current);
+    const from = fromX ?? scrollXRef.current;
     const to = -clamp(index, 0, items.length - 1) * cardUnit;
     const duration = 320;
     const startTime = performance.now();
     const step = (now) => {
       const p = Math.min(1, (now - startTime) / duration);
       const eased = 1 - Math.pow(1 - p, 3);
-      setScrollX(from + (to - from) * eased);
+      const val = from + (to - from) * eased;
+      scrollXRef.current = val;
+      setScrollX(val);
       if (p < 1) tweenRef.current = requestAnimationFrame(step);
     };
     tweenRef.current = requestAnimationFrame(step);
   };
 
   const handlePointerDown = (e) => {
+    // Capture keeps pointer events firing on this element even if the finger
+    // drifts outside its bounds — essential on TV touchscreens.
+    e.currentTarget.setPointerCapture(e.pointerId);
     cancelAnimationFrame(tweenRef.current);
+    cancelAnimationFrame(rafDragRef.current);
+    rafDragRef.current = null;
+    isDraggingRef.current = true;
     setIsDragging(true);
     dragMovedRef.current = false;
     dragStartRef.current = e.clientX;
-    scrollStartRef.current = scrollX;
+    scrollStartRef.current = scrollXRef.current;
     lastPosRef.current = e.clientX;
     lastTimeRef.current = performance.now();
     velocityRef.current = 0;
@@ -89,19 +106,28 @@ export default function AllProjectsSection({ onNavigate }) {
   };
 
   const handlePointerMove = (e) => {
-    if (!isDragging) return;
-    const dx = e.clientX - dragStartRef.current;
-    if (Math.abs(dx) > 4) dragMovedRef.current = true;
+    if (!isDraggingRef.current) return;
+    const rawDx = e.clientX - dragStartRef.current;
+    // 1.3× multiplier makes the carousel feel more responsive under finger.
+    const dx = rawDx * 1.3;
+    if (Math.abs(rawDx) > 2) dragMovedRef.current = true;
 
-    // Track instantaneous velocity (px/ms) for momentum snapping on release.
     const now = performance.now();
     const dt = now - lastTimeRef.current;
     if (dt > 0) velocityRef.current = (e.clientX - lastPosRef.current) / dt;
     lastPosRef.current = e.clientX;
     lastTimeRef.current = now;
 
-    setScrollX(clamp(scrollStartRef.current + dx, -maxScroll, 0));
+    scrollXRef.current = clamp(scrollStartRef.current + dx, -maxScroll, 0);
     thread.feed(e.clientX, e.clientY);
+
+    // Throttle React re-renders to one per animation frame (~60fps).
+    if (!rafDragRef.current) {
+      rafDragRef.current = requestAnimationFrame(() => {
+        setScrollX(scrollXRef.current);
+        rafDragRef.current = null;
+      });
+    }
   };
 
   const handleLuxeTap = () => {
@@ -109,19 +135,25 @@ export default function AllProjectsSection({ onNavigate }) {
   };
 
   const handlePointerUp = () => {
-    if (!isDragging) return;
+    if (!isDraggingRef.current) return;
+    isDraggingRef.current = false;
     setIsDragging(false);
     thread.end();
 
-    // Use swipe velocity to determine snap target so a fast flick carries
-    // to the next/prev card even when the finger hasn't crossed the midpoint.
-    const vel = velocityRef.current; // px/ms
-    const THRESHOLD = 0.25;
-    let target = Math.round(-scrollX / cardUnit);
-    if (vel > THRESHOLD) target = Math.max(0, Math.floor(-scrollX / cardUnit));
-    else if (vel < -THRESHOLD) target = Math.min(items.length - 1, Math.ceil(-scrollX / cardUnit));
+    cancelAnimationFrame(rafDragRef.current);
+    rafDragRef.current = null;
 
-    snapTo(target);
+    const finalX = scrollXRef.current;
+    setScrollX(finalX);
+
+    // Flick threshold lowered to 0.15 px/ms so lighter swipes still snap ahead.
+    const vel = velocityRef.current;
+    const THRESHOLD = 0.15;
+    let target = Math.round(-finalX / cardUnit);
+    if (vel > THRESHOLD) target = Math.max(0, Math.floor(-finalX / cardUnit));
+    else if (vel < -THRESHOLD) target = Math.min(items.length - 1, Math.ceil(-finalX / cardUnit));
+
+    snapTo(target, finalX);
   };
 
   return (
@@ -130,7 +162,6 @@ export default function AllProjectsSection({ onNavigate }) {
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
-      onPointerLeave={handlePointerUp}
     >
       <canvas ref={canvasRef} className="pjcf-canvas" aria-hidden="true" />
 
@@ -201,7 +232,11 @@ export default function AllProjectsSection({ onNavigate }) {
                     <h2>{item.title}</h2>
                     {item.launched && (
                       <p className="all-project-launched">
-                        {typeof item.launched === "number" ? `Est. ${item.launched}` : item.launched}
+                        {typeof item.launched === "number"
+                          ? item.status === "Completed"
+                            ? `Completed ${item.launched}`
+                            : `Est. ${item.launched}`
+                          : item.launched}
                       </p>
                     )}
                     <p className="project-location">{item.location}</p>
