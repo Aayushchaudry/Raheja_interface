@@ -79,17 +79,19 @@ export default function LuxurySection({ onNavigate }) {
     };
   }, [phase]);
 
-  // ── Avana pause: 900ms black screen before confession ──
+  // ── Avana pause: brief black screen before confession ──
+  // Kept short (250ms) so the tap feels responsive; the confession video is
+  // already mounted/preloading from the avana-cta phase, so it starts instantly.
   useEffect(() => {
     if (phase !== "avana-pause") return undefined;
-    const timer = setTimeout(() => setPhase("avana-video"), 900);
+    const timer = setTimeout(() => setPhase("avana-video"), 250);
     return () => clearTimeout(timer);
   }, [phase]);
 
   // ── Auto-navigate to Avana after logo settles ──
   useEffect(() => {
     if (phase !== "avana-logo") return undefined;
-    const timer = setTimeout(() => onNavigate("avana"), 2200);
+    const timer = setTimeout(() => onNavigate("avana"), 1200);
     return () => clearTimeout(timer);
   }, [phase, onNavigate]);
 
