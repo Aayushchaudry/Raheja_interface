@@ -247,6 +247,16 @@ export const allProjects = [
     image: "/assets/images/riviera.jpg",
   },
   {
+    title: "Raheja Avana",
+    category: "Ultra-Luxury Apartments",
+    status: "Pre-Launch",
+    launched: "Pre-Launch",
+    location: "Infront of Kachna Lake, Kachna Main Road, Raipur",
+    body: "An ultra-luxury residential masterpiece featuring sweeping panoramic views, bespoke interiors, and an address that redefines prestige in Raipur.",
+    rera: "",
+    image: "/assets/images/projects/raheja-avana.jpg",
+  },
+  {
     title: "Raheja Waterfront",
     category: "Waterfront Villas",
     status: "Pre-Launch",

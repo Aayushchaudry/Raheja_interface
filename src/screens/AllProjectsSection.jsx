@@ -206,7 +206,6 @@ export default function AllProjectsSection({ onNavigate }) {
                     )}
                     <p className="project-location">{item.location}</p>
                     <p className="all-project-body">{item.body}</p>
-                    {item.rera && <p className="project-rera">{item.rera}</p>}
                   </div>
                 </article>
               )}
