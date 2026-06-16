@@ -232,7 +232,11 @@ export default function AllProjectsSection({ onNavigate }) {
                     <h2>{item.title}</h2>
                     {item.launched && (
                       <p className="all-project-launched">
-                        {typeof item.launched === "number" ? `Est. ${item.launched}` : item.launched}
+                        {typeof item.launched === "number"
+                          ? item.status === "Completed"
+                            ? `Completed ${item.launched}`
+                            : `Est. ${item.launched}`
+                          : item.launched}
                       </p>
                     )}
                     <p className="project-location">{item.location}</p>
