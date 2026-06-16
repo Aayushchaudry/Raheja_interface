@@ -1,23 +1,63 @@
 import { useEffect, useRef, useState } from "react";
 import { avanaDetail } from "../data/brandWallContent.js";
+import { avanaAmenities } from "../data/amenities.js";
+import { prefetchAssets } from "../hooks/useAssetCache.js";
+import AmenitiesSection from "./AmenitiesSection.jsx";
 
 const WALKTHROUGH_SRC = "https://d1ovqzmursgzel.cloudfront.net/raheja_avana/Explore_avana.mp4";
 
+const RENDER_BASE = "https://d1ovqzmursgzel.cloudfront.net/raheja_avana/render";
+
 const ARCH_SLIDES = [
   {
-    image: "/assets/images/AVANA1.jpg",
-    title: "Grand Architecture",
-    body: "Designed to an international standard, Avana's architecture balances grandeur with intimacy at every scale.",
+    image: `${RENDER_BASE}/1.jpg`,
+    title: "The Grand Arrival",
+    body: "A stately, screened gateway announces Avana — Raipur's first address, where every homecoming feels like an occasion.",
   },
   {
-    image: "/assets/images/AVANA2.jpg",
-    title: "Elegant Facades",
-    body: "Every elevation is considered — proportioned to impress, detailed to endure, and crafted to become an icon.",
+    image: `${RENDER_BASE}/2.jpg`,
+    title: "The Clubhouse",
+    body: "A sculptural clubhouse crowns the community, its floating roofline and terraced gardens setting a new benchmark for leisure in the city.",
   },
   {
-    image: "/assets/images/AVANA3.jpg",
-    title: "Timeless Design",
-    body: "Where modern luxury meets classical permanence. A residence that will stand as Raipur's finest address for generations.",
+    image: `${RENDER_BASE}/3.jpg`,
+    title: "The Waterscape",
+    body: "An expansive resort-style pool mirrors the dusk sky — a private oasis framed by cascading green terraces.",
+  },
+  {
+    image: `${RENDER_BASE}/4.jpg`,
+    title: "The Garden Promenade",
+    body: "Residences open onto lush, flower-lined walks, where landscaped greens turn every stroll home into a walk through a garden.",
+  },
+  {
+    image: `${RENDER_BASE}/5.jpg`,
+    title: "Twilight Residences",
+    body: "As evening falls, glass-fronted homes glow with warmth — architecture and light composed for a life lived beautifully.",
+  },
+  {
+    image: `${RENDER_BASE}/6.jpg`,
+    title: "The Central Green",
+    body: "Flowering Gulmohars canopy a central commons — a gathering place designed for community, calm and unhurried evenings.",
+  },
+  {
+    image: `${RENDER_BASE}/7.jpg`,
+    title: "Gardens of Wellbeing",
+    body: "Jacaranda blooms and open play lawns weave wellness into daily life, crafted for families to grow, move and unwind.",
+  },
+  {
+    image: `${RENDER_BASE}/8.jpg`,
+    title: "The Residences",
+    body: "Tree-lined avenues frame a procession of refined villa façades — proportioned, private and unmistakably Avana.",
+  },
+  {
+    image: `${RENDER_BASE}/9.jpg`,
+    title: "The Leisure Lawn",
+    body: "Generous open lawns and shaded pergolas invite pause and play — luxury measured in space, light and greenery.",
+  },
+  {
+    image: `${RENDER_BASE}/10.jpg`,
+    title: "The Masterplan",
+    body: "Seen from above, Avana unfolds as a meticulously master-planned sanctuary — a green township destined to define Raipur's tomorrow.",
   },
 ];
 
@@ -30,7 +70,7 @@ const FEATURES = [
   {
     title: "Amenities",
     body: "Curated leisure, wellness and social spaces that elevate the everyday.",
-    video: "https://d1ovqzmursgzel.cloudfront.net/raheja_avana/Amenities.mp4",
+    amenities: true,
   },
 ];
 
@@ -49,6 +89,18 @@ function ArchGallery({ onClose }) {
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   });
+
+  // Warm the adjacent renders so navigating the gallery feels instant despite
+  // the large, full-resolution image files.
+  useEffect(() => {
+    const warm = (i) => {
+      if (i < 0 || i >= ARCH_SLIDES.length) return;
+      const img = new Image();
+      img.src = ARCH_SLIDES[i].image;
+    };
+    warm(index + 1);
+    warm(index - 1);
+  }, [index]);
 
   const slide = (newIndex, direction) => {
     if (animating) return;
@@ -131,6 +183,8 @@ function ArchGallery({ onClose }) {
 export default function ProjectDetailSection({ onOpenMedia, onNavigate }) {
   const [videoSrc, setVideoSrc] = useState(null);
   const [galleryOpen, setGalleryOpen] = useState(false);
+  const [amenitiesOpen, setAmenitiesOpen] = useState(false);
+  const [prefetch, setPrefetch] = useState({ progress: 0, ready: new Set() });
 
   useEffect(() => {
     if (!videoSrc) return undefined;
@@ -139,8 +193,29 @@ export default function ProjectDetailSection({ onOpenMedia, onNavigate }) {
     return () => document.removeEventListener("keydown", onKey);
   }, [videoSrc]);
 
+  // The moment the Avana page is reached, begin downloading the amenity films
+  // into the browser cache so they play instantly when the visitor opens them.
+  useEffect(() => {
+    let cancelled = false;
+    prefetchAssets(
+      avanaAmenities.map((a) => a.video),
+      (p) => { if (!cancelled) setPrefetch((s) => ({ ...s, progress: p })); },
+      (url) => {
+        if (cancelled) return;
+        setPrefetch((s) => {
+          const ready = new Set(s.ready);
+          ready.add(url);
+          return { ...s, ready };
+        });
+      },
+      () => cancelled,
+    );
+    return () => { cancelled = true; };
+  }, []);
+
   const handleCardClick = (feature) => {
     if (feature.gallery) { setGalleryOpen(true); return; }
+    if (feature.amenities) { setAmenitiesOpen(true); return; }
     if (feature.video) { setVideoSrc(feature.video); return; }
     onOpenMedia(feature.action);
   };
@@ -226,6 +301,15 @@ export default function ProjectDetailSection({ onOpenMedia, onNavigate }) {
       )}
 
       {galleryOpen && <ArchGallery onClose={() => setGalleryOpen(false)} />}
+
+      {amenitiesOpen && (
+        <AmenitiesSection
+          amenities={avanaAmenities}
+          progress={prefetch.progress}
+          readySet={prefetch.ready}
+          onClose={() => setAmenitiesOpen(false)}
+        />
+      )}
     </section>
   );
 }

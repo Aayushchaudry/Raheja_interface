@@ -4610,6 +4610,308 @@ h3 {
   box-shadow: 0 0 24px rgba(201, 169, 110, 0.3);
 }
 
+/* ===================================================================== */
+/* Amenities experience — full-screen luxe grid opened from the Avana   */
+/* "Amenities" card. Each card plays a full-quality film from cache.     */
+/* ===================================================================== */
+.amenities-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(22px, 3vw, 48px) clamp(28px, 4.5vw, 72px) clamp(24px, 3vw, 52px);
+  background: #07050a;
+  overflow-y: auto;
+  animation: amenitiesFade 0.5s ease both;
+}
+
+@keyframes amenitiesFade {
+  from { opacity: 0; transform: scale(1.015); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.amenities-overlay-bg {
+  position: absolute;
+  inset: 0;
+  background: url("/assets/images/avana.jpg") center / cover no-repeat;
+  opacity: 0.16;
+  pointer-events: none;
+}
+
+.amenities-overlay-dim {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(120% 90% at 50% -10%, rgba(201, 169, 110, 0.12) 0%, transparent 55%),
+    linear-gradient(to bottom, rgba(7, 5, 10, 0.72) 0%, rgba(7, 5, 10, 0.4) 40%, rgba(7, 5, 10, 0.85) 100%);
+  pointer-events: none;
+}
+
+/* ── Header ── */
+.amenities-head {
+  position: relative;
+  z-index: 1;
+  flex: none;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: clamp(16px, 2vw, 28px);
+}
+
+.amenities-eyebrow {
+  color: rgba(201, 169, 110, 0.6);
+  font-family: "Raleway", sans-serif;
+  font-size: clamp(8px, 0.72vw, 12px);
+  font-weight: 600;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  margin: 0 0 8px;
+}
+
+.amenities-title {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(30px, 3.6vw, 58px);
+  font-weight: 400;
+  line-height: 1;
+  color: #f0e8d8;
+  margin: 0;
+}
+
+.amenities-title em { font-style: italic; color: var(--gold); }
+
+.amenities-sub {
+  color: rgba(240, 232, 216, 0.6);
+  font-family: "Raleway", sans-serif;
+  font-size: clamp(12px, 1vw, 16px);
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  margin: clamp(8px, 1vw, 14px) 0 0;
+}
+
+.amenities-close {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: clamp(52px, 4.5vw, 72px);
+  height: clamp(52px, 4.5vw, 72px);
+  border-radius: 50%;
+  border: 1.5px solid rgba(201, 169, 110, 0.55);
+  background: rgba(0, 0, 0, 0.4);
+  color: var(--gold);
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.amenities-close svg { width: 42%; height: 42%; }
+
+.amenities-close:hover {
+  background: rgba(201, 169, 110, 0.2);
+  border-color: rgba(201, 169, 110, 0.85);
+  box-shadow: 0 0 24px rgba(201, 169, 110, 0.28);
+}
+
+/* ── Prefetch progress ── */
+.amenities-prep {
+  position: relative;
+  z-index: 1;
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 1.4vw, 20px);
+  margin-bottom: clamp(14px, 1.8vw, 24px);
+}
+
+.amenities-prep-text {
+  color: rgba(201, 169, 110, 0.75);
+  font-family: "Raleway", sans-serif;
+  font-size: clamp(9px, 0.78vw, 12px);
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.amenities-prep-bar {
+  position: relative;
+  flex: 1;
+  max-width: 360px;
+  height: 2px;
+  background: rgba(201, 169, 110, 0.18);
+  overflow: hidden;
+}
+
+.amenities-prep-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: linear-gradient(90deg, rgba(201, 169, 110, 0.4), var(--gold));
+  transition: width 0.4s ease;
+}
+
+/* ── Grid ── */
+.amenities-grid {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(clamp(200px, 17vw, 300px), 1fr));
+  gap: clamp(12px, 1.2vw, 22px);
+  align-content: stretch;
+}
+
+.amenity-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: clamp(150px, 19vh, 240px);
+  padding: clamp(16px, 1.4vw, 24px);
+  border: 1px solid rgba(201, 169, 110, 0.18);
+  border-radius: 4px;
+  background-size: cover;
+  background-position: center;
+  background-color: #14100c;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  transform: translateZ(0);
+  transition: transform 0.34s cubic-bezier(0.2, 0.7, 0.2, 1), border-color 0.34s ease, box-shadow 0.34s ease;
+}
+
+.amenity-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(201, 169, 110, 0.7);
+  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.55), 0 0 30px rgba(201, 169, 110, 0.12);
+}
+
+.amenity-card-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(7, 5, 10, 0.92) 4%, rgba(7, 5, 10, 0.45) 46%, rgba(7, 5, 10, 0.12) 100%);
+  transition: background 0.34s ease;
+}
+
+.amenity-card:hover .amenity-card-scrim {
+  background: linear-gradient(to top, rgba(7, 5, 10, 0.92) 4%, rgba(7, 5, 10, 0.5) 52%, rgba(28, 20, 10, 0.2) 100%);
+}
+
+.amenity-card-index {
+  position: absolute;
+  top: clamp(12px, 1.1vw, 18px);
+  left: clamp(14px, 1.2vw, 22px);
+  z-index: 2;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(16px, 1.3vw, 22px);
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  color: rgba(201, 169, 110, 0.85);
+}
+
+.amenity-card-play {
+  position: absolute;
+  top: clamp(12px, 1.1vw, 18px);
+  right: clamp(12px, 1.1vw, 18px);
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: clamp(34px, 2.8vw, 44px);
+  height: clamp(34px, 2.8vw, 44px);
+  border-radius: 50%;
+  border: 1px solid rgba(201, 169, 110, 0.5);
+  background: rgba(7, 5, 10, 0.5);
+  color: var(--gold);
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.3s ease, transform 0.3s ease, background 0.3s ease;
+}
+
+.amenity-card-play svg { width: 44%; height: 44%; margin-left: 2px; }
+
+.amenity-card:hover .amenity-card-play {
+  opacity: 1;
+  transform: scale(1);
+  background: rgba(201, 169, 110, 0.22);
+}
+
+.amenity-card-meta {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.amenity-card-name {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(17px, 1.55vw, 26px);
+  font-weight: 500;
+  line-height: 1.1;
+  color: #f3ecdd;
+}
+
+.amenity-card-desc {
+  font-family: "Raleway", sans-serif;
+  font-size: clamp(10px, 0.82vw, 13px);
+  font-weight: 300;
+  line-height: 1.45;
+  color: rgba(240, 232, 216, 0.62);
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.34s ease, opacity 0.34s ease, margin 0.34s ease;
+}
+
+.amenity-card:hover .amenity-card-desc {
+  max-height: 60px;
+  opacity: 1;
+  margin-top: 1px;
+}
+
+.amenity-card-status {
+  margin-top: 6px;
+  font-family: "Raleway", sans-serif;
+  font-size: clamp(9px, 0.74vw, 12px);
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(240, 232, 216, 0.45);
+  transition: color 0.3s ease;
+}
+
+.amenity-card-status.is-ready { color: rgba(201, 169, 110, 0.85); }
+.amenity-card:hover .amenity-card-status.is-ready { color: var(--gold); }
+
+/* ── Player loading state ── */
+.amenities-player-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  color: rgba(240, 232, 216, 0.7);
+  font-family: "Raleway", sans-serif;
+  font-size: clamp(12px, 1vw, 15px);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.amenities-spinner {
+  width: clamp(40px, 3.4vw, 54px);
+  height: clamp(40px, 3.4vw, 54px);
+  border-radius: 50%;
+  border: 2px solid rgba(201, 169, 110, 0.22);
+  border-top-color: var(--gold);
+  animation: amenitiesSpin 0.9s linear infinite;
+}
+
+@keyframes amenitiesSpin {
+  to { transform: rotate(360deg); }
+}
+
 /* ===== Redesigned "Enter Luxury" card (last slot of Our Projects coverflow) ===== */
 .luxe-enter-card {
   display: flex;
@@ -5157,16 +5459,16 @@ h3 {
 
 /* ---- Scene 1 · Principles ---- */
 .about-cine .abc-stand .abc-scene-inner {
-  padding: clamp(78px, 9vh, 112px) clamp(48px, 6vw, 96px) clamp(40px, 6vh, 72px);
+  padding: clamp(32px, 9vh, 112px) clamp(36px, 6vw, 96px) clamp(24px, 6vh, 72px);
 }
 .about-cine .abc-stand-head {
-  margin-bottom: clamp(20px, 3vh, 38px);
+  margin-bottom: clamp(12px, 3vh, 38px);
 }
 .about-cine .abc-stand-title {
-  font-size: clamp(40px, 5vw, 72px);
+  font-size: clamp(30px, min(5vw, 7vh), 72px);
   font-weight: 500;
   line-height: 1.02;
-  margin: clamp(10px, 1.4vw, 20px) 0 0;
+  margin: clamp(8px, 1.4vw, 20px) 0 0;
   letter-spacing: 0.005em;
 }
 .about-cine .abc-principles {
@@ -5187,21 +5489,21 @@ h3 {
 .about-cine .abc-principle:nth-child(3),
 .about-cine .abc-principle:nth-child(4) { border-top: 1px solid var(--hair); }
 .about-cine .abc-p-idx {
-  font-size: clamp(24px, 2.6vw, 38px);
+  font-size: clamp(18px, min(2.6vw, 3.6vh), 38px);
   font-weight: 500;
   color: var(--brass);
   letter-spacing: 0.04em;
-  margin-bottom: clamp(8px, 1vw, 14px);
+  margin-bottom: clamp(6px, 1vw, 14px);
 }
 .about-cine .abc-p-title {
-  font-size: clamp(24px, 2.7vw, 40px);
+  font-size: clamp(19px, min(2.7vw, 3.9vh), 40px);
   font-weight: 600;
-  margin: 0 0 clamp(8px, 1vw, 16px);
+  margin: 0 0 clamp(6px, 1vw, 16px);
   line-height: 1.05;
 }
 .about-cine .abc-p-body {
-  font-size: clamp(14px, 1.4vw, 21px);
-  line-height: 1.6;
+  font-size: clamp(13px, min(1.4vw, 2vh), 21px);
+  line-height: 1.5;
   color: var(--paper-soft);
   max-width: 46ch;
   font-weight: 300;
@@ -5226,25 +5528,25 @@ h3 {
 
 /* ---- Scene 2 · Numbers ---- */
 .about-cine .abc-numbers .abc-scene-inner {
-  padding: clamp(90px, 12vh, 140px) clamp(48px, 6vw, 96px) clamp(80px, 11vh, 128px);
+  padding: clamp(40px, 12vh, 140px) clamp(36px, 6vw, 96px) clamp(36px, 11vh, 128px);
 }
 .about-cine .abc-numbers-head {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: clamp(14px, 2vw, 22px);
-  margin-bottom: clamp(28px, 4vh, 46px);
+  gap: clamp(10px, 2vw, 22px);
+  margin-bottom: clamp(16px, 4vh, 46px);
 }
 .about-cine .abc-num-title {
-  font-size: clamp(40px, 5.2vw, 78px);
+  font-size: clamp(30px, min(5.2vw, 7.4vh), 78px);
   font-weight: 500;
   line-height: 1;
-  margin: clamp(12px, 1.5vw, 22px) 0 0;
+  margin: clamp(8px, 1.5vw, 22px) 0 0;
 }
 .about-cine .abc-pullquote {
   font-family: var(--display);
   font-style: italic;
-  font-size: clamp(18px, 2vw, 30px);
+  font-size: clamp(15px, min(2vw, 2.9vh), 30px);
   line-height: 1.45;
   color: var(--paper-soft);
   max-width: 64ch;
@@ -5263,8 +5565,8 @@ h3 {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: clamp(8px, 1vw, 14px);
-  padding: clamp(20px, 2.4vw, 34px) clamp(14px, 1.6vw, 24px);
+  gap: clamp(4px, 1vw, 14px);
+  padding: clamp(10px, 2.4vw, 34px) clamp(10px, 1.6vw, 24px);
   position: relative;
 }
 .about-cine .abc-stat::before {
@@ -5276,7 +5578,7 @@ h3 {
 }
 .about-cine .abc-stat:nth-child(3n + 1)::before { border-left: 0; }
 .about-cine .abc-stat-num {
-  font-size: clamp(48px, 6.4vw, 92px);
+  font-size: clamp(36px, min(6.4vw, 8.6vh), 92px);
   font-weight: 600;
   line-height: 0.9;
   color: var(--brass-bright);
