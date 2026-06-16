@@ -5248,9 +5248,9 @@ h3 {
    All rules scoped under .about-cine so nothing else is affected.
    =========================================================== */
 .about-cine {
-  --brass: #c2a974;
-  --brass-bright: color-mix(in oklab, var(--brass) 64%, #fff);
-  --brass-glow: color-mix(in oklab, var(--brass) 80%, #fff6df);
+  --brass: #a87b16;
+  --brass-bright: color-mix(in oklab, var(--brass) 46%, #fff3cf);
+  --brass-glow: color-mix(in oklab, var(--brass) 42%, #fff1c4);
   --ink: #080706;
   --paper: #f3eee3;
   --paper-soft: rgba(243, 238, 227, 0.74);
@@ -5356,7 +5356,7 @@ h3 {
   left: -20%;
   width: 60%;
   height: 160%;
-  background: linear-gradient(105deg, transparent, color-mix(in oklab, var(--brass) 14%, transparent) 45%, color-mix(in oklab, var(--brass) 20%, transparent) 50%, transparent 60%);
+  background: linear-gradient(105deg, transparent, color-mix(in oklab, var(--brass) 24%, transparent) 45%, color-mix(in oklab, var(--brass-bright) 40%, transparent) 50%, transparent 60%);
   filter: blur(30px);
   transform: translateX(-30%) rotate(8deg);
   animation: abcSweep calc(16s / var(--anim)) ease-in-out infinite;
@@ -5609,11 +5609,11 @@ h3 {
 .about-cine .abc-stat-num > span {
   background-image: linear-gradient(
     100deg,
-    #6e5524 0%,
-    #a9842f 32%,
-    #f0d79b 50%,
-    #a9842f 68%,
-    #6e5524 100%
+    #3d2c0a 0%,
+    #9a7212 30%,
+    #ffe9ad 50%,
+    #9a7212 70%,
+    #3d2c0a 100%
   );
   background-size: 220% 100%;
   -webkit-background-clip: text;
@@ -5634,7 +5634,7 @@ h3 {
   filter: drop-shadow(0 6px 26px rgba(0, 0, 0, 0.55));
 }
 .about-cine .abc-stat-num {
-  filter: drop-shadow(0 0 30px rgba(194, 169, 116, 0.45));
+  filter: drop-shadow(0 0 32px rgba(168, 123, 22, 0.55));
 }
 
 @media (prefers-reduced-motion: reduce) {
