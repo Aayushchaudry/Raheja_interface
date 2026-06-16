@@ -17,6 +17,7 @@ function getDims(viewW) {
 const statusClass = (status) => {
   if (status === "Ongoing") return "is-ongoing";
   if (status === "Future") return "is-future";
+  if (status === "Pre-Launch") return "is-prelaunched";
   return "";
 };
 
@@ -198,9 +199,13 @@ export default function AllProjectsSection({ onNavigate }) {
                   <div className="pjcf-card-copy">
                     <p className="all-project-category">{item.category}</p>
                     <h2>{item.title}</h2>
+                    {item.launched && (
+                      <p className="all-project-launched">
+                        {typeof item.launched === "number" ? `Est. ${item.launched}` : item.launched}
+                      </p>
+                    )}
                     <p className="project-location">{item.location}</p>
                     <p className="all-project-body">{item.body}</p>
-                    <p className="project-rera">{item.rera}</p>
                   </div>
                 </article>
               )}

@@ -76,7 +76,13 @@ function ArchGallery({ onClose }) {
         style={{ backgroundImage: `url("${current.image}")` }}
       />
       <div className="arch-gallery-dim" />
-      <button className="arch-gallery-close" type="button" aria-label="Close" onClick={onClose}>
+      <button
+        className="arch-gallery-close"
+        type="button"
+        aria-label="Close"
+        onClick={onClose}
+        onTouchEnd={(e) => { e.preventDefault(); onClose(); }}
+      >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
           <path d="M18 6L6 18M6 6l12 12" />
         </svg>
@@ -205,7 +211,13 @@ export default function ProjectDetailSection({ onOpenMedia, onNavigate }) {
       {videoSrc && (
         <div className="avana-video-overlay">
           <video className="avana-video-player" src={videoSrc} autoPlay controls playsInline />
-          <button className="avana-video-close" type="button" aria-label="Close video" onClick={() => setVideoSrc(null)}>
+          <button
+            className="avana-video-close"
+            type="button"
+            aria-label="Close video"
+            onClick={() => setVideoSrc(null)}
+            onTouchEnd={(e) => { e.preventDefault(); setVideoSrc(null); }}
+          >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
               <path d="M18 6L6 18M6 6l12 12" />
             </svg>
