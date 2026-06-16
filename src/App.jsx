@@ -118,7 +118,7 @@ export default function App() {
 
   const nextPage = inFlow ? pageOrder[currentIndex + 1] : null;
 
-  const showPrev = inFlow ? currentIndex > 0 : true;
+  const showPrev = false;
   // Projects and luxury/avana pages advance via their own in-page controls.
   // On About, hold the Next arrow back until the visitor has scrolled to the bottom.
   const showNext =

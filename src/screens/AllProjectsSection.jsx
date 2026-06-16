@@ -36,6 +36,9 @@ export default function AllProjectsSection({ onNavigate }) {
   const scrollStartRef = useRef(0);
   const dragMovedRef = useRef(false);
   const tweenRef = useRef(0);
+  const lastPosRef = useRef(0);
+  const lastTimeRef = useRef(0);
+  const velocityRef = useRef(0);
 
   const items = [...allProjects, LUXE_CARD];
   const { cardWidth, cardUnit, imageH, cardHeight } = getDims(viewW);
@@ -56,12 +59,12 @@ export default function AllProjectsSection({ onNavigate }) {
 
   useEffect(() => () => cancelAnimationFrame(tweenRef.current), []);
 
-  // Ease scrollX to a target (replaces GSAP, which this app doesn't bundle).
+  // Ease scrollX to a target with a snappier 320ms duration.
   const snapTo = (index) => {
     cancelAnimationFrame(tweenRef.current);
     const from = scrollX;
     const to = -clamp(index, 0, items.length - 1) * cardUnit;
-    const duration = 450;
+    const duration = 320;
     const startTime = performance.now();
     const step = (now) => {
       const p = Math.min(1, (now - startTime) / duration);
@@ -78,13 +81,24 @@ export default function AllProjectsSection({ onNavigate }) {
     dragMovedRef.current = false;
     dragStartRef.current = e.clientX;
     scrollStartRef.current = scrollX;
+    lastPosRef.current = e.clientX;
+    lastTimeRef.current = performance.now();
+    velocityRef.current = 0;
     thread.start(e.clientX, e.clientY);
   };
 
   const handlePointerMove = (e) => {
     if (!isDragging) return;
     const dx = e.clientX - dragStartRef.current;
-    if (Math.abs(dx) > 8) dragMovedRef.current = true;
+    if (Math.abs(dx) > 4) dragMovedRef.current = true;
+
+    // Track instantaneous velocity (px/ms) for momentum snapping on release.
+    const now = performance.now();
+    const dt = now - lastTimeRef.current;
+    if (dt > 0) velocityRef.current = (e.clientX - lastPosRef.current) / dt;
+    lastPosRef.current = e.clientX;
+    lastTimeRef.current = now;
+
     setScrollX(clamp(scrollStartRef.current + dx, -maxScroll, 0));
     thread.feed(e.clientX, e.clientY);
   };
@@ -97,7 +111,16 @@ export default function AllProjectsSection({ onNavigate }) {
     if (!isDragging) return;
     setIsDragging(false);
     thread.end();
-    snapTo(Math.round(-scrollX / cardUnit));
+
+    // Use swipe velocity to determine snap target so a fast flick carries
+    // to the next/prev card even when the finger hasn't crossed the midpoint.
+    const vel = velocityRef.current; // px/ms
+    const THRESHOLD = 0.25;
+    let target = Math.round(-scrollX / cardUnit);
+    if (vel > THRESHOLD) target = Math.max(0, Math.floor(-scrollX / cardUnit));
+    else if (vel < -THRESHOLD) target = Math.min(items.length - 1, Math.ceil(-scrollX / cardUnit));
+
+    snapTo(target);
   };
 
   return (

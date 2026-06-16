@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { luxuryContent } from "../data/brandWallContent.js";
 
 const VIDEO_START = 15;
 const VIDEO_END = 28;
@@ -8,16 +7,12 @@ const CONFESSION_END = 26;
 
 export default function LuxurySection({ onNavigate }) {
   const [phase, setPhase] = useState("video");
-  // videoReady: true only after intro video has seeked to 15s — prevents showing frame 0
   const [videoReady, setVideoReady] = useState(false);
-  // principle carousel state
-  const [principleIndex, setPrincipleIndex] = useState(0);
-  const [principleAnim, setPrincipleAnim] = useState("entering");
 
   const videoRef = useRef(null);
   const confessionRef = useRef(null);
 
-  // ── Intro video: hide until seeked to 15s, then fade in ──
+  // ── Intro video: seek to 15s, play until 28s ──
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return undefined;
@@ -27,7 +22,7 @@ export default function LuxurySection({ onNavigate }) {
       startTimer = setTimeout(() => {
         const onSeeked = () => {
           video.play().catch(() => setPhase("logo"));
-          setVideoReady(true); // reveal only after correct frame is ready
+          setVideoReady(true);
         };
         video.addEventListener("seeked", onSeeked, { once: true });
         try {
@@ -57,7 +52,7 @@ export default function LuxurySection({ onNavigate }) {
     };
   }, []);
 
-  // ── Confession video: 21s → 26s ──
+  // ── Confession video: starts at 21.7s → 26s ──
   useEffect(() => {
     if (phase !== "avana-video") return undefined;
     const video = confessionRef.current;
@@ -84,36 +79,12 @@ export default function LuxurySection({ onNavigate }) {
     };
   }, [phase]);
 
-  // ── Avana pause: hold black screen 900ms before revealing confession ──
+  // ── Avana pause: 900ms black screen before confession ──
   useEffect(() => {
     if (phase !== "avana-pause") return undefined;
     const timer = setTimeout(() => setPhase("avana-video"), 900);
     return () => clearTimeout(timer);
   }, [phase]);
-
-  // ── Principles carousel: entering → (2.4s) → exiting → (650ms) → next ──
-  useEffect(() => {
-    if (phase !== "principles") return undefined;
-
-    if (principleAnim === "entering") {
-      const timer = setTimeout(() => setPrincipleAnim("exiting"), 2400);
-      return () => clearTimeout(timer);
-    }
-
-    if (principleAnim === "exiting") {
-      const timer = setTimeout(() => {
-        if (principleIndex < 2) {
-          setPrincipleIndex(i => i + 1);
-          setPrincipleAnim("entering");
-        } else {
-          setPhase("avana-cta");
-        }
-      }, 650);
-      return () => clearTimeout(timer);
-    }
-
-    return undefined;
-  }, [phase, principleAnim, principleIndex]);
 
   // ── Auto-navigate to Avana after logo settles ──
   useEffect(() => {
@@ -129,16 +100,6 @@ export default function LuxurySection({ onNavigate }) {
 
   const handleRuleEnd = () => {
     if (phase === "logo") setPhase("ready");
-  };
-
-  // Skip to next principle (or advance) on tap
-  const handleCardTap = () => {
-    if (principleAnim === "exiting") return;
-    if (principleIndex < 2) {
-      setPrincipleAnim("exiting");
-    } else {
-      setPhase("avana-cta");
-    }
   };
 
   const showIntroReveal = phase === "logo" || phase === "ready";
@@ -160,8 +121,8 @@ export default function LuxurySection({ onNavigate }) {
           onError={() => { setVideoReady(false); setPhase("logo"); }}
         />
 
-        {/* Ambient background for principles + avana-cta phases */}
-        {(phase === "principles" || phase === "avana-cta") && (
+        {/* Ambient background for avana-cta */}
+        {phase === "avana-cta" && (
           <div className="luxe-ambient-bg" aria-hidden="true">
             <div className="luxe-ambient-orb luxe-ambient-orb--1" />
             <div className="luxe-ambient-orb luxe-ambient-orb--2" />
@@ -169,8 +130,8 @@ export default function LuxurySection({ onNavigate }) {
           </div>
         )}
 
-        {/* Confession video — preloads during principles + avana phases */}
-        {(phase === "principles" || isAvanaPhase) && (
+        {/* Confession video — preloads during avana phases */}
+        {isAvanaPhase && (
           <video
             ref={confessionRef}
             className={`luxe-confession-video${phase === "avana-video" ? " is-playing" : ""}`}
@@ -183,13 +144,13 @@ export default function LuxurySection({ onNavigate }) {
           />
         )}
 
-        {/* Shared blackout */}
+        {/* Shared blackout overlay */}
         <div
           className={`luxe-blackout luxe-blackout--${phase}`}
           onAnimationEnd={handleBlackoutEnd}
         />
 
-        {/* Intro reveal */}
+        {/* Logo reveal + scroll cue (logo → ready phases) */}
         {showIntroReveal && (
           <div className="luxe-reveal">
             <img
@@ -203,11 +164,11 @@ export default function LuxurySection({ onNavigate }) {
                 <button
                   className="luxe-scroll-cue"
                   type="button"
-                  onClick={() => setPhase("principles")}
-                  aria-label="Explore principles"
+                  aria-label="Enter Luxury of Raheja Avana"
+                  onClick={() => setPhase("avana-cta")}
                 >
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <polyline points="6 9 12 15 18 9" />
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round">
+                    <path d="M6 9l6 6 6-6" />
                   </svg>
                 </button>
                 <p className="luxe-enter-text">Enter Luxury</p>
@@ -216,22 +177,7 @@ export default function LuxurySection({ onNavigate }) {
           </div>
         )}
 
-        {/* Single principles card — one principle at a time */}
-        {phase === "principles" && (
-          <div className="luxe-single-card" onClick={handleCardTap} role="button" tabIndex={0} aria-label="Next">
-            {/* Top gold rule */}
-            <div className="luxe-card-rule" aria-hidden="true" />
-
-            {/* Principle content */}
-            <div key={principleIndex} className={`luxe-card-principle luxe-card-principle--${principleAnim}`}>
-              <p className="luxe-principle-eyebrow">{luxuryContent.principles[principleIndex].eyebrow}</p>
-              <h2 className="luxe-principle-title">{luxuryContent.principles[principleIndex].title}</h2>
-            </div>
-
-          </div>
-        )}
-
-        {/* Avana CTA */}
+        {/* Avana CTA — big centred button */}
         {phase === "avana-cta" && (
           <button
             className="luxe-avana-btn"
@@ -243,7 +189,7 @@ export default function LuxurySection({ onNavigate }) {
           </button>
         )}
 
-        {/* Avana logo */}
+        {/* Avana logo after confession video */}
         {phase === "avana-logo" && (
           <img
             className="luxe-avana-logo"
