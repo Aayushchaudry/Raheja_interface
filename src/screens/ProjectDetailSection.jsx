@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { avanaDetail } from "../data/brandWallContent.js";
+import { avanaAmenities } from "../data/amenities.js";
+import { prefetchAssets } from "../hooks/useAssetCache.js";
+import AmenitiesSection from "./AmenitiesSection.jsx";
 
 const WALKTHROUGH_SRC = "https://d1ovqzmursgzel.cloudfront.net/raheja_avana/Explore_avana.mp4";
 
@@ -30,7 +33,7 @@ const FEATURES = [
   {
     title: "Amenities",
     body: "Curated leisure, wellness and social spaces that elevate the everyday.",
-    video: "https://d1ovqzmursgzel.cloudfront.net/raheja_avana/Amenities.mp4",
+    amenities: true,
   },
 ];
 
@@ -131,6 +134,8 @@ function ArchGallery({ onClose }) {
 export default function ProjectDetailSection({ onOpenMedia, onNavigate }) {
   const [videoSrc, setVideoSrc] = useState(null);
   const [galleryOpen, setGalleryOpen] = useState(false);
+  const [amenitiesOpen, setAmenitiesOpen] = useState(false);
+  const [prefetch, setPrefetch] = useState({ progress: 0, ready: new Set() });
 
   useEffect(() => {
     if (!videoSrc) return undefined;
@@ -139,8 +144,29 @@ export default function ProjectDetailSection({ onOpenMedia, onNavigate }) {
     return () => document.removeEventListener("keydown", onKey);
   }, [videoSrc]);
 
+  // The moment the Avana page is reached, begin downloading the amenity films
+  // into the browser cache so they play instantly when the visitor opens them.
+  useEffect(() => {
+    let cancelled = false;
+    prefetchAssets(
+      avanaAmenities.map((a) => a.video),
+      (p) => { if (!cancelled) setPrefetch((s) => ({ ...s, progress: p })); },
+      (url) => {
+        if (cancelled) return;
+        setPrefetch((s) => {
+          const ready = new Set(s.ready);
+          ready.add(url);
+          return { ...s, ready };
+        });
+      },
+      () => cancelled,
+    );
+    return () => { cancelled = true; };
+  }, []);
+
   const handleCardClick = (feature) => {
     if (feature.gallery) { setGalleryOpen(true); return; }
+    if (feature.amenities) { setAmenitiesOpen(true); return; }
     if (feature.video) { setVideoSrc(feature.video); return; }
     onOpenMedia(feature.action);
   };
@@ -226,6 +252,15 @@ export default function ProjectDetailSection({ onOpenMedia, onNavigate }) {
       )}
 
       {galleryOpen && <ArchGallery onClose={() => setGalleryOpen(false)} />}
+
+      {amenitiesOpen && (
+        <AmenitiesSection
+          amenities={avanaAmenities}
+          progress={prefetch.progress}
+          readySet={prefetch.ready}
+          onClose={() => setAmenitiesOpen(false)}
+        />
+      )}
     </section>
   );
 }
