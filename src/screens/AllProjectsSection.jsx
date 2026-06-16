@@ -60,6 +60,7 @@ export default function AllProjectsSection({ onNavigate }) {
   const dragStartRef = useRef(0);
   const scrollStartRef = useRef(0);
   const dragMovedRef = useRef(false);
+  const luxeDownRef = useRef(false); // press began on the Enter-Luxury card
   const tweenRef = useRef(0);
   const lastPosRef = useRef(0);
   const lastTimeRef = useRef(0);
@@ -116,6 +117,9 @@ export default function AllProjectsSection({ onNavigate }) {
     isDraggingRef.current = true;
     setIsDragging(true);
     dragMovedRef.current = false;
+    // Remember if the press landed on the Enter-Luxury card so pointerup can
+    // open the luxury page itself — pointer capture can swallow the card's click.
+    luxeDownRef.current = !!(e.target.closest && e.target.closest(".luxe-enter-card"));
     dragStartRef.current = e.clientX;
     scrollStartRef.current = scrollXRef.current;
     lastPosRef.current = e.clientX;
@@ -129,7 +133,9 @@ export default function AllProjectsSection({ onNavigate }) {
     const rawDx = e.clientX - dragStartRef.current;
     // 1.3× multiplier makes the carousel feel more responsive under finger.
     const dx = rawDx * 1.3;
-    if (Math.abs(rawDx) > 2) dragMovedRef.current = true;
+    // 10px tolerance so a slightly imperfect tap on a TV touchscreen still
+    // counts as a tap (not a drag) and can trigger the luxe navigation.
+    if (Math.abs(rawDx) > 10) dragMovedRef.current = true;
 
     const now = performance.now();
     const dt = now - lastTimeRef.current;
@@ -149,10 +155,6 @@ export default function AllProjectsSection({ onNavigate }) {
     }
   };
 
-  const handleLuxeTap = () => {
-    if (!dragMovedRef.current && onNavigate) onNavigate("luxury");
-  };
-
   const handlePointerUp = () => {
     if (!isDraggingRef.current) return;
     isDraggingRef.current = false;
@@ -164,6 +166,16 @@ export default function AllProjectsSection({ onNavigate }) {
 
     const finalX = scrollXRef.current;
     setScrollX(finalX);
+
+    // A clean tap (no real drag) that started on the Enter-Luxury card opens the
+    // luxury page. Done here instead of the card's onClick because pointer
+    // capture on the section can retarget/swallow that synthetic click.
+    if (luxeDownRef.current && !dragMovedRef.current) {
+      luxeDownRef.current = false;
+      if (onNavigate) onNavigate("luxury");
+      return;
+    }
+    luxeDownRef.current = false;
 
     // Flick threshold lowered to 0.15 px/ms so lighter swipes still snap ahead.
     const vel = velocityRef.current;
@@ -218,7 +230,7 @@ export default function AllProjectsSection({ onNavigate }) {
               }}
             >
               {item.__luxe ? (
-                <div className="estate-card luxe-enter-card" onClick={handleLuxeTap}>
+                <div className="estate-card luxe-enter-card">
                   <span className="luxe-enter-crest" aria-hidden="true" />
                   <span className="luxe-enter-eyebrow">Raheja Luxe</span>
                   <span className="luxe-enter-title">Enter Luxury</span>
