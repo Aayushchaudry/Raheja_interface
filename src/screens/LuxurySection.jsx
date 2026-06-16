@@ -228,24 +228,6 @@ export default function LuxurySection({ onNavigate }) {
               <h2 className="luxe-principle-title">{luxuryContent.principles[principleIndex].title}</h2>
             </div>
 
-            {/* Footer: principle name nav + progress dots */}
-            <div className="luxe-card-footer">
-              <nav className="luxe-card-nav" aria-hidden="true">
-                {luxuryContent.principles.map((p, i) => (
-                  <span
-                    key={i}
-                    className={`luxe-card-nav-item${i === principleIndex ? " is-active" : i < principleIndex ? " is-past" : ""}`}
-                  >
-                    {p.eyebrow}
-                  </span>
-                ))}
-              </nav>
-              <div className="luxe-card-dots" aria-hidden="true">
-                {luxuryContent.principles.map((_, i) => (
-                  <div key={i} className={`luxe-card-dot${i === principleIndex ? " is-active" : i < principleIndex ? " is-done" : ""}`} />
-                ))}
-              </div>
-            </div>
           </div>
         )}
 
