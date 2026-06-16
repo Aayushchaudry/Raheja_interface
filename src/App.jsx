@@ -119,11 +119,14 @@ export default function App() {
   const nextPage = inFlow ? pageOrder[currentIndex + 1] : null;
 
   const showPrev = inFlow ? currentIndex > 0 : true;
-  // Projects (the coverflow) advances via its own "Enter Luxury" card, so hide
-  // the global Next arrow there. On About, hold the Next arrow back until the
-  // visitor has scrolled to the bottom.
+  // Projects and luxury/avana pages advance via their own in-page controls.
+  // On About, hold the Next arrow back until the visitor has scrolled to the bottom.
   const showNext =
-    inFlow && activePage !== "projects" && (activePage !== "about" || atBottom);
+    inFlow &&
+    activePage !== "projects" &&
+    activePage !== "luxury" &&
+    activePage !== "avana" &&
+    (activePage !== "about" || atBottom);
   const nextLabel = !inFlow
     ? ""
     : currentIndex === 0
