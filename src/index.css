@@ -3402,6 +3402,16 @@ h3 {
   line-height: 1.15;
 }
 
+.pjcf-card-copy .all-project-launched {
+  font-size: clamp(9px, 0.65vw, 10px);
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.65;
+  margin: 0;
+}
+
 .pjcf-card-copy .project-location {
   font-size: clamp(13px, 1vw, 15px);
 }
@@ -3449,6 +3459,12 @@ h3 {
 .project-status.is-future {
   background: #4a7ba6;
   color: var(--ink);
+}
+
+.project-status.is-prelaunched {
+  background: rgba(201, 169, 110, 0.15);
+  color: var(--gold);
+  border: 1px solid rgba(201, 169, 110, 0.45);
 }
 
 @keyframes pjcfFade {
