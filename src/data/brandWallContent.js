@@ -6,16 +6,14 @@ export const navItems = [
 ];
 
 export const heroContent = {
-  eyebrow: "Since 2005",
-  tagline: "Raipur's most trusted name in premium real estate & construction",
+  eyebrow: "Two Decades of Trust",
+  tagline: "Raipur's address for enduring craftsmanship in premium living.",
   desc: "Touch to explore the legacy",
   slides: [
     { image: "/assets/images/NIRWANA 1.png", caption: "Nirwana", captionHi: "निर्वाना", label: "Plots & Villas" },
     { image: "/assets/images/NIRWANA CLUB HOUSE.jpg", caption: "Nirwana", captionHi: "निर्वाना", label: "Clubhouse" },
-    { image: "/assets/images/RAHEHA SKYSCAPES.png", caption: "Skyscapes", captionHi: "स्काईस्केप्स", label: "Apartments" },
-    { image: "/assets/images/RAHEJA GALLERIA.png", caption: "Galleria", captionHi: "गैलेरिया", label: "Commercial" },
-    { image: "/assets/images/RAHEJA AMBARA.jpg", caption: "Ambara", captionHi: "अंबरा", label: "Luxury Plots" },
-    { image: "/assets/images/RAHEJA AMBARA/CLUB HOUSE.jpg", caption: "Ambara", captionHi: "अंबरा", label: "Clubhouse" },
+    { image: "/assets/images/RAHEJA AMBARA.jpg", caption: "Ambara", captionHi: "अंबारा", label: "Luxury Plots" },
+    { image: "/assets/images/RAHEJA AMBARA/CLUB HOUSE.jpg", caption: "Ambara", captionHi: "अंबारा", label: "Clubhouse" },
   ],
 };
 

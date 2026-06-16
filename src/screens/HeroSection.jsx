@@ -30,9 +30,9 @@ export default function HeroSection() {
       <div className="hero-center">
         <p className="hero-eyebrow">{heroContent.eyebrow}</p>
         <h1 className="hero-headline">
-          Crafting Luxury
+          Homes That
           <br />
-          <span>Living Spaces</span>
+          <span>Outlive Trends</span>
         </h1>
         <p className="hero-tagline">{heroContent.tagline}</p>
       </div>
