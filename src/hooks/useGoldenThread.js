@@ -219,7 +219,12 @@ export function useGoldenThread(canvasRef) {
     const canvas = canvasRef.current;
     if (!canvas) return { x: clientX, y: clientY };
     const r = canvas.getBoundingClientRect();
-    return { x: clientX - r.left, y: clientY - r.top };
+    // Some Chromium TV kiosk builds return zoom-corrected visual coordinates from
+    // getBoundingClientRect while pointer clientX/Y remain in CSS px. Detect the
+    // discrepancy via offsetWidth (always in CSS layout px) and scale accordingly.
+    const scaleX = canvas.offsetWidth ? r.width / canvas.offsetWidth : 1;
+    const scaleY = canvas.offsetHeight ? r.height / canvas.offsetHeight : 1;
+    return { x: clientX * scaleX - r.left, y: clientY * scaleY - r.top };
   };
 
   const spawn = (x, y) => {
