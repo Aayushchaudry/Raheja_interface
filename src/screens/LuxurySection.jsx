@@ -12,7 +12,7 @@ export default function LuxurySection({ onNavigate }) {
   const videoRef = useRef(null);
   const confessionRef = useRef(null);
 
-  // ── Intro video: hide until seeked to 15s, then fade in ──
+  // ── Intro video: seek to 15s, play until 28s ──
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return undefined;
@@ -79,7 +79,7 @@ export default function LuxurySection({ onNavigate }) {
     };
   }, [phase]);
 
-  // ── Avana pause: hold black screen 900ms before revealing confession ──
+  // ── Avana pause: 900ms black screen before confession ──
   useEffect(() => {
     if (phase !== "avana-pause") return undefined;
     const timer = setTimeout(() => setPhase("avana-video"), 900);
@@ -121,7 +121,7 @@ export default function LuxurySection({ onNavigate }) {
           onError={() => { setVideoReady(false); setPhase("logo"); }}
         />
 
-        {/* Ambient background for avana-cta phase */}
+        {/* Ambient background for avana-cta */}
         {phase === "avana-cta" && (
           <div className="luxe-ambient-bg" aria-hidden="true">
             <div className="luxe-ambient-orb luxe-ambient-orb--1" />
@@ -144,13 +144,13 @@ export default function LuxurySection({ onNavigate }) {
           />
         )}
 
-        {/* Shared blackout */}
+        {/* Shared blackout overlay */}
         <div
           className={`luxe-blackout luxe-blackout--${phase}`}
           onAnimationEnd={handleBlackoutEnd}
         />
 
-        {/* Intro reveal — logo + direct Avana CTA button */}
+        {/* Logo reveal + scroll cue (logo → ready phases) */}
         {showIntroReveal && (
           <div className="luxe-reveal">
             <img
@@ -162,19 +162,22 @@ export default function LuxurySection({ onNavigate }) {
             {phase === "ready" && (
               <div className="luxe-cta-group">
                 <button
-                  className="luxe-avana-btn"
+                  className="luxe-scroll-cue"
                   type="button"
+                  aria-label="Enter Luxury of Raheja Avana"
                   onClick={() => setPhase("avana-cta")}
                 >
-                  <span className="luxe-avana-btn-eyebrow">Enter Luxury of</span>
-                  <em className="luxe-avana-btn-title">Raheja Avana</em>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round">
+                    <path d="M6 9l6 6 6-6" />
+                  </svg>
                 </button>
+                <p className="luxe-enter-text">Enter Luxury</p>
               </div>
             )}
           </div>
         )}
 
-        {/* Avana CTA */}
+        {/* Avana CTA — big centred button */}
         {phase === "avana-cta" && (
           <button
             className="luxe-avana-btn"
@@ -186,7 +189,7 @@ export default function LuxurySection({ onNavigate }) {
           </button>
         )}
 
-        {/* Avana logo */}
+        {/* Avana logo after confession video */}
         {phase === "avana-logo" && (
           <img
             className="luxe-avana-logo"
