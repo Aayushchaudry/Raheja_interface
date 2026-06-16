@@ -152,7 +152,7 @@ export default function ProjectDetailSection({ onOpenMedia, onNavigate }) {
       {/* Left-aligned hero body */}
       <div className="avana-hero-body">
         <p className="avana-hero-address">Raipur's First Luxury Address</p>
-        <img className="avana-hero-logo" src="/assets/images/avanalogo.png" alt="Raheja Avana" />
+        <img className="avana-hero-logo" src="/assets/images/avanalogo-new.png" alt="Raheja Avana" />
         <div className="avana-hero-rule" aria-hidden="true" />
         <p className="avana-hero-tagline">Where legacy meets the art of living.</p>
       </div>

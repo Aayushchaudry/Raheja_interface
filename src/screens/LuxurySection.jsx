@@ -193,7 +193,7 @@ export default function LuxurySection({ onNavigate }) {
         {phase === "avana-logo" && (
           <img
             className="luxe-avana-logo"
-            src="/assets/images/avanalogo.png"
+            src="/assets/images/avanalogo-new.png"
             alt="Raheja Avana"
           />
         )}
