@@ -2763,13 +2763,16 @@ h3 {
   top: 0;
   left: 0;
   width: 100%;
-  height: 3px;
+  height: 4px;
   z-index: 1000;
   pointer-events: none;
   background: linear-gradient(90deg, transparent 0%, #c9a84c 50%, transparent 100%);
   opacity: 0;
   transform: scaleX(0);
   transform-origin: left;
+  /* will-change forces a GPU compositing layer, which prevents CSS zoom on <html>
+     from breaking the scaleX transition on TV kiosk browsers */
+  will-change: transform, opacity;
   transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
 }
 .gold-thread.animate {
@@ -4480,51 +4483,43 @@ h3 {
   position: fixed;
   inset: 0;
   z-index: 200;
-  display: flex;
-  flex-direction: column;
   background: #000;
-}
-
-/* Toolbar row keeps the close button fully separate from the video element
-   so touch events on the button are never intercepted by native video controls */
-.avana-video-toolbar {
-  flex: 0 0 auto;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  padding: clamp(10px, 1.6vh, 20px) clamp(18px, 3vw, 40px);
-  background: rgba(0, 0, 0, 0.55);
 }
 
 .avana-video-player {
-  flex: 1;
-  min-height: 0;
   width: 100%;
+  height: 100%;
   object-fit: contain;
   background: #000;
+  display: block;
 }
 
 .avana-video-close {
+  position: absolute;
+  top: clamp(20px, 2.8vh, 44px);
+  right: clamp(24px, 3vw, 52px);
+  z-index: 10;
   display: grid;
   place-items: center;
-  width: clamp(48px, 4vw, 60px);
-  height: clamp(48px, 4vw, 60px);
+  width: clamp(64px, 5vw, 80px);
+  height: clamp(64px, 5vw, 80px);
   border-radius: 50%;
-  border: 1px solid rgba(201, 169, 110, 0.6);
-  background: rgba(0, 0, 0, 0.5);
+  border: 1.5px solid rgba(201, 169, 110, 0.7);
+  background: rgba(0, 0, 0, 0.72);
   color: var(--gold);
   cursor: pointer;
   touch-action: manipulation;
-  transition: background 0.2s ease;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
 }
 
 .avana-video-close svg {
-  width: 42%;
-  height: 42%;
+  width: 40%;
+  height: 40%;
 }
 
 .avana-video-close:hover {
-  background: rgba(201, 169, 110, 0.2);
+  background: rgba(201, 169, 110, 0.22);
+  box-shadow: 0 0 24px rgba(201, 169, 110, 0.3);
 }
 
 /* ===== Redesigned "Enter Luxury" card (last slot of Our Projects coverflow) ===== */
@@ -4681,25 +4676,25 @@ h3 {
 /* Close button */
 .arch-gallery-close {
   position: absolute;
-  top: clamp(22px, 3vh, 44px);
-  right: clamp(22px, 3vw, 48px);
+  top: clamp(20px, 2.8vh, 44px);
+  right: clamp(24px, 3vw, 52px);
   z-index: 100;
   display: grid;
   place-items: center;
-  width: 52px;
-  height: 52px;
+  width: clamp(64px, 5vw, 80px);
+  height: clamp(64px, 5vw, 80px);
   border-radius: 50%;
-  border: 1px solid rgba(201, 169, 110, 0.5);
-  background: rgba(6, 5, 3, 0.6);
+  border: 1.5px solid rgba(201, 169, 110, 0.7);
+  background: rgba(6, 5, 3, 0.72);
   color: var(--gold);
   cursor: pointer;
   touch-action: manipulation;
   transition: background 0.2s ease, box-shadow 0.2s ease;
 }
-.arch-gallery-close svg { width: 44%; height: 44%; }
+.arch-gallery-close svg { width: 40%; height: 40%; }
 .arch-gallery-close:hover {
-  background: rgba(201, 169, 110, 0.18);
-  box-shadow: 0 0 22px rgba(201, 169, 110, 0.25);
+  background: rgba(201, 169, 110, 0.22);
+  box-shadow: 0 0 24px rgba(201, 169, 110, 0.3);
 }
 
 /* Slide counter top-right */
