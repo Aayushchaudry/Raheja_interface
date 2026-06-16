@@ -116,25 +116,7 @@ export const projects = [
 ];
 
 export const allProjects = [
-  {
-    title: "Raheja Avana",
-    category: "Ultra-Luxury Apartments",
-    status: "Ongoing",
-    location: "Infront of Kachna Lake, Kachna Main Road, Raipur",
-    body: "An ultra-luxury residential masterpiece featuring sweeping panoramic views, bespoke interiors, and an address that redefines prestige in Raipur.",
-    rera: "",
-    image: "/assets/images/projects/raheja-avana.jpg",
-  },
-  {
-    title: "Raheja Riveria",
-    category: "Premium Residential Plots",
-    status: "Pre-Launch",
-    launched: "Pre-Launch",
-    location: "Raipur, Chhattisgarh (NH 53 Corridor)",
-    body: "Nature-first plotted community designed for peaceful living, breathable open spaces, and premium lifestyle infrastructure.",
-    rera: "RERA: PCGRERA300326002076",
-    image: "/assets/images/riviera.jpg",
-  },
+
   {
     title: "Raheja Towers",
     category: "Commercial Office & Showroom Spaces",
@@ -254,6 +236,25 @@ export const allProjects = [
     body: "A design-forward luxury plotted community with iconic entry architecture, resort-style clubhouse frontage, and curated green boulevards.",
     rera: "RERA: PCGRERA310125001875",
     image: "/assets/images/opt/ambara.jpg",
+  },
+  {
+    title: "Raheja Avana",
+    category: "Ultra-Luxury Apartments",
+    status: "Ongoing",
+    location: "Infront of Kachna Lake, Kachna Main Road, Raipur",
+    body: "An ultra-luxury residential masterpiece featuring sweeping panoramic views, bespoke interiors, and an address that redefines prestige in Raipur.",
+    rera: "",
+    image: "/assets/images/projects/raheja-avana.jpg",
+  },
+  {
+    title: "Raheja Riveria",
+    category: "Premium Residential Plots",
+    status: "Pre-Launch",
+    launched: "Pre-Launch",
+    location: "Raipur, Chhattisgarh (NH 53 Corridor)",
+    body: "Nature-first plotted community designed for peaceful living, breathable open spaces, and premium lifestyle infrastructure.",
+    rera: "RERA: PCGRERA300326002076",
+    image: "/assets/images/riviera.jpg",
   },
   {
     title: "Raheja Waterfront",
