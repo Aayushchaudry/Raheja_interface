@@ -14,6 +14,25 @@ function getDims(viewW) {
   return { cardWidth, cardGap, cardUnit: cardWidth + cardGap, imageH, cardHeight: imageH + copyH };
 }
 
+// Build the launch/completion rows shown on each card. Numeric years get a
+// "Launched"/"Completed" label; non-numeric values ("Pre-Launch", "Ongoing")
+// are shown under a "Status" label. Pre-Launch projects collapse to one row.
+function dateRows(item) {
+  const rows = [];
+  if (typeof item.launched === "number") {
+    rows.push({ label: "Launched", value: item.launched });
+  } else if (item.launched) {
+    // e.g. "Pre-Launch" — a single status row says it all.
+    return [{ label: "Status", value: item.launched }];
+  }
+  if (typeof item.completed === "number") {
+    rows.push({ label: "Completed", value: item.completed });
+  } else if (item.completed) {
+    rows.push({ label: "Status", value: item.completed });
+  }
+  return rows;
+}
+
 const statusClass = (status) => {
   if (status === "Ongoing") return "is-ongoing";
   if (status === "Future") return "is-future";
@@ -230,14 +249,15 @@ export default function AllProjectsSection({ onNavigate }) {
                   <div className="pjcf-card-copy">
                     <p className="all-project-category">{item.category}</p>
                     <h2>{item.title}</h2>
-                    {item.launched && (
-                      <p className="all-project-launched">
-                        {typeof item.launched === "number"
-                          ? item.status === "Completed"
-                            ? `Completed ${item.launched}`
-                            : `Est. ${item.launched}`
-                          : item.launched}
-                      </p>
+                    {dateRows(item).length > 0 && (
+                      <dl className="all-project-dates">
+                        {dateRows(item).map((row) => (
+                          <div key={row.label} className="all-project-date-row">
+                            <dt>{row.label}</dt>
+                            <dd>{row.value}</dd>
+                          </div>
+                        ))}
+                      </dl>
                     )}
                     <p className="project-location">{item.location}</p>
                     <p className="all-project-body">{item.body}</p>
