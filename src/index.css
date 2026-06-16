@@ -3402,14 +3402,34 @@ h3 {
   line-height: 1.15;
 }
 
-.pjcf-card-copy .all-project-launched {
-  font-size: clamp(9px, 0.65vw, 10px);
+.pjcf-card-copy .all-project-dates {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin: 2px 0;
+}
+
+.pjcf-card-copy .all-project-date-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: clamp(9px, 0.65vw, 11px);
   font-weight: 700;
-  letter-spacing: 0.28em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--gold);
-  opacity: 0.65;
+}
+
+.pjcf-card-copy .all-project-date-row dt {
+  flex: 0 0 auto;
+  width: 9em;
+  white-space: nowrap;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.pjcf-card-copy .all-project-date-row dd {
   margin: 0;
+  color: var(--gold);
+  opacity: 0.85;
 }
 
 .pjcf-card-copy .project-location {
