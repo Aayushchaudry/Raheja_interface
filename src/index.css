@@ -3421,7 +3421,8 @@ h3 {
 
 .pjcf-card-copy .all-project-date-row dt {
   flex: 0 0 auto;
-  width: 5.6em;
+  width: 9em;
+  white-space: nowrap;
   color: rgba(255, 255, 255, 0.45);
 }
 
