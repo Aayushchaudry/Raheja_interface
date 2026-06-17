@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import CachedImg from "../components/CachedImg.jsx";
+import { asset } from "../data/assetBase.js";
 
 const VIDEO_START = 15;
 const VIDEO_END = 28;
@@ -155,9 +157,9 @@ export default function LuxurySection({ onNavigate }) {
         {/* Logo reveal + scroll cue (logo → ready phases) */}
         {showIntroReveal && (
           <div className="luxe-reveal">
-            <img
+            <CachedImg
               className="luxe-logo-reveal"
-              src="assets/images/Raheja-luxe-logo-gold.png"
+              src={asset("Raheja-luxe-logo-gold.webp")}
               alt="Raheja Luxe"
             />
             <div className="luxe-gold-rule" onAnimationEnd={handleRuleEnd} />
@@ -193,9 +195,9 @@ export default function LuxurySection({ onNavigate }) {
 
         {/* Avana logo after confession video */}
         {phase === "avana-logo" && (
-          <img
+          <CachedImg
             className="luxe-avana-logo"
-            src="assets/images/avanalogo-new.png"
+            src={asset("avanalogo-new.webp")}
             alt="Raheja Avana"
           />
         )}

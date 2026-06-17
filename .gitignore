@@ -11,3 +11,6 @@ public/assets/videos/raheja-walkthrough11.mp4
 public/assets/videos/The Artist's Confession - Raheja.mp4
 # Legacy root-level assets folder (superseded by public/assets/)
 /assets/
+
+# S3 upload bundle (build artifact, uploaded to CloudFront, not versioned)
+raheja-assets/

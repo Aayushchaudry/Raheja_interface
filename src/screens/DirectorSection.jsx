@@ -1,14 +1,16 @@
 import { directorContent } from "../data/brandWallContent.js";
+import { useLocalUrl } from "../hooks/useLocalUrl.js";
 
 export default function DirectorSection({ onNavigate }) {
   const d = directorContent;
+  const localImg = useLocalUrl(d.image);
 
   return (
     <section className="director-page-v2">
       <div className="dir-bg" />
       <div className="dir-layout">
         <div className="dir-portrait">
-          <div className="dir-portrait-img" style={{ backgroundImage: `url("${d.image}")` }} />
+          <div className="dir-portrait-img" style={{ backgroundImage: `url("${localImg}")` }} />
           <div className="dir-name-card">
             <div className="dir-name">{d.author}</div>
             <div className="dir-role">{d.role}</div>

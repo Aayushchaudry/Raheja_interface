@@ -3,6 +3,7 @@ import { useAppStore } from '../store/useAppStore'
 import { useAudio } from '../hooks/useAudio'
 import { Screen } from '../types'
 import { families } from '../data/families'
+import CachedImg from '../components/CachedImg.jsx'
 import { COLORS } from '../utils/constants'
 import { randomRange, distance } from '../utils/math'
 
@@ -510,7 +511,7 @@ export default function Screen4Constellation() {
                   boxShadow: `0 0 80px rgba(212,175,55,0.3), 0 0 150px rgba(212,175,55,0.08), 0 10px 50px rgba(0,0,0,0.6)`,
                 }}
               >
-                <img src={families[activeVideo].photo} alt={families[activeVideo].name} className="w-full h-full object-cover" />
+                <CachedImg src={families[activeVideo].photo} alt={families[activeVideo].name} className="w-full h-full object-cover" />
               </div>
             </div>
 

@@ -4,8 +4,10 @@
 // are also pre-cached in the browser (see hooks/useAssetCache.js) for instant,
 // buffer-free playback on the kiosk.
 
+import { IMG_BASE } from "./assetBase.js";
+
 const cdn = "https://d1ovqzmursgzel.cloudfront.net/raheja_avana";
-const poster = "assets/images/amenities";
+const poster = `${IMG_BASE}/amenities`;
 
 export const avanaAmenities = [
   {
@@ -13,69 +15,69 @@ export const avanaAmenities = [
     name: "Reception Lobby",
     desc: "A double-height arrival that sets the tone for Avana.",
     video: `${cdn}/RL.mp4`,
-    poster: `${poster}/reception-lobby.jpg`,
+    poster: `${poster}/reception-lobby.webp`,
   },
   {
     slug: "swimming-pool",
     name: "Swimming Pool",
     desc: "A resort-style pool framed by landscaped greens.",
     video: `${cdn}/SP.mp4`,
-    poster: `${poster}/swimming-pool.jpg`,
+    poster: `${poster}/swimming-pool.webp`,
   },
   {
     slug: "gym",
     name: "Gymnasium",
     desc: "A fully-equipped fitness studio for everyday wellness.",
     video: `${cdn}/GYM.mp4`,
-    poster: `${poster}/gym.jpg`,
+    poster: `${poster}/gym.webp`,
   },
   {
     slug: "banquet-hall",
     name: "Banquet Hall",
     desc: "An elegant venue for celebrations and gatherings.",
     video: `${cdn}/GH.mp4`,
-    poster: `${poster}/banquet-hall.jpg`,
+    poster: `${poster}/banquet-hall.webp`,
   },
   {
     slug: "sports-multipurpose-hall",
     name: "Sports & Multipurpose Hall",
     desc: "A grand hall built for sport and events alike.",
     video: `${cdn}/SM.mp4`,
-    poster: `${poster}/sports-multipurpose-hall.jpg`,
+    poster: `${poster}/sports-multipurpose-hall.webp`,
   },
   {
     slug: "sports-facility",
     name: "Sports Facility",
     desc: "Courts and greens for the active resident.",
     video: `${cdn}/SPT.mp4`,
-    poster: `${poster}/sports-facility.jpg`,
+    poster: `${poster}/sports-facility.webp`,
   },
   {
     slug: "indoor-games",
     name: "Indoor Games",
     desc: "A dedicated zone for play, leisure and bonding.",
     video: `${cdn}/IG.mp4`,
-    poster: `${poster}/indoor-games.jpg`,
+    poster: `${poster}/indoor-games.webp`,
   },
   {
     slug: "guest-room",
     name: "Guest Suite",
     desc: "Refined accommodation for visiting family.",
     video: `${cdn}/GR.mp4`,
-    poster: `${poster}/guest-room.jpg`,
+    poster: `${poster}/guest-room.webp`,
   },
   {
     slug: "meeting-room",
     name: "Meeting Room",
     desc: "A private space for work and conversation.",
     video: `${cdn}/MR.mp4`,
-    poster: `${poster}/meeting-room.jpg`,
+    poster: `${poster}/meeting-room.webp`,
   },
   {
     slug: "lift-section",
     name: "Lift Lobby",
     desc: "High-speed elevators with crafted interiors.",
     video: `${cdn}/LIFT.mp4`,
-    poster: `${poster}/lift-section.jpg`,
+    poster: `${poster}/lift-section.webp`,
   },
 ];

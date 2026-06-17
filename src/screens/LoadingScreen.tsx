@@ -4,6 +4,7 @@ import { AudioManager } from '../audio/AudioManager'
 import { Screen } from '../types'
 import { COLORS } from '../utils/constants'
 import { milestones } from '../data/milestones'
+import { getLocalUrl } from '../hooks/useAssetCache.js'
 
 export default function LoadingScreen() {
   const [progress, setProgress] = useState(0)
@@ -24,10 +25,12 @@ export default function LoadingScreen() {
         imageUrls.map(
           (src) =>
             new Promise<void>((resolve) => {
-              const img = new Image()
-              img.onload = () => resolve()
-              img.onerror = () => resolve()
-              img.src = src
+              getLocalUrl(src).then((u: string) => {
+                const img = new Image()
+                img.onload = () => resolve()
+                img.onerror = () => resolve()
+                img.src = u
+              })
             })
         )
       )

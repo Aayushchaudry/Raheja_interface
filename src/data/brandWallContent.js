@@ -1,3 +1,5 @@
+import { asset } from "./assetBase.js";
+
 export const navItems = [
   { page: "about", label: "About Raheja Group" },
   { page: "director", label: "From Director's Desk" },
@@ -10,10 +12,10 @@ export const heroContent = {
   tagline: "Raipur's address for enduring craftsmanship in premium living.",
   desc: "Touch to explore the legacy",
   slides: [
-    { image: "assets/images/NIRWANA 1.png", caption: "Nirwana", captionHi: "निर्वाना", label: "Plots & Villas" },
-    { image: "assets/images/NIRWANA CLUB HOUSE.jpg", caption: "Nirwana", captionHi: "निर्वाना", label: "Clubhouse" },
-    { image: "assets/images/RAHEJA AMBARA.jpg", caption: "Ambara", captionHi: "अंबारा", label: "Luxury Plots" },
-    { image: "assets/images/RAHEJA AMBARA/CLUB HOUSE.jpg", caption: "Ambara", captionHi: "अंबारा", label: "Clubhouse" },
+    { image: asset("brand/nirwana-1.webp"), caption: "Nirwana", captionHi: "निर्वाना", label: "Plots & Villas" },
+    { image: asset("brand/nirwana-club-house.webp"), caption: "Nirwana", captionHi: "निर्वाना", label: "Clubhouse" },
+    { image: asset("brand/raheja-ambara.webp"), caption: "Ambara", captionHi: "अंबारा", label: "Luxury Plots" },
+    { image: asset("brand/raheja-ambara-club-house.webp"), caption: "Ambara", captionHi: "अंबारा", label: "Clubhouse" },
   ],
 };
 
@@ -76,7 +78,7 @@ export const directorContent = {
   ],
   author: "Mr. Sanjay Raheja",
   role: "Managing Director · Raheja Group",
-  image: "assets/images/director.png",
+  image: asset("director.webp"),
   exploreLabel: "Explore Our Projects",
 };
 
@@ -89,7 +91,7 @@ export const projects = [
     rera: "RERA: PCGRERA290621001228",
     cta: "View Details",
     page: "avana",
-    image: "assets/images/NIRWANA 1.png",
+    image: asset("brand/nirwana-1.webp"),
   },
   {
     title: "Raheja Riveria",
@@ -109,7 +111,7 @@ export const projects = [
     rera: "RERA: PCGRERA310125001875",
     cta: "View Details",
     page: "luxury",
-    image: "assets/images/RAHEJA AMBARA.jpg",
+    image: asset("brand/raheja-ambara.webp"),
   },
 ];
 
@@ -124,7 +126,7 @@ export const allProjects = [
     location: "Jail Road, Near Hotel Celebration, Fafadih, Raipur",
     body: "A prominent commercial complex in the heart of Raipur on Jail Road, housing offices, showrooms, and restaurants with full modern infrastructure.",
     rera: "RERA: PCGRERA150618000197",
-    image: "assets/images/opt/towers.jpg",
+    image: asset("opt/towers.webp"),
   },
   {
     title: "Raheja Residency",
@@ -135,7 +137,7 @@ export const allProjects = [
     location: "Opp. St Xavier's High School, Avanti Vihar, Raipur",
     body: "Premium residential development with comprehensive world-class amenities in a secure, high-end lifestyle setting.",
     rera: "RERA: PCGRERA280618000375",
-    image: "assets/images/opt/residency.jpg",
+    image: asset("opt/residency.webp"),
   },
   {
     title: "Raheja Arth",
@@ -146,7 +148,7 @@ export const allProjects = [
     location: "Near Professor Colony, Sai Vihar, Labhandi, Raipur",
     body: "93 flats across 8 floors with 2BHK and 3BHK configurations, modern amenities, podium garden, and club house.",
     rera: "RERA: PCGRERA070718000490",
-    image: "assets/images/opt/arth.jpg",
+    image: asset("opt/arth.webp"),
   },
   {
     title: "Raheja Greens",
@@ -157,7 +159,7 @@ export const allProjects = [
     location: "Near Ring Road No. 3, Pirda, Raipur",
     body: "Designed to perfection and nestled with amenities, a gated plotted community with strong city connectivity.",
     rera: "RERA: PCGRERA220618000291",
-    image: "assets/images/opt/greens.jpg",
+    image: asset("opt/greens.webp"),
   },
   {
     title: "Raheja SkyScapes",
@@ -168,7 +170,7 @@ export const allProjects = [
     location: "Behind Ambuja Mall, Saddu, Raipur",
     body: "A premium residential community with luxury-oriented living, clean surroundings, and strong urban connectivity.",
     rera: "RERA: PCGRERA180718000592",
-    image: "assets/images/opt/skyscapes.jpg",
+    image: asset("opt/skyscapes.webp"),
   },
   {
     title: "Raheja Homes",
@@ -179,7 +181,7 @@ export const allProjects = [
     location: "Daldal Seoni, Raipur",
     body: "Ready-to-move housing society spread across 4.63 acres, designed for comfort, lifestyle convenience, and family living.",
     rera: "RERA: PCGRERA131118000843",
-    image: "assets/images/opt/homes.jpg",
+    image: asset("opt/homes.webp"),
   },
   {
     title: "Raheja Greens Phase 2",
@@ -190,7 +192,7 @@ export const allProjects = [
     location: "Near Ring Road No. 3, Pirda, Raipur",
     body: "The second chapter of Raheja Greens — an expanded gated plotted community with premium plots, enhanced green corridors, and upgraded amenities.",
     rera: "",
-    image: "assets/images/projects/raheja-greens-phase-2.jpg",
+    image: asset("projects/raheja-greens-phase-2.webp"),
   },
   {
     title: "Raheja Nirwana",
@@ -201,7 +203,7 @@ export const allProjects = [
     location: "Kachna Road, Raipur",
     body: "Premium plotted township with thoughtfully designed villa plots and a nature-infused community lifestyle in one of Raipur's most sought-after corridors.",
     rera: "RERA: PCGRERA290621001228",
-    image: "assets/images/projects/raheja-nirwana.jpg",
+    image: asset("projects/raheja-nirwana.webp"),
   },
   {
     title: "Raheja Galleria",
@@ -212,7 +214,7 @@ export const allProjects = [
     location: "Raipur, Chhattisgarh",
     body: "A curated commercial destination featuring premium retail, food courts, and business spaces — designed to become Raipur's defining urban landmark.",
     rera: "",
-    image: "https://d1ovqzmursgzel.cloudfront.net/raheja_avana/render/11.jpeg",
+    image: asset("render/11.webp"),
   },
   {
     title: "Raheja Nirwana 2",
@@ -223,7 +225,7 @@ export const allProjects = [
     location: "Kachna Road, Raipur",
     body: "Luxurious plots surrounded by tranquillity, an amalgamation of modern luxury and serene nature.",
     rera: "RERA: PCGRERA061023001683",
-    image: "assets/images/opt/nirwana-2.jpg",
+    image: asset("opt/nirwana-2.webp"),
   },
   {
     title: "Raheja Nirwana 3",
@@ -234,7 +236,7 @@ export const allProjects = [
     location: "Kachna Road, Raipur",
     body: "The third chapter of the celebrated Nirwana township — elevated plotted living with signature green boulevards, iconic entry architecture, and resort-style amenities.",
     rera: "",
-    image: "assets/images/projects/raheja-nirwana-3.jpg",
+    image: asset("projects/raheja-nirwana-3.webp"),
   },
   {
     title: "Raheja Ambara",
@@ -245,7 +247,7 @@ export const allProjects = [
     location: "Raipur, Chhattisgarh",
     body: "A design-forward luxury plotted community with iconic entry architecture, resort-style clubhouse frontage, and curated green boulevards.",
     rera: "RERA: PCGRERA310125001875",
-    image: "assets/images/opt/ambara.jpg",
+    image: asset("opt/ambara.webp"),
   },
   {
     title: "Raheja Avana",
@@ -256,7 +258,7 @@ export const allProjects = [
     location: "Infront of Kachna Lake, Kachna Main Road, Raipur",
     body: "An ultra-luxury residential masterpiece featuring sweeping panoramic views, bespoke interiors, and an address that redefines prestige in Raipur.",
     rera: "",
-    image: "assets/images/projects/raheja-avana.jpg",
+    image: asset("projects/raheja-avana.webp"),
   },
   {
     title: "Raheja Riveria",
@@ -267,7 +269,7 @@ export const allProjects = [
     location: "Raipur, Chhattisgarh (NH 53 Corridor)",
     body: "Nature-first plotted community designed for peaceful living, breathable open spaces, and premium lifestyle infrastructure.",
     rera: "RERA: PCGRERA300326002076",
-    image: "assets/images/riviera.jpg",
+    image: asset("riviera.webp"),
   },
   {
     title: "Raheja Waterfront",
@@ -278,7 +280,7 @@ export const allProjects = [
     location: "Sector 15, Naya Raipur, Atal Nagar, Raipur",
     body: "Exclusive waterfront villas offering private water access, resort-scale amenities, and architecture inspired by nature.",
     rera: "",
-    image: "assets/images/projects/raheja-waterfront.jpg",
+    image: asset("projects/raheja-waterfront.webp"),
   },
   {
     title: "Raheja Prive",
@@ -289,7 +291,7 @@ export const allProjects = [
     location: "Make in India Square, Telibandha, Raipur",
     body: "An exclusive collection of ultra-luxury residences designed for those who seek seclusion without sacrificing sophistication.",
     rera: "",
-    image: "assets/images/projects/raheja-prive.jpg",
+    image: asset("projects/raheja-prive.webp"),
   },
 ];
 
@@ -305,11 +307,11 @@ export const luxuryContent = {
     "Three extraordinary residences, one uncompromising vision. Welcome to Raheja Luxe, where legacy becomes address.",
   mediaLabel: "Luxury background image carousel placeholder",
   carouselImages: [
-    "assets/images/RAHEHA SKYSCAPES.png",
-    "assets/images/RAHEJA AMBARA.jpg",
-    "assets/images/RAHEJA AMBARA/CLUB HOUSE.jpg",
-    "assets/images/Raheja Waterfront.jpeg",
-    "assets/images/NIRWANA CLUB HOUSE(1).jpg",
+    asset("brand/raheja-skyscapes.webp"),
+    asset("brand/raheja-ambara.webp"),
+    asset("brand/raheja-ambara-club-house.webp"),
+    asset("brand/raheja-waterfront.webp"),
+    asset("brand/nirwana-club-house-1.webp"),
   ],
   stats: [
     { value: "20+", label: "Years of Legacy" },
@@ -341,7 +343,7 @@ export const luxuryContent = {
       location: "Infront of Kachna Lake, Kachna Main Road, Raipur",
       cta: "Explore Residence",
       page: "avana",
-      image: "assets/images/avana.jpg",
+      image: asset("avana.webp"),
     },
     {
       eyebrow: "Privacy is the Ultimate Luxury",
@@ -350,7 +352,7 @@ export const luxuryContent = {
       location: "Make in India Square, Telibandha, Raipur",
       cta: "",
       page: "avana",
-      image: "assets/images/prive.jpg",
+      image: asset("prive.webp"),
       badge: "Upcoming",
     },
     {
@@ -360,7 +362,7 @@ export const luxuryContent = {
       location: "Sector 15, Naya Raipur, Atal Nagar, Raipur",
       cta: "Explore Residence",
       page: "avana",
-      image: "assets/images/Raheja Waterfront.jpeg",
+      image: asset("brand/raheja-waterfront.webp"),
       badge: "Launching Soon",
     },
   ],

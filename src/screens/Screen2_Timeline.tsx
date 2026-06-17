@@ -5,6 +5,7 @@ import { Screen } from '../types'
 import { milestones } from '../data/milestones'
 import { COLORS } from '../utils/constants'
 import { clamp } from '../utils/math'
+import { useLocalUrls } from '../hooks/useLocalUrl.js'
 import gsap from 'gsap'
 
 // Responsive card sizing — uses vw but clamped
@@ -38,6 +39,7 @@ interface Particle {
 export default function Screen2Timeline() {
   const setScreen = useAppStore((s) => s.setScreen)
   const { play, stop } = useAudio()
+  const localMap = useLocalUrls(milestones.map((m) => m.sepiaImage))
 
   const [scrollX, setScrollX] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
@@ -529,7 +531,7 @@ export default function Screen2Timeline() {
                 <div
                   className="w-full h-full bg-cover bg-center"
                   style={{
-                    backgroundImage: `url(${milestone.sepiaImage})`,
+                    backgroundImage: `url(${localMap[milestone.sepiaImage] || milestone.sepiaImage})`,
                     backgroundColor: 'rgba(212,175,55,0.1)',
                     filter: absOffset < 0.5 ? 'sepia(0.3) brightness(0.95)' : 'sepia(0.7) brightness(0.5)',
                   }}

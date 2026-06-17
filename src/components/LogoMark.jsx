@@ -1,7 +1,10 @@
+import CachedImg from "./CachedImg.jsx";
+import { asset } from "../data/assetBase.js";
+
 export default function LogoMark() {
   return (
     <span className="logo-plate">
-      <img src="assets/images/raheja-logo-navbar.png" alt="Raheja Group" />
+      <CachedImg src={asset("raheja-logo-navbar.webp")} alt="Raheja Group" />
     </span>
   );
 }

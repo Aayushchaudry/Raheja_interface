@@ -1,47 +1,71 @@
-// Manifest of the heavy remote assets the app downloads into local storage on
-// first launch (see screens/LoadingGate.jsx + hooks/useAssetCache.js). After the
-// one-time download these play/display from the local cache, so the app runs
-// fully offline. Small UI images, fonts and code ship inside the app package and
-// are never listed here.
+// Manifest of the remote assets the app downloads into local storage on first
+// launch (see screens/LoadingGate.jsx + hooks/useAssetCache.js). After the
+// one-time download these display/play from the local cache, so the app runs
+// fully offline. Fonts and code ship inside the app package and are not listed.
 //
-// Origin is the existing CloudFront distribution (S3-backed). Bump CACHE_VERSION
-// to force a re-download when the asset set changes.
+// Images live in the S3 bundle (CloudFront, see data/assetBase.js) as WebP.
+// Amenity walkthrough films still stream from the original CloudFront prefix.
+// Bump CACHE_VERSION to force a re-download when the asset set changes.
 
-export const CACHE_VERSION = "v1";
+import { IMG_BASE } from "./assetBase.js";
 
-const CDN = "https://d1ovqzmursgzel.cloudfront.net/raheja_avana";
+export const CACHE_VERSION = "v2";
+
+// Amenity films + the 4K project walkthrough still live under the old prefix.
+const FILM_CDN = "https://d1ovqzmursgzel.cloudfront.net/raheja_avana";
+
+// --- images ----------------------------------------------------------------
+const RENDERS = Array.from({ length: 11 }, (_, i) => `${IMG_BASE}/render/${i + 1}.webp`);
+
+const PROJECTS = [
+  "raheja-tower", "raheja-residency", "raheja-arth", "raheja-greens",
+  "raheja-skyscapes", "raheja-homes", "raheja-greens-phase-2", "raheja-nirwana",
+  "raheja-galleria", "raheja-nirwana-2", "raheja-nirwana-3", "raheja-ambara",
+  "raheja-rivera", "raheja-avana", "raheja-waterfront", "raheja-prive",
+].map((s) => `${IMG_BASE}/projects/${s}.webp`);
+
+const OPT = [
+  "ambara", "arth", "greens", "homes", "nirwana-2", "residency", "skyscapes", "towers",
+].map((s) => `${IMG_BASE}/opt/${s}.webp`);
+
+const AMENITIES = [
+  "banquet-hall", "guest-room", "gym", "indoor-games", "lift-section",
+  "meeting-room", "reception-lobby", "sports-facility",
+  "sports-multipurpose-hall", "swimming-pool",
+].map((s) => `${IMG_BASE}/amenities/${s}.webp`);
+
+const FAMILIES = [1, 2, 3, 4, 5].map((n) => `${IMG_BASE}/families/family-${n}.webp`);
+
+const BRAND = [
+  "nirwana-1", "nirwana-club-house", "nirwana-club-house-1", "raheja-ambara",
+  "raheja-ambara-club-house", "raheja-skyscapes", "raheja-waterfront",
+].map((s) => `${IMG_BASE}/brand/${s}.webp`);
+
+const STANDALONE = [
+  "avana", "prive", "riviera", "director", "avanalogo-new",
+  "raheja-logo-navbar", "Raheja-luxe-logo-gold",
+].map((s) => `${IMG_BASE}/${s}.webp`);
+
+// Architecture renders + every UI/gallery image (~370 MB renders + ~6 MB rest).
+export const IMAGE_ASSETS = [
+  ...RENDERS, ...PROJECTS, ...OPT, ...AMENITIES, ...FAMILIES, ...BRAND, ...STANDALONE,
+];
 
 // Amenity walkthrough films + the 4K project walkthrough (~1.6 GB total).
 export const VIDEO_ASSETS = [
-  `${CDN}/RL.mp4`,
-  `${CDN}/SP.mp4`,
-  `${CDN}/GYM.mp4`,
-  `${CDN}/GH.mp4`,
-  `${CDN}/SM.mp4`,
-  `${CDN}/SPT.mp4`,
-  `${CDN}/IG.mp4`,
-  `${CDN}/GR.mp4`,
-  `${CDN}/MR.mp4`,
-  `${CDN}/LIFT.mp4`,
-  `${CDN}/Explore_avana.mp4`,
+  `${FILM_CDN}/RL.mp4`,
+  `${FILM_CDN}/SP.mp4`,
+  `${FILM_CDN}/GYM.mp4`,
+  `${FILM_CDN}/GH.mp4`,
+  `${FILM_CDN}/SM.mp4`,
+  `${FILM_CDN}/SPT.mp4`,
+  `${FILM_CDN}/IG.mp4`,
+  `${FILM_CDN}/GR.mp4`,
+  `${FILM_CDN}/MR.mp4`,
+  `${FILM_CDN}/LIFT.mp4`,
+  `${FILM_CDN}/Explore_avana.mp4`,
 ];
 
-// Architecture renders shown in the Avana gallery + the Galleria project card
-// (~372 MB total — full quality, no compression).
-export const IMAGE_ASSETS = [
-  `${CDN}/render/1.jpg`,
-  `${CDN}/render/2.jpg`,
-  `${CDN}/render/3.jpg`,
-  `${CDN}/render/4.jpg`,
-  `${CDN}/render/5.jpg`,
-  `${CDN}/render/6.jpg`,
-  `${CDN}/render/7.jpg`,
-  `${CDN}/render/8.jpg`,
-  `${CDN}/render/9.jpg`,
-  `${CDN}/render/10.jpg`,
-  `${CDN}/render/11.jpeg`,
-];
-
-// Everything the loader must fetch, in download order (images first — they are
-// smaller and needed for the gallery/cards; videos second).
+// Everything the loader must fetch, in download order (images first — smaller
+// and needed for the gallery/cards; videos second).
 export const REMOTE_ASSETS = [...IMAGE_ASSETS, ...VIDEO_ASSETS];

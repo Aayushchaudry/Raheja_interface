@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { prefetchAssets, allCached } from "../hooks/useAssetCache.js";
 import { REMOTE_ASSETS } from "../data/assetManifest.js";
+import CachedImg from "../components/CachedImg.jsx";
+import { asset } from "../data/assetBase.js";
 
 // The full preload only runs in the packaged kiosk app, NOT on the public
 // website — otherwise web visitors would be forced to download ~2 GB before
@@ -83,7 +85,7 @@ export default function LoadingGate({ children }) {
     <div className="loadgate">
       <div className="loadgate-bg" aria-hidden="true" />
       <div className="loadgate-inner">
-        <img className="loadgate-logo" src="assets/images/raheja-logo-navbar.png" alt="Raheja Group" />
+        <CachedImg className="loadgate-logo" src={asset("raheja-logo-navbar.webp")} alt="Raheja Group" />
         <p className="loadgate-eyebrow">Two Decades of Trust</p>
         <h1 className="loadgate-title">Preparing the Experience</h1>
 
