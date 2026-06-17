@@ -5714,6 +5714,17 @@ h3 {
   display: none;
 }
 
+/* backdrop-filter re-samples and blurs everything behind the element every
+   frame — one of the most expensive GPU ops on the weak TV, and it compounds
+   badly with the root `zoom`. Drop it in lite mode; the panels keep their own
+   semi-opaque backgrounds, so they stay legible, just without the live blur. */
+.perf-lite *,
+.perf-lite *::before,
+.perf-lite *::after {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
 /* Fallback shown while a lazy-loaded page chunk is fetched (see App.jsx). A
    plain charcoal fill so navigation never flashes white on the kiosk. */
 .page-suspense-fallback {

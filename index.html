@@ -44,34 +44,43 @@
       // Proportional scaler — works at any screen size.
       // Applies a zoom factor so the 1920px design fills the screen exactly.
       //
-      // It never resets zoom to 1 before measuring (the old approach did, which
-      // caused a visible flash/flicker on every resize and when entering
-      // fullscreen on the kiosk TV). Instead it recovers the true device width
-      // from the currently-applied zoom: clientWidth is reported in *zoomed* CSS
-      // pixels, so multiplying by the active zoom gives the stable physical
-      // width. --screen-h compensates for zoom affecting vh units.
+      // The scale is computed from window.innerWidth/innerHeight, which are NOT
+      // affected by CSS `zoom`. That makes fit() a pure function of the real
+      // viewport: it converges in one step and gives the identical result no
+      // matter how many times it runs, so it can never drift.
+      //
+      // The previous version measured html.clientWidth (the element it zooms)
+      // and back-calculated the device width from the active zoom. That assumes
+      // the browser divides clientWidth by the root's own zoom — true in modern
+      // Chrome, but FALSE in the older Chromium (53–87) of the webOS TV browser.
+      // There the feedback never converged: every resize / fullscreen / standby
+      // event multiplied the zoom by a factor < 1, so the layout shrank a little
+      // each time ("contracts with time / contracts more on fullscreen").
+      //
+      // --screen-h is the screen height expressed in design (pre-zoom) pixels,
+      // so CSS can use it in place of 100vh (vh ignores zoom).
       (function () {
         var DESIGN_W = 1920;
-        var current = 1; // the zoom factor currently applied
+        var raf = 0;
         function fit() {
+          raf = 0;
           var html = document.documentElement;
-          var physicalW = html.clientWidth * current;
-          var physicalH = window.innerHeight * current;
-          var scale = physicalW / DESIGN_W;
-          // Cheap CSS var update — safe to set every call, never flickers.
-          html.style.setProperty("--screen-h", physicalH / scale + "px");
-          // Only touch zoom when it actually changes, so steady state is stable.
-          if (Math.abs(scale - current) > 0.003) {
-            current = scale;
-            html.style.zoom = Math.abs(scale - 1) > 0.02 ? scale : "";
-          }
+          var scale = window.innerWidth / DESIGN_W;
+          html.style.setProperty("--screen-h", window.innerHeight / scale + "px");
+          // Snap near-1 scales to no-zoom so a true 1920 panel pays nothing.
+          html.style.zoom = Math.abs(scale - 1) > 0.02 ? scale : "";
+        }
+        // Coalesce event bursts (fullscreen fires many resizes) into one relayout
+        // per frame — `zoom` triggers a full reflow, costly on the weak TV CPU.
+        function schedule() {
+          if (!raf) raf = window.requestAnimationFrame(fit);
         }
         fit();
-        window.addEventListener("resize", fit);
-        window.addEventListener("orientationchange", fit);
+        window.addEventListener("resize", schedule);
+        window.addEventListener("orientationchange", schedule);
         // Re-fit when TV wakes from standby — resolution can change on resume.
         document.addEventListener("visibilitychange", function () {
-          if (document.visibilityState === "visible") fit();
+          if (document.visibilityState === "visible") schedule();
         });
       })();
     </script>
