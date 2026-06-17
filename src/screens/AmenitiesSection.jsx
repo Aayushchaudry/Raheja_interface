@@ -112,11 +112,13 @@ export default function AmenitiesSection({ amenities, progress = 0, readySet, on
           {resolvedSrc ? (
             <video
               key={active.slug}
+              ref={(el) => { if (el) el.muted = true; }}
               className="avana-video-player"
               src={resolvedSrc}
               autoPlay
               controls
               playsInline
+              muted
             />
           ) : (
             <div className="amenities-player-loading">
