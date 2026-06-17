@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { avanaDetail } from "../data/brandWallContent.js";
 import { avanaAmenities } from "../data/amenities.js";
-import { prefetchAssets } from "../hooks/useAssetCache.js";
+import { prefetchAssets, getLocalUrl } from "../hooks/useAssetCache.js";
 import AmenitiesSection from "./AmenitiesSection.jsx";
 
 const WALKTHROUGH_SRC = "https://d1ovqzmursgzel.cloudfront.net/raheja_avana/Explore_avana.mp4";
@@ -80,6 +80,17 @@ function ArchGallery({ onClose }) {
   const [animating, setAnimating] = useState(false);
   const timeoutRef = useRef(null);
 
+  // Resolve every render to its locally-cached copy (offline-safe). Until a
+  // resolution lands the network URL is used, so it always shows something.
+  const [localImages, setLocalImages] = useState({});
+  useEffect(() => {
+    let alive = true;
+    Promise.all(ARCH_SLIDES.map((s) => getLocalUrl(s.image).then((u) => [s.image, u]))).then(
+      (pairs) => { if (alive) setLocalImages(Object.fromEntries(pairs)); },
+    );
+    return () => { alive = false; };
+  }, []);
+
   useEffect(() => {
     const onKey = (e) => {
       if (e.key === "Escape") onClose();
@@ -125,7 +136,7 @@ function ArchGallery({ onClose }) {
       <div
         key={index}
         className={`arch-gallery-bg arch-gallery-bg--${dir}${animating ? " arch-gallery-bg--exit" : " arch-gallery-bg--enter"}`}
-        style={{ backgroundImage: `url("${current.image}")` }}
+        style={{ backgroundImage: `url("${localImages[current.image] || current.image}")` }}
       />
       <div className="arch-gallery-dim" />
       <button
@@ -213,10 +224,14 @@ export default function ProjectDetailSection({ onOpenMedia, onNavigate }) {
     return () => { cancelled = true; };
   }, []);
 
+  // Resolve to the locally-cached copy (offline-safe) before playing; falls back
+  // to the network URL if it isn't cached.
+  const openVideo = (url) => { getLocalUrl(url).then(setVideoSrc); };
+
   const handleCardClick = (feature) => {
     if (feature.gallery) { setGalleryOpen(true); return; }
     if (feature.amenities) { setAmenitiesOpen(true); return; }
-    if (feature.video) { setVideoSrc(feature.video); return; }
+    if (feature.video) { openVideo(feature.video); return; }
     onOpenMedia(feature.action);
   };
 
@@ -233,7 +248,7 @@ export default function ProjectDetailSection({ onOpenMedia, onNavigate }) {
       {/* Left-aligned hero body */}
       <div className="avana-hero-body">
         <p className="avana-hero-address">Raipur's First Luxury Address</p>
-        <img className="avana-hero-logo" src="/assets/images/avanalogo-new.png" alt="Raheja Avana" />
+        <img className="avana-hero-logo" src="assets/images/avanalogo-new.png" alt="Raheja Avana" />
         <div className="avana-hero-rule" aria-hidden="true" />
         <p className="avana-hero-tagline">Where legacy meets the art of living.</p>
       </div>
@@ -267,7 +282,7 @@ export default function ProjectDetailSection({ onOpenMedia, onNavigate }) {
           <button
             className="avana-explore-btn"
             type="button"
-            onClick={() => setVideoSrc(WALKTHROUGH_SRC)}
+            onClick={() => openVideo(WALKTHROUGH_SRC)}
           >
             Explore Avana <span aria-hidden="true">→</span>
           </button>

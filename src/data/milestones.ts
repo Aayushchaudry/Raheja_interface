@@ -3,7 +3,7 @@ import type { MilestoneData } from '../types'
 // Real Raheja project renders live in /public/assets/images/projects/
 // (optimized from the source files in /Raheja). Each project uses the same
 // image for sepiaImage (carousel card) and modernImage (Screen 3 reveal).
-const img = (slug: string) => `/assets/images/projects/${slug}.jpg`
+const img = (slug: string) => `assets/images/projects/${slug}.jpg`
 
 export const milestones: MilestoneData[] = [
   {

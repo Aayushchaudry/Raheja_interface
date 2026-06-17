@@ -157,7 +157,7 @@ export default function LuxurySection({ onNavigate }) {
           <div className="luxe-reveal">
             <img
               className="luxe-logo-reveal"
-              src="/assets/images/Raheja-luxe-logo-gold.png"
+              src="assets/images/Raheja-luxe-logo-gold.png"
               alt="Raheja Luxe"
             />
             <div className="luxe-gold-rule" onAnimationEnd={handleRuleEnd} />
@@ -195,7 +195,7 @@ export default function LuxurySection({ onNavigate }) {
         {phase === "avana-logo" && (
           <img
             className="luxe-avana-logo"
-            src="/assets/images/avanalogo-new.png"
+            src="assets/images/avanalogo-new.png"
             alt="Raheja Avana"
           />
         )}

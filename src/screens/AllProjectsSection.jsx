@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { allProjects } from "../data/brandWallContent.js";
 import { useGoldenThread } from "../hooks/useGoldenThread.js";
+import { getLocalUrl } from "../hooks/useAssetCache.js";
 
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
@@ -51,6 +52,20 @@ export default function AllProjectsSection({ onNavigate }) {
   const [viewW, setViewW] = useState(() => (typeof window !== "undefined" ? window.innerWidth : 1920));
   const [scrollX, setScrollX] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+
+  // Resolve card images to their locally-cached copies (offline-safe). Bundled
+  // local images pass straight through; only the remote Galleria render resolves
+  // to a cached blob URL.
+  const [localImages, setLocalImages] = useState({});
+  useEffect(() => {
+    let alive = true;
+    Promise.all(
+      allProjects
+        .filter((p) => p.image)
+        .map((p) => getLocalUrl(p.image).then((u) => [p.image, u])),
+    ).then((pairs) => { if (alive) setLocalImages(Object.fromEntries(pairs)); });
+    return () => { alive = false; };
+  }, []);
 
   // scrollXRef is the source of truth during drag; setScrollX is only called
   // once per animation frame so React re-renders stay at ≤60fps.
@@ -249,7 +264,7 @@ export default function AllProjectsSection({ onNavigate }) {
                       height: imageH,
                       ...(item.image
                         ? {
-                            backgroundImage: `url("${item.image}")`,
+                            backgroundImage: `url("${localImages[item.image] || item.image}")`,
                             filter: isCenter ? "none" : "brightness(0.55) saturate(0.85)",
                           }
                         : {}),

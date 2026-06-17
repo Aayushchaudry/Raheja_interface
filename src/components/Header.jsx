@@ -12,7 +12,7 @@ export default function Header({ activePage, onHome, onLuxe }) {
       </div>
       <div className="topbar-actions">
         <button className="luxe-btn luxe-btn--logo" type="button" aria-label="Enter Raheja Luxury" onClick={onLuxe}>
-          <img className="luxe-logo-img" src="/assets/images/Raheja-luxe-logo-gold.png" alt="Raheja Luxury" />
+          <img className="luxe-logo-img" src="assets/images/Raheja-luxe-logo-gold.png" alt="Raheja Luxury" />
         </button>
       </div>
     </header>

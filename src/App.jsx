@@ -1,15 +1,32 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import Header from "./components/Header.jsx";
 import MediaModal from "./components/MediaModal.jsx";
 import NavArrows from "./components/NavArrows.jsx";
 import PageIndicator from "./components/PageIndicator.jsx";
-import AboutSection from "./screens/AboutSection.jsx";
-import AllProjectsSection from "./screens/AllProjectsSection.jsx";
-import DirectorSection from "./screens/DirectorSection.jsx";
+// HeroSection is the standby screen (first paint), so it loads eagerly.
 import HeroSection from "./screens/HeroSection.jsx";
-import LuxurySection from "./screens/LuxurySection.jsx";
-import ProjectDetailSection from "./screens/ProjectDetailSection.jsx";
-import ThanksSection from "./screens/ThanksSection.jsx";
+
+// The remaining pages are code-split: each becomes its own chunk that is only
+// downloaded when the visitor first reaches it, so the initial standby load no
+// longer carries all seven pages' code. They are prefetched during idle time
+// (see the effect in App) so navigation stays instant on the kiosk.
+const AboutSection = lazy(() => import("./screens/AboutSection.jsx"));
+const DirectorSection = lazy(() => import("./screens/DirectorSection.jsx"));
+const AllProjectsSection = lazy(() => import("./screens/AllProjectsSection.jsx"));
+const LuxurySection = lazy(() => import("./screens/LuxurySection.jsx"));
+const ProjectDetailSection = lazy(() => import("./screens/ProjectDetailSection.jsx"));
+const ThanksSection = lazy(() => import("./screens/ThanksSection.jsx"));
+
+// Same dynamic imports, used to warm the chunk cache during idle. Calling
+// import() twice is cheap — the module loader returns the cached promise.
+const PAGE_PREFETCHERS = [
+  () => import("./screens/AboutSection.jsx"),
+  () => import("./screens/DirectorSection.jsx"),
+  () => import("./screens/AllProjectsSection.jsx"),
+  () => import("./screens/LuxurySection.jsx"),
+  () => import("./screens/ProjectDetailSection.jsx"),
+  () => import("./screens/ThanksSection.jsx"),
+];
 
 // The guided step flow. Luxury → Avana → Thanks.
 const pageOrder = ["standby", "about", "director", "projects", "luxury", "avana", "thanks"];
@@ -81,6 +98,19 @@ export default function App() {
       window.removeEventListener("resize", check);
     };
   }, [activePage]);
+
+  // Warm the lazy page chunks once the standby screen is idle, so the guided
+  // journey never stalls waiting on a download mid-way, while keeping the
+  // initial paint fast. requestIdleCallback where available, else a short timer.
+  useEffect(() => {
+    const warm = () => PAGE_PREFETCHERS.forEach((load) => load());
+    if (typeof window.requestIdleCallback === "function") {
+      const id = window.requestIdleCallback(warm, { timeout: 3000 });
+      return () => window.cancelIdleCallback?.(id);
+    }
+    const t = window.setTimeout(warm, 1500);
+    return () => window.clearTimeout(t);
+  }, []);
 
   const openMedia = (title) => setActiveMedia(title);
   const closeMedia = () => setActiveMedia(null);
@@ -165,7 +195,14 @@ export default function App() {
         onLuxe={() => navigateTo("luxury")}
       />
 
-      <main className="page-stage">{pageMap[activePage]}</main>
+      <main className="page-stage">
+        {/* A charcoal fallback covers the brief first-load of a lazy page chunk
+            so there is never a white flash; on the kiosk chunks are prefetched
+            so this rarely shows. */}
+        <Suspense fallback={<div className="page-suspense-fallback" aria-hidden="true" />}>
+          {pageMap[activePage]}
+        </Suspense>
+      </main>
 
       {/* The thanks/CTA page carries its own back + restart controls. */}
       {activePage !== "thanks" && (

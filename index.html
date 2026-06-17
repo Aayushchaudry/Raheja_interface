@@ -8,25 +8,62 @@
          a ~1920px-wide viewport regardless of physical screen size. -->
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Raheja Brand Wall Interface</title>
+
+    <!-- Fonts load asynchronously so they never block first paint (they used to
+         be chained @import statements in index.css, which delayed the whole UI
+         from appearing on the kiosk). preconnect warms the connection; the
+         media="print" + onload swap trick fetches the stylesheet without
+         blocking render, then applies it once ready. A <noscript> fallback
+         keeps fonts working if JS is disabled. display=swap (in each URL) shows
+         text immediately in a fallback face and swaps when the web font loads. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" />
+    <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Raleway:wght@200;300;400;500;600&family=Cinzel:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" />
+    <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@400;500&display=swap" />
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Raleway:wght@200;300;400;500;600&family=Cinzel:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Noto+Serif+Devanagari:wght@400;500&display=swap" />
+    </noscript>
   </head>
   <body>
     <div id="root"></div>
     <script>
+      // Performance "lite" mode. The kiosk TV has a weak processor, so the
+      // heavy *continuous* ambient animations (full-screen blurred beams,
+      // film-grain blend layers, drifting dust/orbs) are switched off by
+      // default — see `.perf-lite` in index.css. One-shot entrance reveals,
+      // scroll-cue hints and the core hero stay. Append ?motion=full to the URL
+      // to restore the full ambient motion. Runs before React mounts so the
+      // class is present on first paint.
+      if (!/[?&]motion=full\b/.test(window.location.search)) {
+        document.documentElement.classList.add("perf-lite");
+      }
+    </script>
+    <script>
       // Proportional scaler — works at any screen size.
-      // Resets zoom, measures the real viewport width, then applies a zoom
-      // factor so the 1920px design fills the screen exactly.
-      // --screen-h compensates for zoom affecting vh units.
+      // Applies a zoom factor so the 1920px design fills the screen exactly.
+      //
+      // It never resets zoom to 1 before measuring (the old approach did, which
+      // caused a visible flash/flicker on every resize and when entering
+      // fullscreen on the kiosk TV). Instead it recovers the true device width
+      // from the currently-applied zoom: clientWidth is reported in *zoomed* CSS
+      // pixels, so multiplying by the active zoom gives the stable physical
+      // width. --screen-h compensates for zoom affecting vh units.
       (function () {
         var DESIGN_W = 1920;
+        var current = 1; // the zoom factor currently applied
         function fit() {
           var html = document.documentElement;
-          html.style.zoom = "";
-          html.style.setProperty("--screen-h", "100vh");
-          var w = html.clientWidth;
-          var scale = w / DESIGN_W;
-          if (Math.abs(scale - 1) > 0.02) {
-            html.style.setProperty("--screen-h", window.innerHeight / scale + "px");
-            html.style.zoom = scale;
+          var physicalW = html.clientWidth * current;
+          var physicalH = window.innerHeight * current;
+          var scale = physicalW / DESIGN_W;
+          // Cheap CSS var update — safe to set every call, never flickers.
+          html.style.setProperty("--screen-h", physicalH / scale + "px");
+          // Only touch zoom when it actually changes, so steady state is stable.
+          if (Math.abs(scale - current) > 0.003) {
+            current = scale;
+            html.style.zoom = Math.abs(scale - 1) > 0.02 ? scale : "";
           }
         }
         fit();

@@ -8,7 +8,15 @@
 // Everything degrades gracefully: if Cache Storage is unavailable (e.g. an
 // insecure context) playback simply falls back to streaming the original URL.
 
-const CACHE_NAME = "avana-amenities-v1";
+import { CACHE_VERSION } from "../data/assetManifest.js";
+
+const CACHE_NAME = `raheja-assets-${CACHE_VERSION}`;
+
+// Memoised blob: URLs so an asset used many times (e.g. a render shown in the
+// gallery and again on a card) resolves to one stable URL for the session
+// instead of creating — and leaking — a new object URL on every call. On a
+// long-running kiosk these intentionally live for the whole session.
+const localUrlCache = new Map();
 
 function cacheSupported() {
   return typeof caches !== "undefined" && typeof window !== "undefined";
@@ -76,4 +84,50 @@ export async function getCachedUrl(url) {
     // fall through to the network URL
   }
   return url;
+}
+
+/**
+ * Resolve a usable URL for an asset, preferring the local cache. Returns a
+ * memoised blob: URL when cached (works fully offline), otherwise the original
+ * URL (which will hit the network, or fail gracefully when offline). Safe to
+ * call from render-time component state — the returned URL is stable per asset.
+ *
+ * @param {string} url
+ * @returns {Promise<string>}
+ */
+export async function getLocalUrl(url) {
+  if (localUrlCache.has(url)) return localUrlCache.get(url);
+  if (!cacheSupported()) return url;
+  try {
+    const cache = await caches.open(CACHE_NAME);
+    const res = await cache.match(url);
+    if (res) {
+      const blobUrl = URL.createObjectURL(await res.blob());
+      localUrlCache.set(url, blobUrl);
+      return blobUrl;
+    }
+  } catch {
+    // fall through to the network URL
+  }
+  return url;
+}
+
+/**
+ * True when every URL in the list is already in the local cache — used to tell
+ * whether the app can run offline without a download.
+ *
+ * @param {string[]} urls
+ * @returns {Promise<boolean>}
+ */
+export async function allCached(urls) {
+  if (!cacheSupported()) return false;
+  try {
+    const cache = await caches.open(CACHE_NAME);
+    for (const url of urls) {
+      if (!(await cache.match(url))) return false;
+    }
+    return true;
+  } catch {
+    return false;
+  }
 }

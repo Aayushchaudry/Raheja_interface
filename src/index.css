@@ -1,7 +1,5 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Raleway:wght@200;300;400;500;600&family=Cinzel:wght@400;500;600;700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@400;500&display=swap");
+/* Web fonts are loaded asynchronously from index.html (preconnect + async
+   <link>) so they no longer block first paint. Do not re-add @import here. */
 
 :root {
   --warm-base: #faf8f5;
@@ -35,6 +33,11 @@
 html {
   scroll-behavior: smooth;
   width: 100%;
+  /* Letterbox colour. The 1920-wide design is scaled to fill the screen width
+     (see the flicker-free zoom scaler in index.html); on a panel that is not
+     exactly 16:9 the leftover edge shows this instead of a bright gap. Matches
+     the body so a true 16:9 kiosk shows no seam. */
+  background: #0a0906;
 }
 
 body {
@@ -2741,21 +2744,26 @@ h3 {
    ============================================================ */
 
 /* Cinematic page transition + gold thread */
+/* The page-change dissolve. Previously animated `clip-path: circle()`, which is
+   not GPU-composited and forces a full-screen repaint every frame — expensive
+   on the weak kiosk TV. Reworked to a plain opacity fade: same cinematic black
+   dissolve, but compositor-only (cheap). Timings still match runTransition() in
+   App.jsx (cover ~520ms, then swap behind black, then reveal). */
 .transition-overlay {
   position: fixed;
   inset: 0;
   z-index: 500;
   pointer-events: none;
   background: #0a0a0b;
-  clip-path: circle(0% at 50% 50%);
+  opacity: 0;
 }
 .transition-overlay.out {
-  clip-path: circle(150% at 50% 50%);
-  transition: clip-path 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 1;
+  transition: opacity 0.42s ease;
 }
 .transition-overlay.in {
-  clip-path: circle(0% at 100% 0%);
-  transition: clip-path 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  transition: opacity 0.5s ease;
 }
 
 .gold-thread {
@@ -4183,7 +4191,7 @@ h3 {
   content: "";
   position: absolute;
   inset: 0;
-  background: url("/assets/images/avana.jpg") center / cover no-repeat;
+  background: url("./avana-bg.jpg") center / cover no-repeat;
   opacity: 0.28;
   pointer-events: none;
 }
@@ -4634,7 +4642,7 @@ h3 {
 .amenities-overlay-bg {
   position: absolute;
   inset: 0;
-  background: url("/assets/images/avana.jpg") center / cover no-repeat;
+  background: url("./avana-bg.jpg") center / cover no-repeat;
   opacity: 0.16;
   pointer-events: none;
 }
@@ -5648,4 +5656,144 @@ h3 {
   .about-cine .abc-stat-num {
     animation: none;
   }
+}
+
+/* Stat numbers (see components/CountUp.jsx). Rendered statically — no per-frame
+   JS — and gently faded in once. animation-fill-mode "both" + a "to" state of
+   full opacity means the number is always visible even if the animation never
+   runs, so it can never get stuck hidden on the kiosk. */
+.countup {
+  display: inline-block;
+  animation: countUpIn 0.7s ease both;
+}
+@keyframes countUpIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .countup {
+    animation: none;
+  }
+}
+
+/* ===========================================================
+   PERFORMANCE "LITE" MODE (kiosk default — toggled in index.html)
+   Disables the heaviest *continuous* ambient animations that run forever and
+   keep the GPU/CPU busy on the weak TV. One-shot entrance reveals, the core
+   hero carousel, scroll-cue hints and interaction feedback are left intact.
+   These are the layers that profiled worst: full-screen animated blur beams,
+   mix-blend film grain, and drifting blurred dust/orbs.
+   =========================================================== */
+.perf-lite .about-cine .abc-spark,
+.perf-lite .about-cine .abc-beam,
+.perf-lite .about-cine .abc-grain,
+.perf-lite .about-cine .abc-ghost,
+.perf-lite .about-cine .abc-stat-num,
+.perf-lite .hero-mote,
+.perf-lite .luxe-ambient-orb--1,
+.perf-lite .luxe-ambient-orb--2,
+.perf-lite .luxe-ambient-orb--3 {
+  animation: none !important;
+}
+
+/* The film-grain layer also uses mix-blend-mode, which is expensive to
+   composite every frame even when static — drop it entirely in lite mode. */
+.perf-lite .about-cine .abc-grain {
+  display: none;
+}
+
+/* 14 drifting dust motes are pure decoration; hiding the layer removes 14
+   animated, blurred elements from the hero compositing on every page. */
+.perf-lite .hero-dust {
+  display: none;
+}
+
+/* Fallback shown while a lazy-loaded page chunk is fetched (see App.jsx). A
+   plain charcoal fill so navigation never flashes white on the kiosk. */
+.page-suspense-fallback {
+  position: fixed;
+  inset: 0;
+  background: #0a0a0b;
+  z-index: 1;
+}
+
+/* ===========================================================
+   LOADING GATE (one-time asset preload — see screens/LoadingGate.jsx)
+   =========================================================== */
+.loadgate {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0a0906;
+  color: var(--ink);
+}
+.loadgate-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(201, 169, 110, 0.16), transparent 42%),
+    linear-gradient(160deg, #0b0a07 0%, #14121d 56%, #070604 100%);
+}
+.loadgate-inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: min(620px, 64vw);
+}
+.loadgate-logo {
+  width: 132px;
+  height: auto;
+  margin-bottom: 34px;
+  opacity: 0.96;
+}
+.loadgate-eyebrow {
+  font-family: Cinzel, Georgia, serif;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  font-size: 14px;
+  color: var(--gold);
+  margin: 0 0 12px;
+}
+.loadgate-title {
+  font-family: "Playfair Display", Georgia, serif;
+  font-weight: 600;
+  font-size: 40px;
+  margin: 0 0 34px;
+  color: #f4ecdb;
+}
+.loadgate-bar {
+  width: 100%;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(201, 169, 110, 0.18);
+  overflow: hidden;
+}
+.loadgate-fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #9a7340, #c9a96e, #f6e6bd);
+  transition: width 0.4s ease;
+}
+.loadgate-status {
+  margin: 18px 0 4px;
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.82);
+  letter-spacing: 0.04em;
+}
+.loadgate-note {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
 }

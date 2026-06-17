@@ -84,7 +84,7 @@ export default function AboutSection() {
 
   return (
     <section id="about" className="about-cine" data-section>
-      <img className="abc-logo" src="/assets/images/raheja-logo-navbar.png" alt="Raheja Group" />
+      <img className="abc-logo" src="assets/images/raheja-logo-navbar.png" alt="Raheja Group" />
       <div className="abc-frame" aria-hidden="true" />
       <span className="abc-tick abc-tl" aria-hidden="true" />
       <span className="abc-tick abc-tr" aria-hidden="true" />

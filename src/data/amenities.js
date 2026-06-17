@@ -5,7 +5,7 @@
 // buffer-free playback on the kiosk.
 
 const cdn = "https://d1ovqzmursgzel.cloudfront.net/raheja_avana";
-const poster = "/assets/images/amenities";
+const poster = "assets/images/amenities";
 
 export const avanaAmenities = [
   {
