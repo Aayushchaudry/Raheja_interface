@@ -212,7 +212,7 @@ export const allProjects = [
     location: "Raipur, Chhattisgarh",
     body: "A curated commercial destination featuring premium retail, food courts, and business spaces — designed to become Raipur's defining urban landmark.",
     rera: "",
-    image: "/assets/images/projects/raheja-galleria.jpg",
+    image: "https://d1ovqzmursgzel.cloudfront.net/raheja_avana/render/11.jpeg",
   },
   {
     title: "Raheja Nirwana 2",
