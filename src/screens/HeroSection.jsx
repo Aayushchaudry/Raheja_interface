@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { heroContent } from "../data/brandWallContent.js";
+import { useLocalUrls } from "../hooks/useLocalUrl.js";
 
 // Faint drifting light particles ported from the Ambara hero reference.
 function Dust() {
@@ -35,6 +36,7 @@ function Dust() {
 
 export default function HeroSection() {
   const slides = heroContent.slides;
+  const localSlides = useLocalUrls(slides.map((s) => s.image));
   const [index, setIndex] = useState(0);
   const [lit, setLit] = useState(false);
 
@@ -58,7 +60,7 @@ export default function HeroSection() {
       <div className="hero-carousel" aria-hidden="true">
         {slides.map((slide, i) => (
           <div key={slide.image} className={`hero-slide${i === index ? " is-active" : ""}`}>
-            <div className="hero-ken" style={{ backgroundImage: `url("${slide.image}")` }} />
+            <div className="hero-ken" style={{ backgroundImage: `url("${localSlides[slide.image] || slide.image}")` }} />
           </div>
         ))}
       </div>

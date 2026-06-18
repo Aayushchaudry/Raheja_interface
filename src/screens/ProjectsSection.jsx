@@ -1,7 +1,9 @@
 import PageLabel from "../components/PageLabel.jsx";
 import { projects } from "../data/brandWallContent.js";
+import { useLocalUrls } from "../hooks/useLocalUrl.js";
 
 export default function ProjectsSection({ onNavigate }) {
+  const localMap = useLocalUrls(projects.map((p) => p.image).filter(Boolean));
   return (
     <section id="projects" className="panel projects-panel" data-section>
       <PageLabel>Page 3: Explore Projects</PageLabel>
@@ -30,7 +32,7 @@ export default function ProjectsSection({ onNavigate }) {
             >
               <div
                 className={`project-photo project-photo--${index + 1}`}
-                style={project.image ? { "--bg-image": `url("${project.image}")` } : undefined}
+                style={project.image ? { "--bg-image": `url("${localMap[project.image] || project.image}")` } : undefined}
               >
                 <span className="project-pill">{project.category}</span>
                 <span className={`project-status ${project.status === "Ongoing" ? "is-ongoing" : ""}`}>{project.status}</span>

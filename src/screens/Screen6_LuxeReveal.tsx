@@ -4,7 +4,7 @@ import { useAudio } from '../hooks/useAudio'
 import { Screen } from '../types'
 import { COLORS } from '../utils/constants'
 
-const VIDEO_SRC = '/assets/videos/raheja-website.mp4'
+const VIDEO_SRC = 'assets/videos/raheja-website.mp4'
 const SCRUB_THRESHOLD_PX = 8
 
 export default function Screen6LuxeReveal() {

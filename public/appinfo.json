@@ -1,0 +1,15 @@
+{
+  "id": "com.raheja.kiosk",
+  "version": "1.0.0",
+  "vendor": "Raheja Group",
+  "type": "web",
+  "main": "index.html",
+  "title": "Raheja Experience",
+  "icon": "icon.png",
+  "largeIcon": "icon.png",
+  "bgColor": "#0a0a0b",
+  "iconColor": "#c9a96e",
+  "resolution": "1920x1080",
+  "disableBackHistoryAPI": true,
+  "handlesRelaunch": true
+}

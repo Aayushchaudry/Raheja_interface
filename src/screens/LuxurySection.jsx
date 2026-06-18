@@ -1,9 +1,34 @@
 import { useEffect, useRef, useState } from "react";
+import CachedImg from "../components/CachedImg.jsx";
+import { asset } from "../data/assetBase.js";
 
 const VIDEO_START = 15;
 const VIDEO_END = 28;
 const CONFESSION_START = 21.7;
 const CONFESSION_END = 26;
+
+// The two upcoming Luxe residences shown alongside the Avana entry on the
+// "Our Luxury Projects" screen. One royal, one modern — both display-only.
+const LUXE_PROJECTS = [
+  {
+    variant: "royal",
+    eyebrow: "Where the Water Meets the Sky",
+    title: "Raheja Waterfront",
+    location: "Sector 15, Naya Raipur, Atal Nagar",
+    body: "Exclusive waterfront villas with private water access, resort-scale amenities, and architecture inspired by nature.",
+    image: asset("brand/raheja-waterfront.webp"),
+    badge: "Launching Soon",
+  },
+  {
+    variant: "modern",
+    eyebrow: "Privacy is the Ultimate Luxury",
+    title: "Raheja Prive",
+    location: "Make in India Square, Telibandha",
+    body: "An exclusive collection of ultra-luxury residences for those who seek seclusion without sacrificing sophistication.",
+    image: asset("prive.webp"),
+    badge: "Upcoming",
+  },
+];
 
 export default function LuxurySection({ onNavigate }) {
   const [phase, setPhase] = useState("video");
@@ -155,9 +180,9 @@ export default function LuxurySection({ onNavigate }) {
         {/* Logo reveal + scroll cue (logo → ready phases) */}
         {showIntroReveal && (
           <div className="luxe-reveal">
-            <img
+            <CachedImg
               className="luxe-logo-reveal"
-              src="/assets/images/Raheja-luxe-logo-gold.png"
+              src={asset("Raheja-luxe-logo-gold.webp")}
               alt="Raheja Luxe"
             />
             <div className="luxe-gold-rule" onAnimationEnd={handleRuleEnd} />
@@ -179,23 +204,51 @@ export default function LuxurySection({ onNavigate }) {
           </div>
         )}
 
-        {/* Avana CTA — big centred button */}
+        {/* Avana CTA — page heading, raised entry button, and the two
+            upcoming Luxe residences as royal/modern cards. */}
         {phase === "avana-cta" && (
-          <button
-            className="luxe-avana-btn"
-            type="button"
-            onClick={() => setPhase("avana-pause")}
-          >
-            <span className="luxe-avana-btn-eyebrow">Enter Luxury of</span>
-            <em className="luxe-avana-btn-title">Raheja Avana</em>
-          </button>
+          <div className="luxe-projects-stage">
+            <header className="luxe-projects-head">
+              <span className="luxe-projects-eyebrow">Raheja Luxe</span>
+              <h2 className="luxe-projects-title">Our Luxury Projects</h2>
+            </header>
+
+            <button
+              className="luxe-avana-btn"
+              type="button"
+              onClick={() => setPhase("avana-pause")}
+            >
+              <span className="luxe-avana-btn-eyebrow">Enter Luxury of</span>
+              <em className="luxe-avana-btn-title">Raheja Avana</em>
+            </button>
+
+            <div className="luxe-collection-cards">
+              {LUXE_PROJECTS.map((p) => (
+                <article
+                  key={p.title}
+                  className={`luxe-collection-card luxe-collection-card--${p.variant}`}
+                >
+                  <div className="luxe-collection-photo">
+                    <CachedImg src={p.image} alt={p.title} />
+                    {p.badge && <span className="luxe-collection-badge">{p.badge}</span>}
+                  </div>
+                  <div className="luxe-collection-body">
+                    <span className="luxe-collection-eyebrow">{p.eyebrow}</span>
+                    <h3 className="luxe-collection-title">{p.title}</h3>
+                    <p className="luxe-collection-loc">{p.location}</p>
+                    <p className="luxe-collection-desc">{p.body}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
         )}
 
         {/* Avana logo after confession video */}
         {phase === "avana-logo" && (
-          <img
+          <CachedImg
             className="luxe-avana-logo"
-            src="/assets/images/avanalogo-new.png"
+            src={asset("avanalogo-new.webp")}
             alt="Raheja Avana"
           />
         )}

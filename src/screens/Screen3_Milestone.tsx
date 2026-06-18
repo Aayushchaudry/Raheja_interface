@@ -4,6 +4,7 @@ import { useAudio } from '../hooks/useAudio'
 import { Screen } from '../types'
 import { milestones } from '../data/milestones'
 import { COLORS } from '../utils/constants'
+import { useLocalUrl } from '../hooks/useLocalUrl.js'
 
 export default function Screen3Milestone() {
   const selectedIndex = useAppStore((s) => s.selectedMilestoneIndex)
@@ -21,6 +22,8 @@ export default function Screen3Milestone() {
   const swipeStartRef = useRef(0)
 
   const milestone = milestones[currentIndex]
+  const localSepia = useLocalUrl(milestone?.sepiaImage)
+  const localModern = useLocalUrl(milestone?.modernImage)
 
   // Parse number from stat text for counting animation
   const statNumber = parseInt(milestone.stat.match(/\d+/)?.[0] || '0', 10)
@@ -170,7 +173,7 @@ export default function Screen3Milestone() {
         <div
           className="absolute inset-0 bg-cover bg-center transition-opacity duration-500"
           style={{
-            backgroundImage: `url(${milestone.sepiaImage})`,
+            backgroundImage: `url(${localSepia})`,
             backgroundColor: 'rgba(212,175,55,0.15)',
             filter: 'sepia(0.7) brightness(0.8)',
             opacity: isModern ? 0 : 1,
@@ -181,7 +184,7 @@ export default function Screen3Milestone() {
         <div
           className="absolute inset-0 bg-cover bg-center transition-opacity duration-500"
           style={{
-            backgroundImage: `url(${milestone.modernImage})`,
+            backgroundImage: `url(${localModern})`,
             backgroundColor: 'rgba(100,160,200,0.15)',
             opacity: isModern ? 1 : 0,
           }}

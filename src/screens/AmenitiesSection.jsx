@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { getCachedUrl } from "../hooks/useAssetCache.js";
+import { useLocalUrls } from "../hooks/useLocalUrl.js";
 
 // Full-screen amenities experience for Raheja Avana. Opens from the Avana page's
 // "Amenities" card: a luxe grid of every amenity, each playing its full-quality
@@ -8,6 +9,7 @@ export default function AmenitiesSection({ amenities, progress = 0, readySet, on
   const [active, setActive] = useState(null); // the amenity whose film is playing
   const [resolvedSrc, setResolvedSrc] = useState(null);
   const objectUrlRef = useRef(null);
+  const localPosters = useLocalUrls(amenities.map((a) => a.poster));
 
   const revoke = () => {
     if (objectUrlRef.current) {
@@ -87,7 +89,7 @@ export default function AmenitiesSection({ amenities, progress = 0, readySet, on
               className="amenity-card"
               type="button"
               key={item.slug}
-              style={{ backgroundImage: `url("${item.poster}")` }}
+              style={{ backgroundImage: `url("${localPosters[item.poster] || item.poster}")` }}
               onClick={() => openPlayer(item)}
             >
               <span className="amenity-card-scrim" aria-hidden="true" />

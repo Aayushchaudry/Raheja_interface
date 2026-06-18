@@ -1,4 +1,4 @@
-export default function NavArrows({ showPrev, showNext, nextLabel, onPrev, onNext }) {
+export default function NavArrows({ showPrev, showNext, nextLabel, nextAccent, onPrev, onNext }) {
   return (
     <>
       {showPrev ? (
@@ -12,8 +12,13 @@ export default function NavArrows({ showPrev, showNext, nextLabel, onPrev, onNex
       ) : null}
 
       {showNext ? (
-        <button className="nav-arrow-right" type="button" aria-label="Next" onClick={onNext}>
-          <span className="arrow-circle">
+        <button
+          className={`nav-arrow-right${nextAccent ? " is-accent" : ""}`}
+          type="button"
+          aria-label="Next"
+          onClick={onNext}
+        >
+          <span className={`arrow-circle${nextAccent ? " gold-orbit" : ""}`}>
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
               <path d="M4 9H14M14 9L9 4M14 9L9 14" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
             </svg>

@@ -1,9 +1,10 @@
 import type { MilestoneData } from '../types'
+import { asset } from './assetBase.js'
 
-// Real Raheja project renders live in /public/assets/images/projects/
-// (optimized from the source files in /Raheja). Each project uses the same
-// image for sepiaImage (carousel card) and modernImage (Screen 3 reveal).
-const img = (slug: string) => `/assets/images/projects/${slug}.jpg`
+// Project renders live in the S3 bundle under images/projects/ as WebP (see
+// data/assetBase.js). Each project uses the same image for sepiaImage (carousel
+// card) and modernImage (Screen 3 reveal).
+const img = (slug: string) => asset(`projects/${slug}.webp`)
 
 export const milestones: MilestoneData[] = [
   {

@@ -1,7 +1,5 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Raleway:wght@200;300;400;500;600&family=Cinzel:wght@400;500;600;700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@400;500&display=swap");
+/* Web fonts are loaded asynchronously from index.html (preconnect + async
+   <link>) so they no longer block first paint. Do not re-add @import here. */
 
 :root {
   --warm-base: #faf8f5;
@@ -35,6 +33,11 @@
 html {
   scroll-behavior: smooth;
   width: 100%;
+  /* Letterbox colour. The 1920-wide design is scaled to fill the screen width
+     (see the flicker-free zoom scaler in index.html); on a panel that is not
+     exactly 16:9 the leftover edge shows this instead of a bright gap. Matches
+     the body so a true 16:9 kiosk shows no seam. */
+  background: #0a0906;
 }
 
 body {
@@ -2741,21 +2744,26 @@ h3 {
    ============================================================ */
 
 /* Cinematic page transition + gold thread */
+/* The page-change dissolve. Previously animated `clip-path: circle()`, which is
+   not GPU-composited and forces a full-screen repaint every frame — expensive
+   on the weak kiosk TV. Reworked to a plain opacity fade: same cinematic black
+   dissolve, but compositor-only (cheap). Timings still match runTransition() in
+   App.jsx (cover ~520ms, then swap behind black, then reveal). */
 .transition-overlay {
   position: fixed;
   inset: 0;
   z-index: 500;
   pointer-events: none;
   background: #0a0a0b;
-  clip-path: circle(0% at 50% 50%);
+  opacity: 0;
 }
 .transition-overlay.out {
-  clip-path: circle(150% at 50% 50%);
-  transition: clip-path 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 1;
+  transition: opacity 0.42s ease;
 }
 .transition-overlay.in {
-  clip-path: circle(0% at 100% 0%);
-  transition: clip-path 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  transition: opacity 0.5s ease;
 }
 
 .gold-thread {
@@ -4183,7 +4191,7 @@ h3 {
   content: "";
   position: absolute;
   inset: 0;
-  background: url("/assets/images/avana.jpg") center / cover no-repeat;
+  background: url("./avana-bg.jpg") center / cover no-repeat;
   opacity: 0.28;
   pointer-events: none;
 }
@@ -4634,7 +4642,7 @@ h3 {
 .amenities-overlay-bg {
   position: absolute;
   inset: 0;
-  background: url("/assets/images/avana.jpg") center / cover no-repeat;
+  background: url("./avana-bg.jpg") center / cover no-repeat;
   opacity: 0.16;
   pointer-events: none;
 }
@@ -5648,4 +5656,396 @@ h3 {
   .about-cine .abc-stat-num {
     animation: none;
   }
+}
+
+/* Stat numbers (see components/CountUp.jsx). Rendered statically — no per-frame
+   JS — and gently faded in once. animation-fill-mode "both" + a "to" state of
+   full opacity means the number is always visible even if the animation never
+   runs, so it can never get stuck hidden on the kiosk. */
+.countup {
+  display: inline-block;
+  animation: countUpIn 0.7s ease both;
+}
+@keyframes countUpIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .countup {
+    animation: none;
+  }
+}
+
+/* ===========================================================
+   PERFORMANCE "LITE" MODE (kiosk default — toggled in index.html)
+   Disables the heaviest *continuous* ambient animations that run forever and
+   keep the GPU/CPU busy on the weak TV. One-shot entrance reveals, the core
+   hero carousel, scroll-cue hints and interaction feedback are left intact.
+   These are the layers that profiled worst: full-screen animated blur beams,
+   mix-blend film grain, and drifting blurred dust/orbs.
+   =========================================================== */
+.perf-lite .about-cine .abc-spark,
+.perf-lite .about-cine .abc-beam,
+.perf-lite .about-cine .abc-grain,
+.perf-lite .about-cine .abc-ghost,
+.perf-lite .about-cine .abc-stat-num,
+.perf-lite .hero-mote,
+.perf-lite .luxe-ambient-orb--1,
+.perf-lite .luxe-ambient-orb--2,
+.perf-lite .luxe-ambient-orb--3 {
+  animation: none !important;
+}
+
+/* The film-grain layer also uses mix-blend-mode, which is expensive to
+   composite every frame even when static — drop it entirely in lite mode. */
+.perf-lite .about-cine .abc-grain {
+  display: none;
+}
+
+/* 14 drifting dust motes are pure decoration; hiding the layer removes 14
+   animated, blurred elements from the hero compositing on every page. */
+.perf-lite .hero-dust {
+  display: none;
+}
+
+/* backdrop-filter re-samples and blurs everything behind the element every
+   frame — one of the most expensive GPU ops on the weak TV, and it compounds
+   badly with the root `zoom`. Drop it in lite mode; the panels keep their own
+   semi-opaque backgrounds, so they stay legible, just without the live blur. */
+.perf-lite *,
+.perf-lite *::before,
+.perf-lite *::after {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Fallback shown while a lazy-loaded page chunk is fetched (see App.jsx). A
+   plain charcoal fill so navigation never flashes white on the kiosk. */
+.page-suspense-fallback {
+  position: fixed;
+  inset: 0;
+  background: #0a0a0b;
+  z-index: 1;
+}
+
+/* ===========================================================
+   LOADING GATE (one-time asset preload — see screens/LoadingGate.jsx)
+   =========================================================== */
+.loadgate {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0a0906;
+  color: var(--ink);
+}
+.loadgate-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(201, 169, 110, 0.16), transparent 42%),
+    linear-gradient(160deg, #0b0a07 0%, #14121d 56%, #070604 100%);
+}
+.loadgate-inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: min(620px, 64vw);
+}
+.loadgate-logo {
+  width: 132px;
+  height: auto;
+  margin-bottom: 34px;
+  opacity: 0.96;
+}
+.loadgate-eyebrow {
+  font-family: Cinzel, Georgia, serif;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  font-size: 14px;
+  color: var(--gold);
+  margin: 0 0 12px;
+}
+.loadgate-title {
+  font-family: "Playfair Display", Georgia, serif;
+  font-weight: 600;
+  font-size: 40px;
+  margin: 0 0 34px;
+  color: #f4ecdb;
+}
+.loadgate-bar {
+  width: 100%;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(201, 169, 110, 0.18);
+  overflow: hidden;
+}
+.loadgate-fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #9a7340, #c9a96e, #f6e6bd);
+  transition: width 0.4s ease;
+}
+.loadgate-status {
+  margin: 18px 0 4px;
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.82);
+  letter-spacing: 0.04em;
+}
+.loadgate-note {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* ===================================================================== */
+/* Travelling gold border — a luminous line that orbits the edge of a    */
+/* card or button. Pure conic-gradient + rotate (no @property/mask-      */
+/* composite) so it runs on the older webOS TV browser. The rotating     */
+/* gradient lives on ::before; ::after caps the centre so only a thin    */
+/* gold rim shows; real content sits on top at z-index 2.                */
+/* ===================================================================== */
+.gold-orbit {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.gold-orbit > * {
+  position: relative;
+  z-index: 2;
+}
+.gold-orbit::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  left: 50%;
+  /* 175% of each side comfortably exceeds the card diagonal, so the
+     spinning square never leaves an uncovered corner. */
+  width: 175%;
+  height: 175%;
+  /* A single short, bright segment with a brief tail — the rest fully
+     transparent — so what travels the rim reads as one moving line, not
+     a sweeping glow. */
+  background: conic-gradient(
+    from 0deg,
+    rgba(201, 169, 110, 0) 0deg,
+    rgba(201, 169, 110, 0) 300deg,
+    rgba(201, 169, 110, 0.35) 326deg,
+    #f6e6bd 342deg,
+    #fff6df 350deg,
+    #e7c067 356deg,
+    rgba(201, 169, 110, 0) 360deg
+  );
+  transform: translate(-50%, -50%) rotate(0deg);
+  animation: goldOrbit 3.4s linear infinite;
+  pointer-events: none;
+}
+.gold-orbit::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: 1.5px;
+  border-radius: inherit;
+  /* Fully opaque so the spinning gradient never shows through the centre —
+     only the 1.5px rim is animated. */
+  background: #0b0905;
+  pointer-events: none;
+}
+@keyframes goldOrbit {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+/* Enter-Luxury card (Our Projects) — keep its own surface inside the rim */
+.luxe-enter-card.gold-orbit {
+  border-color: transparent;
+}
+.luxe-enter-card.gold-orbit::after {
+  background:
+    radial-gradient(circle at 50% 30%, rgba(201, 169, 110, 0.22), transparent 60%),
+    linear-gradient(180deg, #282116, #120f0a);
+}
+
+/* Begin-Journey arrow (landing) — orbit rides the circular button */
+.nav-arrow-right.is-accent .arrow-circle {
+  border-color: transparent;
+}
+.nav-arrow-right.is-accent .arrow-circle::after {
+  background: #0a0804;
+}
+.nav-arrow-right.is-accent .arrow-label {
+  color: #f3e3b4;
+}
+
+/* ===================================================================== */
+/* "Our Luxury Projects" screen (Luxe avana-cta phase) — heading, raised */
+/* Avana entry button, and the two upcoming residences as cards.         */
+/* ===================================================================== */
+.luxe-projects-stage {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(22px, 3.4vh, 48px);
+  width: min(1400px, 94vw);
+  /* Fill the full screen height so the heading anchors the top, the entry
+     button sits a touch lower, and the cards drop to the bottom. */
+  min-height: var(--screen-h);
+  padding: clamp(48px, 8vh, 110px) 0 clamp(44px, 6vh, 84px);
+  animation: luxeVideoFadeIn 700ms ease both;
+}
+
+.luxe-projects-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+.luxe-projects-eyebrow {
+  font-family: "Raleway", sans-serif;
+  font-size: clamp(11px, 1vw, 14px);
+  font-weight: 300;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: rgba(201, 169, 110, 0.82);
+}
+.luxe-projects-title {
+  margin: 0;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(34px, 4.6vw, 66px);
+  line-height: 1;
+  background: linear-gradient(100deg, #9a7340, #f6e6bd 46%, #c9a96e 82%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* Centre the Avana entry button vertically in the space between the heading
+   and the cards: an auto margin above the button and above the cards splits
+   the free height equally, leaving the button mid-way between the two. */
+.luxe-projects-stage .luxe-avana-btn {
+  margin-top: auto;
+  padding: clamp(22px, 2.8vw, 44px) clamp(48px, 6.5vw, 100px);
+}
+
+.luxe-collection-cards {
+  /* Push the cards to the bottom of the full-height stage */
+  margin-top: auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(22px, 2.8vw, 46px);
+  width: 100%;
+}
+
+.luxe-collection-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  width: clamp(320px, 30vw, 470px);
+  border: 1px solid rgba(201, 169, 110, 0.32);
+  border-radius: 18px;
+  text-align: left;
+  color: #f3ece1;
+  box-shadow: 0 20px 52px rgba(0, 0, 0, 0.52);
+  animation: royalRise 760ms ease both;
+}
+
+/* Distinct surfaces — royal (warm gold) vs modern (cool slate) */
+.luxe-collection-card--royal {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(201, 169, 110, 0.16), transparent 58%),
+    linear-gradient(180deg, rgba(38, 30, 20, 0.96), rgba(18, 14, 9, 0.96));
+}
+.luxe-collection-card--modern {
+  background: linear-gradient(180deg, rgba(22, 24, 28, 0.96), rgba(11, 12, 15, 0.96));
+  border-color: rgba(176, 196, 210, 0.26);
+  animation-delay: 90ms;
+}
+
+.luxe-collection-photo {
+  position: relative;
+  width: 100%;
+  height: clamp(190px, 24vh, 300px);
+  overflow: hidden;
+  border-radius: 16px 16px 0 0;
+}
+.luxe-collection-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.luxe-collection-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 3;
+  padding: 5px 12px;
+  font-family: "Raleway", sans-serif;
+  font-size: clamp(9px, 0.78vw, 11px);
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #0b0905;
+  background: linear-gradient(135deg, #f6e6bd, #c9a96e);
+  border-radius: 2px;
+}
+.luxe-collection-card--modern .luxe-collection-badge {
+  background: linear-gradient(135deg, #eef3f7, #aab8c4);
+}
+
+.luxe-collection-body {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: clamp(20px, 1.9vw, 30px);
+}
+.luxe-collection-eyebrow {
+  font-family: "Raleway", sans-serif;
+  font-size: clamp(9px, 0.78vw, 11px);
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(201, 169, 110, 0.85);
+}
+.luxe-collection-card--modern .luxe-collection-eyebrow {
+  color: rgba(176, 196, 210, 0.82);
+}
+.luxe-collection-title {
+  margin: 0;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-weight: 500;
+  font-size: clamp(28px, 2.6vw, 42px);
+  line-height: 1.05;
+  color: #f6efe1;
+}
+.luxe-collection-loc {
+  margin: 0;
+  font-size: clamp(13px, 1.05vw, 15px);
+  color: rgba(243, 236, 225, 0.55);
+}
+.luxe-collection-desc {
+  margin: 5px 0 0;
+  font-size: clamp(13px, 1.05vw, 16px);
+  line-height: 1.55;
+  color: rgba(243, 236, 225, 0.72);
 }

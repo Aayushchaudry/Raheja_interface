@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import CountUp from "../components/CountUp.jsx";
 import ScrollCue from "../components/ScrollCue.jsx";
 import { aboutContent } from "../data/brandWallContent.js";
+import CachedImg from "../components/CachedImg.jsx";
+import { asset } from "../data/assetBase.js";
 
 // Cinematic ambient layer ported from the standalone kiosk reference:
 // drifting bokeh sparks, a sweeping light beam, a grain wash, and a giant
@@ -84,7 +86,7 @@ export default function AboutSection() {
 
   return (
     <section id="about" className="about-cine" data-section>
-      <img className="abc-logo" src="/assets/images/raheja-logo-navbar.png" alt="Raheja Group" />
+      <CachedImg className="abc-logo" src={asset("raheja-logo-navbar.webp")} alt="Raheja Group" />
       <div className="abc-frame" aria-hidden="true" />
       <span className="abc-tick abc-tl" aria-hidden="true" />
       <span className="abc-tick abc-tr" aria-hidden="true" />

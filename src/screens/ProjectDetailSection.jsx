@@ -1,61 +1,63 @@
 import { useEffect, useRef, useState } from "react";
 import { avanaDetail } from "../data/brandWallContent.js";
 import { avanaAmenities } from "../data/amenities.js";
-import { prefetchAssets } from "../hooks/useAssetCache.js";
+import { prefetchAssets, getLocalUrl } from "../hooks/useAssetCache.js";
+import { IMG_BASE, asset } from "../data/assetBase.js";
+import CachedImg from "../components/CachedImg.jsx";
 import AmenitiesSection from "./AmenitiesSection.jsx";
 
 const WALKTHROUGH_SRC = "https://d1ovqzmursgzel.cloudfront.net/raheja_avana/Explore_avana.mp4";
 
-const RENDER_BASE = "https://d1ovqzmursgzel.cloudfront.net/raheja_avana/render";
+const RENDER_BASE = `${IMG_BASE}/render-2560`;
 
 const ARCH_SLIDES = [
   {
-    image: `${RENDER_BASE}/1.jpg`,
+    image: `${RENDER_BASE}/1.webp`,
     title: "The Grand Arrival",
     body: "A stately, screened gateway announces Avana — Raipur's first address, where every homecoming feels like an occasion.",
   },
   {
-    image: `${RENDER_BASE}/2.jpg`,
+    image: `${RENDER_BASE}/2.webp`,
     title: "The Clubhouse",
     body: "A sculptural clubhouse crowns the community, its floating roofline and terraced gardens setting a new benchmark for leisure in the city.",
   },
   {
-    image: `${RENDER_BASE}/3.jpg`,
+    image: `${RENDER_BASE}/3.webp`,
     title: "The Waterscape",
     body: "An expansive resort-style pool mirrors the dusk sky — a private oasis framed by cascading green terraces.",
   },
   {
-    image: `${RENDER_BASE}/4.jpg`,
+    image: `${RENDER_BASE}/4.webp`,
     title: "The Garden Promenade",
     body: "Residences open onto lush, flower-lined walks, where landscaped greens turn every stroll home into a walk through a garden.",
   },
   {
-    image: `${RENDER_BASE}/5.jpg`,
+    image: `${RENDER_BASE}/5.webp`,
     title: "Twilight Residences",
     body: "As evening falls, glass-fronted homes glow with warmth — architecture and light composed for a life lived beautifully.",
   },
   {
-    image: `${RENDER_BASE}/6.jpg`,
+    image: `${RENDER_BASE}/6.webp`,
     title: "The Central Green",
     body: "Flowering Gulmohars canopy a central commons — a gathering place designed for community, calm and unhurried evenings.",
   },
   {
-    image: `${RENDER_BASE}/7.jpg`,
+    image: `${RENDER_BASE}/7.webp`,
     title: "Gardens of Wellbeing",
     body: "Jacaranda blooms and open play lawns weave wellness into daily life, crafted for families to grow, move and unwind.",
   },
   {
-    image: `${RENDER_BASE}/8.jpg`,
+    image: `${RENDER_BASE}/8.webp`,
     title: "The Residences",
     body: "Tree-lined avenues frame a procession of refined villa façades — proportioned, private and unmistakably Avana.",
   },
   {
-    image: `${RENDER_BASE}/9.jpg`,
+    image: `${RENDER_BASE}/9.webp`,
     title: "The Leisure Lawn",
     body: "Generous open lawns and shaded pergolas invite pause and play — luxury measured in space, light and greenery.",
   },
   {
-    image: `${RENDER_BASE}/10.jpg`,
+    image: `${RENDER_BASE}/10.webp`,
     title: "The Masterplan",
     body: "Seen from above, Avana unfolds as a meticulously master-planned sanctuary — a green township destined to define Raipur's tomorrow.",
   },
@@ -79,6 +81,17 @@ function ArchGallery({ onClose }) {
   const [dir, setDir] = useState("next");
   const [animating, setAnimating] = useState(false);
   const timeoutRef = useRef(null);
+
+  // Resolve every render to its locally-cached copy (offline-safe). Until a
+  // resolution lands the network URL is used, so it always shows something.
+  const [localImages, setLocalImages] = useState({});
+  useEffect(() => {
+    let alive = true;
+    Promise.all(ARCH_SLIDES.map((s) => getLocalUrl(s.image).then((u) => [s.image, u]))).then(
+      (pairs) => { if (alive) setLocalImages(Object.fromEntries(pairs)); },
+    );
+    return () => { alive = false; };
+  }, []);
 
   useEffect(() => {
     const onKey = (e) => {
@@ -125,7 +138,7 @@ function ArchGallery({ onClose }) {
       <div
         key={index}
         className={`arch-gallery-bg arch-gallery-bg--${dir}${animating ? " arch-gallery-bg--exit" : " arch-gallery-bg--enter"}`}
-        style={{ backgroundImage: `url("${current.image}")` }}
+        style={{ backgroundImage: `url("${localImages[current.image] || current.image}")` }}
       />
       <div className="arch-gallery-dim" />
       <button
@@ -213,10 +226,14 @@ export default function ProjectDetailSection({ onOpenMedia, onNavigate }) {
     return () => { cancelled = true; };
   }, []);
 
+  // Resolve to the locally-cached copy (offline-safe) before playing; falls back
+  // to the network URL if it isn't cached.
+  const openVideo = (url) => { getLocalUrl(url).then(setVideoSrc); };
+
   const handleCardClick = (feature) => {
     if (feature.gallery) { setGalleryOpen(true); return; }
     if (feature.amenities) { setAmenitiesOpen(true); return; }
-    if (feature.video) { setVideoSrc(feature.video); return; }
+    if (feature.video) { openVideo(feature.video); return; }
     onOpenMedia(feature.action);
   };
 
@@ -233,7 +250,7 @@ export default function ProjectDetailSection({ onOpenMedia, onNavigate }) {
       {/* Left-aligned hero body */}
       <div className="avana-hero-body">
         <p className="avana-hero-address">Raipur's First Luxury Address</p>
-        <img className="avana-hero-logo" src="/assets/images/avanalogo-new.png" alt="Raheja Avana" />
+        <CachedImg className="avana-hero-logo" src={asset("avanalogo-new.webp")} alt="Raheja Avana" />
         <div className="avana-hero-rule" aria-hidden="true" />
         <p className="avana-hero-tagline">Where legacy meets the art of living.</p>
       </div>
@@ -267,7 +284,7 @@ export default function ProjectDetailSection({ onOpenMedia, onNavigate }) {
           <button
             className="avana-explore-btn"
             type="button"
-            onClick={() => setVideoSrc(WALKTHROUGH_SRC)}
+            onClick={() => openVideo(WALKTHROUGH_SRC)}
           >
             Explore Avana <span aria-hidden="true">→</span>
           </button>

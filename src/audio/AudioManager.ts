@@ -25,22 +25,22 @@ interface SoundConfig {
 }
 
 const SOUND_MAP: Record<SoundName, SoundConfig> = {
-  ambientDrone: { src: '/assets/audio/ambient-drone.mp3', loop: true, volume: 0.6 },
-  celloSwell: { src: '/assets/audio/cello-swell.mp3', volume: 0.85 },
-  metallicShimmer: { src: '/assets/audio/metallic-shimmer.mp3', loop: true, volume: 0.7 },
-  chimeSoft: { src: '/assets/audio/chime-soft.mp3', volume: 0.8 },
-  waterPing: { src: '/assets/audio/water-ping.mp3', volume: 0.8 },
-  celloSustain: { src: '/assets/audio/cello-sustain.mp3', volume: 0.75 },
-  etherealPad: { src: '/assets/audio/ethereal-pad.mp3', loop: true, volume: 0.6 },
-  stringPull: { src: '/assets/audio/string-pull.mp3', volume: 0.8 },
-  harmonicChime: { src: '/assets/audio/harmonic-chime.mp3', volume: 0.85 },
-  validationClick: { src: '/assets/audio/validation-click.mp3', volume: 0.9 },
-  orchestralSwell: { src: '/assets/audio/orchestral-swell.mp3', volume: 0.9 },
-  descendingTone: { src: '/assets/audio/descending-tone.mp3', volume: 0.7 },
-  constructionLayers: { src: '/assets/audio/construction-layers.mp3', volume: 0.75 },
-  grandReveal: { src: '/assets/audio/grand-reveal.mp3', volume: 0.9 },
-  luxeAmbient: { src: '/assets/audio/luxe-ambient.mp3', loop: true, volume: 0.6 },
-  fadeExhale: { src: '/assets/audio/fade-exhale.mp3', volume: 0.7 },
+  ambientDrone: { src: 'assets/audio/ambient-drone.mp3', loop: true, volume: 0.6 },
+  celloSwell: { src: 'assets/audio/cello-swell.mp3', volume: 0.85 },
+  metallicShimmer: { src: 'assets/audio/metallic-shimmer.mp3', loop: true, volume: 0.7 },
+  chimeSoft: { src: 'assets/audio/chime-soft.mp3', volume: 0.8 },
+  waterPing: { src: 'assets/audio/water-ping.mp3', volume: 0.8 },
+  celloSustain: { src: 'assets/audio/cello-sustain.mp3', volume: 0.75 },
+  etherealPad: { src: 'assets/audio/ethereal-pad.mp3', loop: true, volume: 0.6 },
+  stringPull: { src: 'assets/audio/string-pull.mp3', volume: 0.8 },
+  harmonicChime: { src: 'assets/audio/harmonic-chime.mp3', volume: 0.85 },
+  validationClick: { src: 'assets/audio/validation-click.mp3', volume: 0.9 },
+  orchestralSwell: { src: 'assets/audio/orchestral-swell.mp3', volume: 0.9 },
+  descendingTone: { src: 'assets/audio/descending-tone.mp3', volume: 0.7 },
+  constructionLayers: { src: 'assets/audio/construction-layers.mp3', volume: 0.75 },
+  grandReveal: { src: 'assets/audio/grand-reveal.mp3', volume: 0.9 },
+  luxeAmbient: { src: 'assets/audio/luxe-ambient.mp3', loop: true, volume: 0.6 },
+  fadeExhale: { src: 'assets/audio/fade-exhale.mp3', volume: 0.7 },
 }
 
 class AudioManagerClass {
