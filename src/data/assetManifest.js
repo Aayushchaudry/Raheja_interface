@@ -15,7 +15,10 @@ export const CACHE_VERSION = "v2";
 const FILM_CDN = "https://d1ovqzmursgzel.cloudfront.net/raheja_avana";
 
 // --- images ----------------------------------------------------------------
-const RENDERS = Array.from({ length: 11 }, (_, i) => `${IMG_BASE}/render/${i + 1}.webp`);
+// 2560px-wide renders (downscaled from the 8000px originals) — the 8K versions
+// decoded far too slowly on the weak TV GPU. New path so the TV re-fetches only
+// these 11 small files without re-downloading the cached videos.
+const RENDERS = Array.from({ length: 11 }, (_, i) => `${IMG_BASE}/render-2560/${i + 1}.webp`);
 
 const PROJECTS = [
   "raheja-tower", "raheja-residency", "raheja-arth", "raheja-greens",

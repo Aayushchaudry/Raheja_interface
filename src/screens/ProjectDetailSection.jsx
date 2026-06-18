@@ -8,7 +8,7 @@ import AmenitiesSection from "./AmenitiesSection.jsx";
 
 const WALKTHROUGH_SRC = "https://d1ovqzmursgzel.cloudfront.net/raheja_avana/Explore_avana.mp4";
 
-const RENDER_BASE = `${IMG_BASE}/render`;
+const RENDER_BASE = `${IMG_BASE}/render-2560`;
 
 const ARCH_SLIDES = [
   {
