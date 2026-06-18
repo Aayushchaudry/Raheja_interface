@@ -5879,12 +5879,15 @@ h3 {
     linear-gradient(180deg, #282116, #120f0a);
 }
 
-/* Begin-Journey arrow (landing) — orbit rides the circular button */
-.nav-arrow-right.is-accent .arrow-circle {
-  border-color: transparent;
-}
+/* Begin-Journey arrow (landing) — keep the original transparent button face
+   (the hero shows through, no black fill); drop the centre cap and mask the
+   orbit down to a thin ring so only the gold line travels the rim. */
 .nav-arrow-right.is-accent .arrow-circle::after {
-  background: #0a0804;
+  display: none;
+}
+.nav-arrow-right.is-accent .arrow-circle::before {
+  -webkit-mask: radial-gradient(circle, transparent 24px, #000 26px);
+  mask: radial-gradient(circle, transparent 24px, #000 26px);
 }
 .nav-arrow-right.is-accent .arrow-label {
   color: #f3e3b4;

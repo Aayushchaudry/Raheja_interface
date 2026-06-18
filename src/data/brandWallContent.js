@@ -58,7 +58,7 @@ export const aboutContent = {
   stats: [
     { value: "20+", label: "Yrs of Trust & Excellence" },
     { value: "5,000+", label: "Happy Families" },
-    { value: "40+", label: "Projects Delivered" },
+    { value: "14+", label: "Projects Delivered" },
     { value: "2", label: "Mn Sq Ft Developed" },
     { value: "1st", label: "Luxury Project in Raipur" },
     { value: "Avana", label: "The Crown Jewel" },
@@ -73,7 +73,7 @@ export const directorContent = {
   quote:
     "When we broke ground on our first project in Raipur, we carried one belief — that a home is not merely a structure. It is a feeling. A legacy. A promise kept across time.",
   body: [
-    "Over two decades, the Raheja Group has grown from a single vision to Raipur's most trusted name in premium real estate. We have built more than forty projects, housed more than five thousand families, and developed two million square feet of spaces that people are proud to call home.",
+    "Over two decades, the Raheja Group has grown from a single vision to Raipur's most trusted name in premium real estate. We have built more than fourteen projects, housed more than five thousand families, and developed two million square feet of spaces that people are proud to call home.",
     "Avana is our crown jewel — the culmination of everything we have learned, refined, and perfected. It is not just our finest work. It is Raipur's finest address.",
   ],
   author: "Mr. Sanjay Raheja",
