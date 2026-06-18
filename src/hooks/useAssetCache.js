@@ -23,6 +23,25 @@ function cacheSupported() {
 }
 
 /**
+ * Delete any previous-version asset caches (e.g. raheja-assets-v1) left behind
+ * after CACHE_VERSION is bumped, so old data doesn't pile up on the device.
+ * Safe to call on every launch; only touches our own caches.
+ */
+export async function purgeStaleCaches() {
+  if (!cacheSupported()) return;
+  try {
+    const keys = await caches.keys();
+    await Promise.all(
+      keys
+        .filter((k) => k.startsWith("raheja-assets-") && k !== CACHE_NAME)
+        .map((k) => caches.delete(k)),
+    );
+  } catch {
+    // ignore — purging is best-effort
+  }
+}
+
+/**
  * Download a list of URLs into the cache, one at a time so progress is smooth
  * and we never hold more than one in-flight request.
  *

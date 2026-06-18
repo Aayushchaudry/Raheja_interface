@@ -1,17 +1,27 @@
 import { useEffect, useState } from "react";
-import { prefetchAssets, allCached } from "../hooks/useAssetCache.js";
+import { prefetchAssets, allCached, purgeStaleCaches } from "../hooks/useAssetCache.js";
 import { REMOTE_ASSETS } from "../data/assetManifest.js";
 import CachedImg from "../components/CachedImg.jsx";
 import { asset } from "../data/assetBase.js";
 
-// The full preload only runs in the packaged kiosk app, NOT on the public
-// website — otherwise web visitors would be forced to download ~2 GB before
-// seeing anything. The kiosk app loads over file:// (webOS) or reports a webOS
-// user agent; ?kiosk=1 forces it on for local testing.
+// The full preload only runs in the packaged/installed kiosk app, NOT on a
+// casual public-website visit — otherwise web visitors would be forced to
+// download ~2 GB before seeing anything. We treat it as the kiosk when:
+//   - it loads over file:// (webOS packaged app), or
+//   - the user agent is webOS, or
+//   - it runs as an installed app (standalone display-mode / added to home), or
+//   - ?kiosk=1 is present (manual override for browser testing).
+// The standalone check matters: when you "install" the page from the browser,
+// the installed window must prefetch in ITS OWN storage — the cache filled in a
+// normal browser tab does not carry over to the installed app's sandbox.
 function isKioskApp() {
   if (typeof window === "undefined") return false;
+  const standalone =
+    (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) ||
+    window.navigator.standalone === true;
   return (
     window.location.protocol === "file:" ||
+    standalone ||
     /web0?s/i.test(navigator.userAgent) ||
     /[?&]kiosk=1\b/.test(window.location.search)
   );
@@ -34,8 +44,12 @@ export default function LoadingGate({ children }) {
   useEffect(() => {
     let cancelled = false;
 
-    // Public website (not the packaged app): don't block — media streams from
-    // the CDN exactly as before.
+    // Remove orphaned old-version caches (e.g. after a CACHE_VERSION bump) so
+    // stale data never piles up. Best-effort, runs in every context.
+    purgeStaleCaches();
+
+    // Public website (not the packaged/installed app): don't block — media
+    // streams from the CDN exactly as before.
     if (!isKioskApp()) {
       setReady(true);
       return undefined;
