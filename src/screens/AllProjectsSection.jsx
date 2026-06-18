@@ -245,7 +245,7 @@ export default function AllProjectsSection({ onNavigate }) {
               }}
             >
               {item.__luxe ? (
-                <div className="estate-card luxe-enter-card">
+                <div className="estate-card luxe-enter-card gold-orbit">
                   <span className="luxe-enter-crest" aria-hidden="true" />
                   <span className="luxe-enter-eyebrow">Raheja Luxe</span>
                   <span className="luxe-enter-title">Enter Luxury</span>

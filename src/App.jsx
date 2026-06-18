@@ -148,12 +148,13 @@ export default function App() {
 
   const nextPage = inFlow ? pageOrder[currentIndex + 1] : null;
 
-  const showPrev = false;
-  // Projects and luxury/avana pages advance via their own in-page controls.
+  // A Previous arrow on every in-flow page except the very first (standby),
+  // so the visitor can always step back through the guided journey.
+  const showPrev = inFlow && currentIndex > 0;
+  // Luxury/avana pages advance via their own in-page cinematic controls.
   // On About, hold the Next arrow back until the visitor has scrolled to the bottom.
   const showNext =
     inFlow &&
-    activePage !== "projects" &&
     activePage !== "luxury" &&
     activePage !== "avana" &&
     (activePage !== "about" || atBottom);
@@ -211,6 +212,7 @@ export default function App() {
             showPrev={showPrev}
             showNext={showNext}
             nextLabel={nextLabel}
+            nextAccent={activePage === "standby"}
             onPrev={handlePrev}
             onNext={handleNext}
           />

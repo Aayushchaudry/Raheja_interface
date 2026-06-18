@@ -5808,3 +5808,244 @@ h3 {
   font-size: 13px;
   color: rgba(255, 255, 255, 0.5);
 }
+
+/* ===================================================================== */
+/* Travelling gold border — a luminous line that orbits the edge of a    */
+/* card or button. Pure conic-gradient + rotate (no @property/mask-      */
+/* composite) so it runs on the older webOS TV browser. The rotating     */
+/* gradient lives on ::before; ::after caps the centre so only a thin    */
+/* gold rim shows; real content sits on top at z-index 2.                */
+/* ===================================================================== */
+.gold-orbit {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.gold-orbit > * {
+  position: relative;
+  z-index: 2;
+}
+.gold-orbit::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  left: 50%;
+  /* 175% of each side comfortably exceeds the card diagonal, so the
+     spinning square never leaves an uncovered corner. */
+  width: 175%;
+  height: 175%;
+  /* A single short, bright segment with a brief tail — the rest fully
+     transparent — so what travels the rim reads as one moving line, not
+     a sweeping glow. */
+  background: conic-gradient(
+    from 0deg,
+    rgba(201, 169, 110, 0) 0deg,
+    rgba(201, 169, 110, 0) 300deg,
+    rgba(201, 169, 110, 0.35) 326deg,
+    #f6e6bd 342deg,
+    #fff6df 350deg,
+    #e7c067 356deg,
+    rgba(201, 169, 110, 0) 360deg
+  );
+  transform: translate(-50%, -50%) rotate(0deg);
+  animation: goldOrbit 3.4s linear infinite;
+  pointer-events: none;
+}
+.gold-orbit::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: 1.5px;
+  border-radius: inherit;
+  /* Fully opaque so the spinning gradient never shows through the centre —
+     only the 1.5px rim is animated. */
+  background: #0b0905;
+  pointer-events: none;
+}
+@keyframes goldOrbit {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+/* Enter-Luxury card (Our Projects) — keep its own surface inside the rim */
+.luxe-enter-card.gold-orbit {
+  border-color: transparent;
+}
+.luxe-enter-card.gold-orbit::after {
+  background:
+    radial-gradient(circle at 50% 30%, rgba(201, 169, 110, 0.22), transparent 60%),
+    linear-gradient(180deg, #282116, #120f0a);
+}
+
+/* Begin-Journey arrow (landing) — orbit rides the circular button */
+.nav-arrow-right.is-accent .arrow-circle {
+  border-color: transparent;
+}
+.nav-arrow-right.is-accent .arrow-circle::after {
+  background: #0a0804;
+}
+.nav-arrow-right.is-accent .arrow-label {
+  color: #f3e3b4;
+}
+
+/* ===================================================================== */
+/* "Our Luxury Projects" screen (Luxe avana-cta phase) — heading, raised */
+/* Avana entry button, and the two upcoming residences as cards.         */
+/* ===================================================================== */
+.luxe-projects-stage {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(22px, 3.4vh, 48px);
+  width: min(1400px, 94vw);
+  /* Fill the full screen height so the heading anchors the top, the entry
+     button sits a touch lower, and the cards drop to the bottom. */
+  min-height: var(--screen-h);
+  padding: clamp(48px, 8vh, 110px) 0 clamp(44px, 6vh, 84px);
+  animation: luxeVideoFadeIn 700ms ease both;
+}
+
+.luxe-projects-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+.luxe-projects-eyebrow {
+  font-family: "Raleway", sans-serif;
+  font-size: clamp(11px, 1vw, 14px);
+  font-weight: 300;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: rgba(201, 169, 110, 0.82);
+}
+.luxe-projects-title {
+  margin: 0;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(34px, 4.6vw, 66px);
+  line-height: 1;
+  background: linear-gradient(100deg, #9a7340, #f6e6bd 46%, #c9a96e 82%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* Centre the Avana entry button vertically in the space between the heading
+   and the cards: an auto margin above the button and above the cards splits
+   the free height equally, leaving the button mid-way between the two. */
+.luxe-projects-stage .luxe-avana-btn {
+  margin-top: auto;
+  padding: clamp(22px, 2.8vw, 44px) clamp(48px, 6.5vw, 100px);
+}
+
+.luxe-collection-cards {
+  /* Push the cards to the bottom of the full-height stage */
+  margin-top: auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(22px, 2.8vw, 46px);
+  width: 100%;
+}
+
+.luxe-collection-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  width: clamp(320px, 30vw, 470px);
+  border: 1px solid rgba(201, 169, 110, 0.32);
+  border-radius: 18px;
+  text-align: left;
+  color: #f3ece1;
+  box-shadow: 0 20px 52px rgba(0, 0, 0, 0.52);
+  animation: royalRise 760ms ease both;
+}
+
+/* Distinct surfaces — royal (warm gold) vs modern (cool slate) */
+.luxe-collection-card--royal {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(201, 169, 110, 0.16), transparent 58%),
+    linear-gradient(180deg, rgba(38, 30, 20, 0.96), rgba(18, 14, 9, 0.96));
+}
+.luxe-collection-card--modern {
+  background: linear-gradient(180deg, rgba(22, 24, 28, 0.96), rgba(11, 12, 15, 0.96));
+  border-color: rgba(176, 196, 210, 0.26);
+  animation-delay: 90ms;
+}
+
+.luxe-collection-photo {
+  position: relative;
+  width: 100%;
+  height: clamp(190px, 24vh, 300px);
+  overflow: hidden;
+  border-radius: 16px 16px 0 0;
+}
+.luxe-collection-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.luxe-collection-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 3;
+  padding: 5px 12px;
+  font-family: "Raleway", sans-serif;
+  font-size: clamp(9px, 0.78vw, 11px);
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #0b0905;
+  background: linear-gradient(135deg, #f6e6bd, #c9a96e);
+  border-radius: 2px;
+}
+.luxe-collection-card--modern .luxe-collection-badge {
+  background: linear-gradient(135deg, #eef3f7, #aab8c4);
+}
+
+.luxe-collection-body {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: clamp(20px, 1.9vw, 30px);
+}
+.luxe-collection-eyebrow {
+  font-family: "Raleway", sans-serif;
+  font-size: clamp(9px, 0.78vw, 11px);
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(201, 169, 110, 0.85);
+}
+.luxe-collection-card--modern .luxe-collection-eyebrow {
+  color: rgba(176, 196, 210, 0.82);
+}
+.luxe-collection-title {
+  margin: 0;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-weight: 500;
+  font-size: clamp(28px, 2.6vw, 42px);
+  line-height: 1.05;
+  color: #f6efe1;
+}
+.luxe-collection-loc {
+  margin: 0;
+  font-size: clamp(13px, 1.05vw, 15px);
+  color: rgba(243, 236, 225, 0.55);
+}
+.luxe-collection-desc {
+  margin: 5px 0 0;
+  font-size: clamp(13px, 1.05vw, 16px);
+  line-height: 1.55;
+  color: rgba(243, 236, 225, 0.72);
+}
