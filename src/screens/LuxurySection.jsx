@@ -2,10 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import CachedImg from "../components/CachedImg.jsx";
 import { asset } from "../data/assetBase.js";
 
-const VIDEO_START = 15;
-const VIDEO_END = 28;
-const CONFESSION_START = 21.7;
-const CONFESSION_END = 26;
+// Videos are pre-trimmed to exactly the used segments, so they play from 0.
+const VIDEO_END = 13;
+const CONFESSION_END = 4.3;
 
 // The two upcoming Luxe residences shown alongside the Avana entry on the
 // "Our Luxury Projects" screen. One royal, one modern — both display-only.
@@ -37,7 +36,7 @@ export default function LuxurySection({ onNavigate }) {
   const videoRef = useRef(null);
   const confessionRef = useRef(null);
 
-  // ── Intro video: seek to 15s, play until 28s ──
+  // ── Intro video: play the trimmed clip, fade out at the end ──
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return undefined;
@@ -45,62 +44,58 @@ export default function LuxurySection({ onNavigate }) {
 
     const begin = () => {
       startTimer = setTimeout(() => {
-        const onSeeked = () => {
-          video.play().catch(() => setPhase("logo"));
-          setVideoReady(true);
-        };
-        video.addEventListener("seeked", onSeeked, { once: true });
-        try {
-          video.currentTime = VIDEO_START;
-        } catch {
-          video.play().catch(() => setPhase("logo"));
-          setVideoReady(true);
-        }
+        video.play().catch(() => setPhase("logo"));
+        setVideoReady(true);
       }, 600);
     };
 
+    const finish = () => {
+      video.pause();
+      setPhase("fade-out");
+    };
     const onTime = () => {
-      if (video.currentTime >= VIDEO_END) {
-        video.pause();
-        setPhase("fade-out");
-      }
+      if (video.currentTime >= VIDEO_END) finish();
     };
 
     video.addEventListener("loadedmetadata", begin);
     video.addEventListener("timeupdate", onTime);
+    video.addEventListener("ended", finish);
     if (video.readyState >= 1) begin();
 
     return () => {
       video.removeEventListener("loadedmetadata", begin);
       video.removeEventListener("timeupdate", onTime);
+      video.removeEventListener("ended", finish);
       if (startTimer) clearTimeout(startTimer);
     };
   }, []);
 
-  // ── Confession video: starts at 21.7s → 26s ──
+  // ── Confession video: play the trimmed clip, fade out at the end ──
   useEffect(() => {
     if (phase !== "avana-video") return undefined;
     const video = confessionRef.current;
     if (!video) return undefined;
 
     const begin = () => {
-      try { video.currentTime = CONFESSION_START; } catch {}
       video.play().catch(() => setPhase("avana-logo"));
     };
+    const finish = () => {
+      video.pause();
+      setPhase("avana-fade");
+    };
     const onTime = () => {
-      if (video.currentTime >= CONFESSION_END) {
-        video.pause();
-        setPhase("avana-fade");
-      }
+      if (video.currentTime >= CONFESSION_END) finish();
     };
 
     video.addEventListener("loadedmetadata", begin);
     video.addEventListener("timeupdate", onTime);
+    video.addEventListener("ended", finish);
     if (video.readyState >= 1) begin();
 
     return () => {
       video.removeEventListener("loadedmetadata", begin);
       video.removeEventListener("timeupdate", onTime);
+      video.removeEventListener("ended", finish);
     };
   }, [phase]);
 
@@ -136,11 +131,11 @@ export default function LuxurySection({ onNavigate }) {
     <section id="luxury" className="luxe-page">
       <div className="luxe-cinematic-hero">
 
-        {/* Intro video — invisible until seeked to 15s */}
+        {/* Intro video — pre-trimmed clip, invisible until it starts */}
         <video
           ref={videoRef}
           className={`luxe-intro-video${videoReady && phase === "video" ? " is-playing" : ""}`}
-          src="/luxury.mp4"
+          src="https://d1ovqzmursgzel.cloudfront.net/raheja_avana/raheja-assets/videos/luxury-intro.mp4"
           muted
           playsInline
           preload="auto"
@@ -162,7 +157,7 @@ export default function LuxurySection({ onNavigate }) {
           <video
             ref={confessionRef}
             className={`luxe-confession-video${phase === "avana-video" ? " is-playing" : ""}`}
-            src="/confession.mp4"
+            src="https://d1ovqzmursgzel.cloudfront.net/raheja_avana/raheja-assets/videos/confession-clip.mp4"
             muted
             playsInline
             preload="auto"
