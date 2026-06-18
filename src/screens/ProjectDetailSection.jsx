@@ -6,7 +6,7 @@ import { IMG_BASE, asset } from "../data/assetBase.js";
 import CachedImg from "../components/CachedImg.jsx";
 import AmenitiesSection from "./AmenitiesSection.jsx";
 
-const WALKTHROUGH_SRC = "https://d1ovqzmursgzel.cloudfront.net/raheja_avana/Explore_avana.mp4";
+const WALKTHROUGH_SRC = "https://d1ovqzmursgzel.cloudfront.net/raheja_avana/Raheja%20Avana.mp4";
 
 const RENDER_BASE = `${IMG_BASE}/render-2560`;
 
