@@ -9,6 +9,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Raheja Brand Wall Interface</title>
 
+    <!-- Installable app (PWA): the manifest + icons make the browser's
+         install/"Add to Home Screen" create a real home-screen app icon that
+         launches standalone. start_url carries ?kiosk=1 so the installed app
+         prefetches its assets for offline use. -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#0a0a0b" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
     <!-- Fonts load asynchronously so they never block first paint (they used to
          be chained @import statements in index.css, which delayed the whole UI
          from appearing on the kiosk). preconnect warms the connection; the
