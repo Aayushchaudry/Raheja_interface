@@ -3,6 +3,7 @@ import Header from "./components/Header.jsx";
 import MediaModal from "./components/MediaModal.jsx";
 import NavArrows from "./components/NavArrows.jsx";
 import PageIndicator from "./components/PageIndicator.jsx";
+import ConvrseWatermark from "./components/ConvrseWatermark.jsx";
 // HeroSection is the standby screen (first paint), so it loads eagerly.
 import HeroSection from "./screens/HeroSection.jsx";
 
@@ -227,6 +228,8 @@ export default function App() {
       <div className={`transition-overlay ${overlayClass}`} aria-hidden="true" />
 
       <MediaModal title={activeMedia} onClose={closeMedia} />
+
+      <ConvrseWatermark />
     </div>
   );
 }

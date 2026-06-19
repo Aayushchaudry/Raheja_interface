@@ -6052,3 +6052,57 @@ h3 {
   line-height: 1.55;
   color: rgba(243, 236, 225, 0.72);
 }
+
+/* ── "Powered by convrse tech" watermark ─────────────────────────────────
+   Fixed to the bottom-right on every page, above all content (incl. fullscreen
+   video). A subtle glass pill keeps it legible over both dark cinematic pages
+   and light sections. Non-interactive so it never blocks kiosk taps. */
+.convrse-watermark {
+  position: fixed;
+  right: clamp(10px, 1.4vw, 22px);
+  bottom: clamp(10px, 1.4vw, 22px);
+  z-index: 2147483647;
+  display: flex;
+  align-items: baseline;
+  gap: 0.34em;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(12, 12, 18, 0.34);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px) saturate(120%);
+  -webkit-backdrop-filter: blur(8px) saturate(120%);
+  font-family: Poppins, Inter, -apple-system, "system-ui", sans-serif;
+  font-size: clamp(16px, 1.43vw, 21px);
+  line-height: 1;
+  white-space: nowrap;
+  opacity: 0.45;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+/* One font, one white tone for all text. "Powered by" reads a touch lighter
+   for hierarchy; the brand words sit at medium weight. */
+.convrse-watermark .cw-prefix,
+.convrse-watermark .cw-brand,
+.convrse-watermark .cw-tech {
+  color: rgba(255, 255, 255, 0.92);
+  letter-spacing: -0.005em;
+}
+.convrse-watermark .cw-prefix {
+  font-weight: 400;
+}
+.convrse-watermark .cw-brand,
+.convrse-watermark .cw-tech {
+  font-weight: 500;
+}
+/* The exact swirl "o" from the convrse.ai logo, sized to sit inline like the
+   lowercase letter it replaces. */
+.convrse-watermark .cw-o {
+  height: 0.7em;
+  width: auto;
+  vertical-align: -0.07em;
+  margin: 0 0.005em;
+}
+@media print {
+  .convrse-watermark { display: none; }
+}
